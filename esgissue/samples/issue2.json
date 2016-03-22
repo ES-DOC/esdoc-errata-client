@@ -1,0 +1,15 @@
+{
+"title": "Aerosols forcing prescribed in a wrong way", 
+"description": "Aerosols forcing has been prescribed in a wrong way in the sstClimAerosol experiment.", 
+"project": "CMIP5", 
+"kind": "bug",
+"severity": "critical",
+"url": "http://errata.ipsl.upmc.fr/issue/7",
+"materials": [
+"http://errata.ipsl.upmc.fr/static/images_errata/time.jpg"],
+"assignee": {
+"name": "Guillaume Levavasseur",
+"mail": "glipsl@ipsl.jussieu.fr"
+},
+"dset_ids": "/home/glipsl/CMIP5_Analysis/esgf-issue-manager/esgissue/samples/dsets1.txt"
+}

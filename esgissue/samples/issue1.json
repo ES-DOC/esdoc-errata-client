@@ -1,0 +1,12 @@
+{
+"title": "Wrong pH computing",
+"description": "Ocean biogeochemical model (PISCES) provides the hydrogen ion (H+) concentration instead of pH. pH variable has to be computed as follows: pH = -log10[H+].",
+"project": "CMIP5",
+"kind": "bug",
+"severity": "major",
+"url": "http://errata.ipsl.upmc.fr/issue/2",
+"materials": [
+"http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+"http://errata.ipsl.upmc.fr/static/images_errata/time3.jpg"
+]
+}

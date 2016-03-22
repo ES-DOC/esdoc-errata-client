@@ -1,0 +1,18 @@
+{
+"title": "Corrupted files", 
+"description": "Six-hourly files have a corrupted time axis with wrong end dates.", 
+"project": "CMIP5", 
+"type": "bug", 
+"severity": "minor",
+"url": "http://errata.ipsl.upmc.fr/issue/7",
+"materials": [
+"http://errata.ipsl.upmc.fr/static/images_errata/time.jpg", 
+"http://errata.ipsl.upmc.fr/static/images_errata/time3.jpg", 
+"http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+], 
+"dset_ids": [
+"cmip5.output1.IPSL.IPSL-CM5A-MR.historical.6hr.atmos.6hrLev.r1i1p1#20120114", 
+"cmip5.output1.IPSL.IPSL-CM5A-MR.rcp45.6hr.atmos.6hrLev.r1i1p1#20120212"
+], 
+"hash_key": "796f89173c75a7a43c485c8452bd12f4"
+}
