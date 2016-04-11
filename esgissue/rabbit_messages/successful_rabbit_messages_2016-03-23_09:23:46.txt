@@ -1,0 +1,6 @@
+----------------------------------------
+URL:         handle-esgf.dkrz.de
+exchange:    guillaume_test
+routing_key: errata_ids
+{'version_number': '20151216', 'handle': '21.14100/45285e2a-442c-3213-b45b-0ff481ef9d1c', 'drs_id': 'test_dataset', 'publication_date': '2016-03-23T08:23:46.766554+00:00', 'operation': 'metadata_update', 'aggregation_level': 'dataset', 'errata_ids': ['errata_id']}
+----------------------------------------

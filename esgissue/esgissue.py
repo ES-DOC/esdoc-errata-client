@@ -5,56 +5,24 @@
 
 """
 
+# TODO: Add possibility to scan a directory of JSON issues to handle
+
 # Module imports
 import os
+import sys
 import logging
-import textwrap
 import argparse
-from issue_handler import ESGFIssue, BitBucketIssue
+from esgfpid import ESGF_PID_connector
+from issue_handler import ESGFIssue, GitHubIssue
 from datetime import datetime
-from bb_client import Bitbucket
-from argparse import HelpFormatter
-from utils import config_parse
+from utils import MultilineFormatter, config_parse, init_logging, split_line
+from github3 import GitHub
 
 # Program version
-__version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=01, day=15).strftime("%Y-%d-%m"))
+__version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
 
-
-class MultilineFormatter(HelpFormatter):
-    """
-    Custom formatter class for argument parser to use with the Python
-    `argparse <https://docs.python.org/2/library/argparse.html>`_ module.
-
-    """
-
-    def __init__(self, prog):
-        # Overload the HelpFormatter class.
-        super(MultilineFormatter, self).__init__(prog, max_help_position=60, width=100)
-
-    def _fill_text(self, text, width, indent):
-        # Rewrites the _fill_text method to support multiline description.
-        text = self._whitespace_matcher.sub(' ', text).strip()
-        multiline_text = ''
-        paragraphs = text.split('|n|n ')
-        for paragraph in paragraphs:
-            lines = paragraph.split('|n ')
-            for line in lines:
-                formatted_line = textwrap.fill(line, width,
-                                               initial_indent=indent,
-                                               subsequent_indent=indent) + '\n'
-                multiline_text += formatted_line
-            multiline_text += '\n'
-        return multiline_text
-
-    def _split_lines(self, text, width):
-        # Rewrites the _split_lines method to support multiline helps.
-        text = self._whitespace_matcher.sub(' ', text).strip()
-        lines = text.split('|n ')
-        multiline_text = []
-        for line in lines:
-            multiline_text.append(textwrap.fill(line, width))
-        multiline_text[-1] += '\n'
-        return multiline_text
+# Rabbit MQ unsent messages directory
+__UNSENT_MESSAGES_DIR__ = "{0}/unsent_rabbit_messages".format(os.path.dirname(os.path.abspath(__file__)))
 
 
 def get_args():
@@ -64,24 +32,8 @@ def get_args():
     :returns: The corresponding ``argparse`` Namespace
 
     """
-    __GLOBAL_DESCRIPTION__ = """The publication workflow on the ESGF nodes requires to deal with errata issues.
-                    The background of the version changes has to be published alongside the data: what was updated,
-                    retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
-                    be motivated by an issue.|n|n
-
-                    "esgissue" allows the referenced data providers to easily create, document, update, close or remove
-                    a validated issue. "esgissue" relies on the BitBucket Python-API to deal with the BitBucket private
-                    repository giving read access to ESGF issues for community.|n|n
-
-                    The issue registration always appears prior to the publication process and should be mandatory
-                    for additional version, version removal or retraction.|n|n
-
-                    "esgissue" works with a JSON file. This allows the data provider in charge of ESGF issues
-                    to manage one or several JSON templates gathering the issues locally.|n|n
-
-                    See full documentation on http://esgissue.readthedocs.org/"""
-    __TEMPLATE_HELP__ = """Path of the issue JSON template."""
-    __DSETS_HELP__ = """Path of the dataset IDs list corresponding to the issue."""
+    __TEMPLATE_HELP__ = """Required path of the issue JSON template."""
+    __DSETS_HELP__ = """Required path of the dataset IDs list corresponding to the issue."""
     __HELP__ = """Show this help message and exit."""
     __BB_USER_HELP__ = """BitBucket username. If not, the $BB_USER environment |n
                        variable is used."""
@@ -90,11 +42,26 @@ def get_args():
     __LOG_HELP__ = """Logfile directory. If not, standard output is used."""
     parser = argparse.ArgumentParser(
         prog='esgissue',
-        description= __GLOBAL_DESCRIPTION__,
+        description="""The publication workflow on the ESGF nodes requires to deal with errata issues.
+                    The background of the version changes has to be published alongside the data: what was updated,
+                    retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
+                    be motivated by an issue.|n|n
+
+                    "esgissue" allows the referenced data providers to easily create, document, update, close or remove
+                    a validated issue. "esgissue" relies on the GitHub API v3 to deal with private repositories.|n|n
+
+                    The issue registration always appears prior to the publication process and should be mandatory
+                    for additional version, version removal or retraction.|n|n
+
+                    "esgissue" works with both JSON and TXT files. This allows the data provider in charge of ESGF
+                    issues to manage one or several JSON templates gathering the issues locally.|n|n
+
+                    See full documentation on http://esgissue.readthedocs.org/""",
         formatter_class=MultilineFormatter,
         add_help=False,
         epilog="""Developed by:|n
-                  Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)""")
+                  Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)|n
+                  Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr""")
     parser._optionals.title = "Optional arguments"
     parser._positionals.title = "Positional arguments"
     parser.add_argument(
@@ -114,7 +81,10 @@ def get_args():
     create = subparsers.add_parser(
         'create',
         prog='esgissue create',
-        description=""""esgissue create" registers one or several issues and returns the corresponding issue numbers.|n|n
+        description=""""esgissue create" registers one or several issues. and returns:|n
+                    - the corresponding issue number,
+                    - |n
+                    |n|n
 
                     The data provider submits an JSON file gathering all issues information (see
                     http://esgissue.readthedocs.org/configuration.html to get a template). The issues
@@ -180,26 +150,30 @@ def get_args():
         help="""Creates/updates ESGF issues from a JSON template to the BitBucket repository. See |n
              "esgissue push -h" for full help.""",
         add_help=False)
-    create._optionals.title = "Optional arguments"
+    create._optionals.title = "Arguments"
     create._positionals.title = "Positional arguments"
     create.add_argument(
-        'template',
+        '-I',
         nargs='?',
+        required=True,
         metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
     create.add_argument(
-        'dsets',
+        '-D',
         nargs='?',
+        required=True,
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=__DSETS_HELP__)
     create.add_argument(
         '-i',
-        metavar='$PWD/config.ini',
+        metavar='/esg/config/esgcet/.',
         type=str,
-        default='{0}/config.ini'.format(os.getcwd()),
-        help="""Path of configuration INI file.""")
+        default='/esg/config/esgcet/.',
+        help="""Initialization/configuration directory containing "esg.ini"|n
+                and "esg.<project>.ini" files. If not specified, the usual|n
+                datanode directory is used.""")
     create.add_argument(
         '--log',
         metavar='$PWD',
@@ -289,17 +263,27 @@ def get_args():
     update._optionals.title = "Optional arguments"
     update._positionals.title = "Positional arguments"
     update.add_argument(
-        'template',
+        '-I',
         nargs='?',
-        metavar='PATH',
+        required=True,
+        metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
     update.add_argument(
+        '-D',
+        nargs='?',
+        required=True,
+        metavar='PATH/dsets.list',
+        type=argparse.FileType('r'),
+        help=__DSETS_HELP__)
+    update.add_argument(
         '-i',
-        metavar='$PWD/config.ini',
+        metavar='/esg/config/esgcet/.',
         type=str,
-        default='{0}/config.ini'.format(os.getcwd()),
-        help="""Path of configuration INI file.""")
+        default='/esg/config/esgcet/.',
+        help="""Initialization/configuration directory containing "esg.ini"|n
+                and "esg.<project>.ini" files. If not specified, the usual|n
+                datanode directory is used.""")
     update.add_argument(
         '--log',
         metavar='$PWD',
@@ -317,9 +301,9 @@ def get_args():
         action='help',
         help=__HELP__)
 
-    pull = subparsers.add_parser(
-        'pull',
-        prog='esgissue pull',
+    close = subparsers.add_parser(
+        'close',
+        prog='esgissue close',
         description=""""esgissue pull" retrieves or displays one or several issues from the BitBucket repository.|n|n
 
                     If one or several issue ID is(are) submitted, the corresponding issue(s) is(are) returned from the
@@ -358,218 +342,233 @@ def get_args():
         help="""Retrieves ESGF issues from the BitBucket repository to a JSON template. See |n
              "esgissue pull -h" for full help.""",
         add_help=False)
-    pull._optionals.title = "Optional arguments"
-    pull._positionals.title = "Positional arguments"
-    pull.add_argument(
-        '--template',
+    close._optionals.title = "Optional arguments"
+    close._positionals.title = "Positional arguments"
+    close.add_argument(
+        '-I',
         nargs='?',
-        metavar='PATH',
+        required=True,
+        metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
-    pull.add_argument(
-        '--local-id',
-        nargs='+',
-        metavar='ID',
+    close.add_argument(
+        '-D',
+        nargs='?',
+        required=True,
+        metavar='PATH/dsets.list',
+        type=argparse.FileType('r'),
+        help=__DSETS_HELP__)
+    close.add_argument(
+        '-i',
+        metavar='/esg/config/esgcet/.',
         type=str,
-        help="""The issue identifier/number to retrieve.""")
-    pull.add_argument(
-        '--project',
-        action='store_true',
-        default=False,
-        help="""Gets the project name affected by the issue.""")
-    pull.add_argument(
-        '--title',
-        action='store_true',
-        default=False,
-        help="""Gets the issue title.""")
-    pull.add_argument(
-        '--description',
-        action='store_true',
-        default=False,
-        help="""Gets the issue description.""")
-    pull.add_argument(
-        '--type',
-        action='store_true',
-        default=False,
-        help="""Gets the issue type.""")
-    pull.add_argument(
-        '--severity',
-        action='store_true',
-        default=False,
-        help="""Gets the issue severity level.""")
-    pull.add_argument(
-        '--status',
-        action='store_true',
-        default=False,
-        help="""Gets the issue status.""")
-    pull.add_argument(
-        '--url',
-        action='store_true',
-        default=False,
-        help="""Gets the issue landing page URL.""")
-    pull.add_argument(
-        '--materials',
-        action='store_true',
-        default=False,
-        help="""Gets the URLs list pointing to issue materials.""")
-    pull.add_argument(
-        '--bb-user',
-        metavar='USERNAME',
-        default=os.getenv("BB_USER"),
-        type=str,
-        help=__BB_USER_HELP__)
-    pull.add_argument(
-        '--bb-passwd',
-        metavar='PASSWORD',
-        default=os.getenv("BB_PASSWORD"),
-        type=str,
-        help=__BB_PASSWORD_HELP__)
-    pull.add_argument(
+        default='/esg/config/esgcet/.',
+        help="""Initialization/configuration directory containing "esg.ini"|n
+                and "esg.<project>.ini" files. If not specified, the usual|n
+                datanode directory is used.""")
+    close.add_argument(
         '--log',
         metavar='$PWD',
         type=str,
         const=os.getcwd(),
         nargs='?',
         help=__LOG_HELP__)
-    pull.add_argument(
+    close.add_argument(
         '-v',
         action='store_true',
         default=False,
         help="""Verbose mode.""")
-    pull.add_argument(
+    close.add_argument(
         '-h', '--help',
         action='help',
         help=__HELP__)
 
-    remove = subparsers.add_parser(
-        'remove',
-        prog='esgissue remove',
-        description=""""esgissue remove" deletes an existing issue from the BitBucket repository. To use with
-                    caution !|n|n
+    retrieve = subparsers.add_parser(
+        'retrieve',
+        prog='esgissue retrieve',
+        description=""""esgissue pull" retrieves or displays one or several issues from the BitBucket repository.|n|n
 
-                    If one or several issue ID is(are) submitted, the corresponding issue(s) is(are) deleted from the
-                    BitBucket repository. If not, all issues are deleted.|n|n
+                    If one or several issue ID is(are) submitted, the corresponding issue(s) is(are) returned from the
+                    BitBucket repository.|n|n
 
-                    If a JSON file is submitted (see http://esgissue.readthedocs.org/configuration.html) the issue(s)
-                    (is)are deleted from the JSON template.|n|n
+                    If a JSON file is submitted (see http://esgissue.readthedocs.org/configuration.html) the issues
+                    information are overwritten from the BitBucket repository to the JSON template (as the opposite of
+                    "esgissue push" mode).|n|n
+
+                    If another flag is set to True (e.g., --status), only the corresponding issue information is
+                    displayed or overwritten to the JSON template. The other flags are unchanged to the template even
+                    they are different between the BitBucket repository and the template.|n|n
 
                     Usage examples:|n|n
 
-                    esgissue remove|n
-                    -> Deletes all issues assigned to the data provider from the BitBucket repository|n|n
+                    esgissue pull|n
+                    -> Gets all issues from the BitBucket repository|n|n
 
-                    esgissue remove --issue-id ID|n
-                    -> Deletes issue #ID from the BitBucket repository|n|n
+                    esgissue pull --issue-id ID|n
+                    -> Gets issue #ID from the BitBucket repository|n|n
 
-                    esgissue remove --template --issue-id #ID|n
-                    -> Deletes issue #ID from the BitBucket repository and the JSON template|n|n
+                    esgissue pull --issue-id ID --project [...]|n
+                    -> Gets issue #ID information from the BitBucket repository|n|n
 
-                    esgissue remove --template|n
-                    -> Deletes all issues assigned to the data provider from the BitBucket repository and the JSON
-                    template|n|n
+                    esgissue pull --template myissues.json|n
+                    -> (Over)writes all issues from the BitBucket repository to the template|n|n
+
+                    esgissue pull --template --issue-id|n
+                    -> (Over)write issue #ID from the BitBucket repository to the template|n|n
+
+                    esgissue pull --template --issue-id --project|n
+                    -> (Over)write issue #ID information from the BitBucket repository to the template|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Deletes existing ESGF issues. Please just use in case of mistakes, a closed issue |n
-             don't have to be removed. See "esgissue remove -h" for full help""",
+        help="""Retrieves ESGF issues from the BitBucket repository to a JSON template. See |n
+             "esgissue pull -h" for full help.""",
         add_help=False)
-    remove._optionals.title = "Optional arguments"
-    remove._positionals.title = "Positional arguments"
-    remove.add_argument(
-        '--template',
+    retrieve._optionals.title = "Optional arguments"
+    retrieve._positionals.title = "Positional arguments"
+    retrieve.add_argument(
+        '-N',
+        metavar='INT',
+        type=int,
+        required=True,
+        help='GitHub issue number to retrieve')
+    retrieve.add_argument(
+        '-I',
         nargs='?',
-        metavar='PATH',
-        type=argparse.FileType('r'),
+        metavar='$PWD/issue.json',
+        default='{0}/issue.json'.format(os.getcwd()),
+        type=argparse.FileType('w'),
         help=__TEMPLATE_HELP__)
-    remove.add_argument(
-        '--local-id',
-        nargs='+',
-        metavar='ID',
+    retrieve.add_argument(
+        '-D',
+        nargs='?',
+        metavar='$PWD/dsets.list',
+        default='{0}/dsets.list'.format(os.getcwd()),
+        type=argparse.FileType('w'),
+        help=__DSETS_HELP__)
+    retrieve.add_argument(
+        '-i',
+        metavar='/esg/config/esgcet/.',
         type=str,
-        help="""The issue identifier/number to delete.""")
-    remove.add_argument(
-        '--bb-user',
-        metavar='USERNAME',
-        default=os.getenv("BB_USER"),
-        type=str,
-        help=__BB_USER_HELP__)
-    remove.add_argument(
-        '--bb-passwd',
-        metavar='PASSWORD',
-        default=os.getenv("BB_PASSWORD"),
-        type=str,
-        help=__BB_PASSWORD_HELP__)
-    remove.add_argument(
+        default='/esg/config/esgcet/.',
+        help="""Initialization/configuration directory containing "esg.ini"|n
+                and "esg.<project>.ini" files. If not specified, the usual|n
+                datanode directory is used.""")
+    retrieve.add_argument(
         '--log',
         metavar='$PWD',
         type=str,
         const=os.getcwd(),
         nargs='?',
         help=__LOG_HELP__)
-    remove.add_argument(
+    retrieve.add_argument(
         '-v',
         action='store_true',
         default=False,
         help="""Verbose mode.""")
-    remove.add_argument(
+    retrieve.add_argument(
         '-h', '--help',
         action='help',
         help=__HELP__)
-
     return parser.parse_args()
 
 
-def init_logging(logdir, level):
+def github_connector(username, password, team, repo):
     """
-    Initiates the logging configuration (output, message formatting).
-    In the case of a logfile, the logfile name is unique and formatted as follows:
-    ``name-YYYYMMDD-HHMMSS-JOBID.log``
+    Instantiates the GitHub repository connector if granted for user.
 
-    :param str logdir: The relative or absolute logfile directory. If ``None`` the standard \
-    output is used.
-
-    """
-    __LOG_LEVELS__ = {'CRITICAL': logging.CRITICAL,
-                      'ERROR': logging.ERROR,
-                      'WARNING': logging.WARNING,
-                      'INFO': logging.INFO,
-                      'DEBUG': logging.DEBUG,
-                      'NOTSET': logging.NOTSET}
-    logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
-    if logdir:
-        logfile = 'esgissue-{0}-{1}.log'.format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                                                os.getpid())
-        if not os.path.isdir(logdir):
-            os.makedirs(logdir)
-        logging.basicConfig(filename=os.path.join(logdir, logfile),
-                            level=__LOG_LEVELS__[level],
-                            format='%(asctime)s %(levelname)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
-    else:
-        logging.basicConfig(level=__LOG_LEVELS__[level],
-                            format='%(asctime)s %(levelname)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
-
-
-def bb_connect(username, password, team, repo):
-    """
-    Tries connection to the BitBucket repository.
-    :param username: The BitBucket login
-    :param password: The BitBucket corresponding password
-    :param team: The BitBucket team to connect
-    :param repo: The BitBucket repository to reach
-    :raises Error: If the connection fails because of invalid input
+    :param username: The GitHub login
+    :param password: The GitHub password
+    :param team: The GitHub team to connect
+    :param repo: The GitHub repository to reach
+    :returns: The GitHub repository connector and the GitHub user login
+    :rtype: *tuple* of (*str*, *github3.repos.repo*)
+    :raises Error: If the GitHub connection fails because of invalid inputs
 
     """
-    bb_link = {'team': cfg.get('BITBUCKET', 'bb_team'),
-               'repo': cfg.get('BITBUCKET', 'bb_repo').lower()}
-    logging.info('Connection to the BitBucket repository "{team}/{repo}"'.format(**bb_link))
-    bb = Bitbucket(username, password, team, repo)
-    if bb.repository.get()[0]:
+    gh_link = {'team': cfg.get('issues', 'gh_team'),
+               'repo': cfg.get('issues', 'gh_repo').lower()}
+    logging.info('Connection to the GitHub repository "{team}/{repo}"'.format(**gh_link))
+    try:
+        gh_user = GitHub(username, password)
+        gh_repo = gh_user.repository(team, repo.lower())
         logging.info('Result: SUCCESSFUL')
+        return username, gh_repo
+    except:
+        logging.exception('Result: FAILED // Access denied')
+        sys.exit(1)
+
+
+def pid_connector(prefix, url_messaging_service, messaging_exchange, rabbit_username,
+                  rabbit_password, successful_messages=True):
+    """
+    Instantiates the PID Handle Service connector if granted for user.
+
+    :param str prefix: The PID prefix to use
+    :param str url_messaging_service: The Handle Service URL
+    :param str messaging_exchange: The message header
+    :param str rabbit_username: The RabbitMQ username
+    :param str rabbit_password: The RabbitMQ password
+    :param boolean successful_messages: True to store successful messages
+    :returns: The Handle Service connector
+    :rtype: *ESGF_PID_connector*
+    :raises Error: If the Handle Service connection fails because of invalid inputs
+
+    """
+    logging.info('Connection to the RabbitMQ Server of the Handle Service')
+    try:
+        if not os.path.isdir(__UNSENT_MESSAGES_DIR__):
+            os.mkdir(__UNSENT_MESSAGES_DIR__)
+        pid = ESGF_PID_connector(prefix=prefix,
+                                 url_messaging_service=url_messaging_service,
+                                 messaging_exchange=messaging_exchange,
+                                 data_node='foo.fr',
+                                 thredds_service_path='/what/ever/',
+                                 solr_url='http://i-will.not/be/used',
+                                 rabbit_username=rabbit_username,
+                                 rabbit_password=rabbit_password,
+                                 directory_unsent_messages=__UNSENT_MESSAGES_DIR__,
+                                 store_successful_messages=successful_messages)
+        logging.info('Result: SUCCESSFUL')
+        return pid
+    except:
+        logging.exception('Result: FAILED // Access denied')
+        sys.exit(1)
+
+
+def get_projects(config):
+    """
+    Gets project options from esg.ini file.
+
+    :param dict config: The configuration file parser
+    :returns: The project options
+    :rtype: *list*
+
+    """
+    project_options = split_line(config.get('DEFAULT', 'project_options'), sep='\n')
+    return [option[0].upper() for option in map(lambda x: split_line(x), project_options[1:])]
+
+
+def get_descriptions(gh):
+    """
+    Gets description strings from all registered GitHub issues.
+
+    :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+    :returns: The descriptions strings and associated issue numbers
+    :rtype: *dict*
+    :raises Error: If retrieval fails without any results
+
+    """
+    descriptions = {}
+    issues = gh.iter_issues()
+    if issues:
+        for issue in issues:
+            content = GitHubIssue.issue_content_parser(issue.body)
+            descriptions[issue.number] = content['description']
+        return descriptions
     else:
-        logging.warning('Result: FAILED')
-        raise Exception('Invalid BitBucket username, password, team or repository name.')
+        logging.error('   Result: FAILED')
+        raise Exception('Cannot retrieve all descriptions from GitHub repository')
 
 
 # Main entry point for stand-alone call.
@@ -579,26 +578,77 @@ if __name__ == "__main__":
     # Parse configuration INI file
     cfg = config_parse(args.i)
     # Init logging
-    init_logging(args.log, cfg.get('DEFAULT', 'log_level'))
-    # Connection to the BitBucket repository
-    bb_connect(username=cfg.get('BITBUCKET', 'bb_login'),
-               password=cfg.get('BITBUCKET', 'bb_password'),
-               team=cfg.get('BITBUCKET', 'bb_team'),
-               repo=cfg.get('BITBUCKET', 'bb_repo'))
+    if args.v:
+        init_logging(args.log, level='DEBUG')
+    elif cfg.has_option('initialize', 'log_level'):
+        init_logging(args.log, cfg.get('initialize', 'log_level'))
+    else:
+        init_logging(args.log)
+    # Connection to the GitHub repository
+    gh_login, gh = github_connector(username=cfg.get('issues', 'gh_login'),
+                                    password=cfg.get('issues', 'gh_password'),
+                                    team=cfg.get('issues', 'gh_team'),
+                                    repo=cfg.get('issues', 'gh_repo'))
+    # Connection to the Handle Service
+    # hs = pid_connector(prefix=cfg.get('issues', 'prefix'),
+    #                    url_messaging_service=cfg.get('issues', 'url_messaging_service'),
+    #                    messaging_exchange=cfg.get('issues', 'messaging_exchange'),
+    #                    rabbit_username=cfg.get('issues', 'rabbit_username'),
+    #                    rabbit_password=cfg.get('issues', 'rabbit_password'))
     # Run command
     if args.command == 'create':
-        local_issue = ESGFIssue(args.template, args.dsets)
-        local_issue.validate()  # Validate issue template against JSON schema
-        exit()
-        local_issue.create(bb)  # Create issue on BitBucket repository
-        #issue.push(hs)    # Push issue information to Handle Service
+        # Instantiate ESGF issue from issue template and datasets list
+        local_issue = ESGFIssue(issue_f=args.I,
+                                dsets_f=args.D)
+        # Validate ESGF issue against JSON schema
+        local_issue.validate(action=args.command,
+                             projects=get_projects(cfg))
+        # Create ESGF issue on GitHub repository
+        local_issue.create(assignee=gh_login,
+                           gh=gh,
+                           descriptions=get_descriptions(gh))
+        #local_issue.send(hs, gh_repo.name)  # Send issue id to Handle Service
     elif args.command == 'update':
-        local_issue = ESGFIssue(args.template, args.dsets)
-        local_issue.validate()  # Validate issue template against JSON schema
-        remote_issue = BitBucketIssue(bb, local_issue.get_remote_id(bb))  # Get the corresponding BitBucket issue
-        remote_issue.validate()  # Validate BitBucket issue against JSON schema
-        local_issue.update(bb, remote_issue)  # Update issue information on BitBucket repository
+        # Instantiate ESGF issue from issue template and datasets list
+        local_issue = ESGFIssue(issue_f=args.I,
+                                dsets_f=args.D)
+        # Validate ESGF issue against JSON schema
+        local_issue.validate(action=args.command,
+                             projects=get_projects(cfg))
+        print local_issue.get('salut')
+        # Get corresponding GitHub issue
+        remote_issue = GitHubIssue(gh=gh,
+                                   number=local_issue.get('number'))
+        # Validate GitHub issue against JSON schema
+        remote_issue.validate(action=args.command,
+                              projects=get_projects(cfg))
+        # Update ESGF issue information on GitHub repository
+        local_issue.update(gh=gh,
+                           remote_issue=remote_issue)
         #issue.push(hs)    # Push new issue information to update Handle Service metadata
-#    elif args.command == 'get':
-        # To retrieve one or several JSON template from the BitBucket repository
-        # giving the BitBucket issue number/id.
+    elif args.command == 'close':
+        # Instantiate ESGF issue from issue template and datasets list
+        local_issue = ESGFIssue(issue_f=args.I,
+                                dsets_f=args.D)
+        # Validate ESGF issue against JSON schema
+        local_issue.validate(action=args.command,
+                             projects=get_projects(cfg))
+        # Get corresponding GitHub issue
+        remote_issue = GitHubIssue(gh=gh,
+                                   number=local_issue.get('number'))
+        # Validate GitHub issue against JSON schema
+        remote_issue.validate(action=args.command,
+                              projects=get_projects(cfg))
+        # Close the ESGF issue on the Github repository
+        local_issue.close(gh=gh,
+                          remote_issue=remote_issue)
+    elif args.command == 'retrieve':
+        # Get corresponding GitHub issue
+        remote_issue = GitHubIssue(gh=gh,
+                                   number=args.N)
+        # Validate GitHub issue against JSON schema
+        remote_issue.validate(action=args.command,
+                              projects=get_projects(cfg))
+        # Retrieve the corresponding GitHub issue
+        remote_issue.retrieve(issue_f=args.I,
+                              dsets_f=args.D)

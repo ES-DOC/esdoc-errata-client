@@ -5,535 +5,613 @@
 
 """
 
+# TODO: Handle Service interaction with errors in case of drs_id and version number does not exists
+# TODO: Handle Service interaction should consider dictionary to records hundreds of PIDs per issue
+
 # Module imports
 import re
 import os
 import sys
 import logging
-from hashlib import md5
+from uuid import uuid4
+from copy import copy
 from bs4 import BeautifulSoup
-from utils import DictDiff, ListDiff, test_url, test_pattern
+from utils import MyOrderedDict, DictDiff, ListDiff, test_url, test_pattern, traverse
 from json import dump, load
 from jsonschema import validate
-from collections import OrderedDict
+from wheezy.template.engine import Engine
+from wheezy.template.ext.core import CoreExtension
+from wheezy.template.loader import FileLoader
 
-# Available issue status
-__STATUS__ = ['new', 'on hold', 'wontfix', 'close']
 
 # Fill value for undocumented URL or MATERIALS
 __FILL_VALUE__ = unicode('Not documented')
 
-# JSON key order to keep user-friendly readability
-__KEYS_ORDER__ = ['title',
-                  'description',
-                  'project',
-                  'kind',
-                  'severity',
-                  'url',
-                  'materials',
-                  'assignee',
-                  'dset_ids']
+# JSON issue schemas full path
+__JSON_SCHEMA_PATHS__ = {'create': "{0}/schema_create.json".format(os.path.dirname(os.path.abspath(__file__))),
+                         'update': "{0}/schema_update.json".format(os.path.dirname(os.path.abspath(__file__))),
+                         'close': "{0}/schema_update.json".format(os.path.dirname(os.path.abspath(__file__))),
+                         'retrieve': "{0}/schema_retrieve.json".format(os.path.dirname(os.path.abspath(__file__)))}
 
-# JSON issue schema full path
-__JSON_SCHEMA_PATH__ = "{0}/schema.json".format(os.path.dirname(os.path.abspath(__file__)))
+# GitHub labels
+__LABELS__ = {'Low': '#e6b8af',
+              'Medium': '#dd7e6b',
+              'High': '#cc4125',
+              'Critical': '#a61c00',
+              'New': '#00ff00',
+              'On hold': '#ff9900',
+              'Wontfix': '#0c343d',
+              'Resolved': '#38761d',
+              'project': '#a4c2f4',
+              'models': '#a2c4c9'}
 
 
 class ESGFIssue(object):
     """
-    Encapsulates the following issue context/information and provides related methods to deal with:
+    Encapsulates the following issue context/information from local JSON template and
+    provides related methods to deal with:
 
     +--------------------+-------------+------------------------------------+
     | Attribute          | Type        | Description                        |
     +====================+=============+====================================+
-    | *self*.id          | *int*       | Remote BitBucket issue id          |
+    | *self*.issue_f     | *FileObj*   | The issue template JSON file       |
     +--------------------+-------------+------------------------------------+
-    | *self*.title       | *str*       | Issue title                        |
+    | *self*.dsets_f     | *FileObj*   | The affected dataset list file     |
     +--------------------+-------------+------------------------------------+
-    | *self*.description | *str*       | Issue description                  |
+    | *self*.attributes  | *dict*      | The issues attributes              |
     +--------------------+-------------+------------------------------------+
-    | *self*.project     | *str*       | Project affected by the issue      |
-    +--------------------+-------------+------------------------------------+
-    | *self*.severity    | *str*       | Issue priority/severity level      |
-    +--------------------+-------------+------------------------------------+
-    | *self*.type        | *str*       | Issue type/kind                    |
-    +--------------------+-------------+------------------------------------+
-    | *self*.url         | *str*       | Landing page URL                   |
-    +--------------------+-------------+------------------------------------+
-    | *self*.materials   | *list*      | Materials URLs                     |
-    +--------------------+-------------+------------------------------------+
-    | *self*.hash_key    | *str*       | The title hash key                 |
-    +--------------------+-------------+------------------------------------+
-    | *self*.description | *str*       | Issue description                  |
+    | *self*.dsets       | *list*      | The affected datasets              |
     +--------------------+-------------+------------------------------------+
 
+    The attributes keys are:
+    +--------------------+-------------+------------------------------------+
+    | Key                | Value type  | Description                        |
+    +====================+=============+====================================+
+    | *self*.number      | *int*       | The issue number                   |
+    +--------------------+-------------+------------------------------------+
+    | *self*.id          | *str*       | The issue ESGF id (UUID format)    |
+    +--------------------+-------------+------------------------------------+
+    | *self*.title       | *str*       | The issue title                    |
+    +--------------------+-------------+------------------------------------+
+    | *self*.description | *str*       | The issue description              |
+    +--------------------+-------------+------------------------------------+
+    | *self*.severity    | *str*       | The issue priority/severity level  |
+    +--------------------+-------------+------------------------------------+
+    | *self*.project     | *str*       | The affected project               |
+    +--------------------+-------------+------------------------------------+
+    | *self*.models      | *list*      | The affected models                |
+    +--------------------+-------------+------------------------------------+
+    | *self*.url         | *str*       | The landing page URL               |
+    +--------------------+-------------+------------------------------------+
+    | *self*.materials   | *list*      | The materials URLs                 |
+    +--------------------+-------------+------------------------------------+
+    | *self*.state       | *str*       | The issue state                    |
+    +--------------------+-------------+------------------------------------+
+    | *self*.created_at  | *str*       | The registration date (ISO format) |
+    +--------------------+-------------+------------------------------------+
+    | *self*.updated_at  | *str*       | The last updated date (ISO format) |
+    +--------------------+-------------+------------------------------------+
+    | *self*.closed_at   | *str*       | The closure date (ISO format)      |
+    +--------------------+-------------+------------------------------------+
 
-    :param dict args: Parsed command-line arguments
+    :param FileObj issue_f: The issue template JSON file
+    :param FileObj dsets_f: The affected datasets list file
     :returns: The issue context
-    :rtype: *dict*
+    :rtype: *ESGFIssue*
 
     """
-    def __init__(self, template, dsets):
-        self.attributes = self.get_template(template)
-        self.path = template.name
-        self.dsets = self.get_dsets(dsets)
+    def __init__(self, issue_f, dsets_f):
+        self.issue_f, self.dsets_f = issue_f, dsets_f
+        self.attributes = self.get_template(issue_f)
+        self.dsets = self.get_dsets(dsets_f)
+        # Ensure that local files are writable to avoid registration/update/closure of an issue without file returns.
+        if not os.access(self.issue_f.name, os.W_OK):
+            logging.error('Result: FAILED // JSON template {0} is not writable'.format(self.issue_f.name))
+            sys.exit(1)
+        if not os.access(self.dsets.name, os.W_OK):
+            logging.error('Result: FAILED // Dataset list {0} is not writable'.format(self.issue_f.name))
+            sys.exit(1)
 
     def get(self, key):
         """
-        Returns the template value to the corresponding key.
+        Returns the attribute value corresponding to the key.
+        The submitted key can refer to `ESGFIssue.key` or `ESGFIssue.attributes[key]`.
 
-        :param str key: The template key
-        :returns: The template value
+        :param str key: The key
+        :returns: The corresponding value
         :rtype: *str* or *list* or *dict* depending on the key
 
         """
-        return self.attributes[key]
+        if key in self.attributes:
+            return self.attributes[key]
+        elif key in self.__dict__.keys():
+            return self.__dict__[key]
+        else:
+            raise Exception('{0} not found. Available keys are {1}'.format(key, self.attributes.keys()))
 
     @staticmethod
-    def get_template(path):
+    def get_template(issue_f):
         """
         Loads an issue template from a JSON file.
 
-        :param *file* path: The JSON issue template as file object
+        :param FileObj issue_f: The JSON issue template as file object
         :returns: The issue attributes
         :rtype: *dict*
         :raises Error: If the JSON file parsing fails
 
         """
         try:
-            return load(path, object_pairs_hook=OrderedDict)
+            return load(issue_f, object_pairs_hook=MyOrderedDict)
         except:
-            logging.exception('{0} is not a valid JSON file'.format(path.name))
+            logging.exception('{0} is not a valid JSON file'.format(issue_f.name))
             sys.exit(1)
 
     @staticmethod
-    def get_dsets(dsets_list):
+    def get_dsets(dsets_f):
         """
         Gets the affected datasets list from a text file.
 
-        :param *file* dsets_list: The path of the text file as file object
-        :returns: An iterator on the datasets list
+        :param FileObj dsets_f: The affected datasets list file
+        :returns: The affected datasets
         :rtype: *iter*
 
         """
-        with dsets_list as dsets:
-            for dset in dsets:
-                yield dset.strip(' \n\r\t')
+        dsets = list()
+        for dset in dsets_f:
+            dsets.append(unicode(dset.strip(' \n\r\t')))
+        return dsets
 
-    def validate(self):
+    def validate(self, action, projects):
         """
-        Validates JSON template against predefined JSON schema
+        Validates ESGF issue template against predefined JSON schema
 
-        :raises Error: If the template has an invalid JSON schema.
-        :raises Error: If the landing page or materials urls cannot be reached.
+        :param str action: The issue action/command
+        :param list projects: The projects options from esg.ini
+        :raises Error: If the template has an invalid JSON schema
+        :raises Error: If the project option does not exist in esg.ini
+        :raises Error: If the description is already published on GitHub
+        :raises Error: If the landing page or materials urls cannot be reached
+        :raises Error: If dataset ids are malformed
 
         """
-        logging.info('Validation of template {0}'.format(self.path))
-        with open(__JSON_SCHEMA_PATH__) as f:
-            __JSON_SCHEMA__ = load(f)
+        logging.info('Validation of template {0}'.format(self.issue_f.name))
+        # Load JSON schema for issue template
+        with open(__JSON_SCHEMA_PATHS__[action]) as f:
+            schema = load(f)
+        # Validate issue attributes against JSON issue schema
         try:
-            validate(self.attributes, __JSON_SCHEMA__)
+            validate(self.attributes, schema)
         except:
-            logging.warning('Result: FAILED')
-            logging.exception('{0} has an invalid JSON schema'.format(self.path))
+            logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(self.issue_f.name))
+            sys.exit(1)
+        # Test if project is declared in esg.ini
+        if not self.attributes['project'] in projects:
+            logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
+            logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
             sys.exit(1)
         # Test landing page and materials URLs
-    #    for key in ['url', 'materials']:
-    #        self.attributes[key]
-    #           test_url(url)
-    #    
-    #    map(self.attributes.__getitem__, ['url','materials'])                
-#
-#
-        if 'url' in self.attributes:
-            test_url(self.attributes['url'])
-        if 'materials' in self.attributes:
-            for url in self.attributes['materials']:
-                test_url(url)
-        # Test dataset id format
+        urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
+        if not all(map(test_url, urls)):
+            logging.error('Result: FAILED // URLs cannot be reached')
+            sys.exit(1)
+        # Validate the datasets list against the dataset id pattern
         if not all(map(test_pattern, self.dsets)):
+            logging.error('Result: FAILED // Dataset IDs have invalid format')
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
 
-
-    def hash(self):
+    def create(self, assignee, gh, descriptions):
         """
-        Hashable function to attach a unique hash key to the issue. The hashing is applied on the all keys of
-        the JSON template without the hash key. If one the other fields changes the hash key is modified and added
-        to the JSON template.
+        Creates an issue on the GitHub repository.
 
-        :returns: The hash key
-        :rtype: *str*
-
-        """
-        hash_key = md5()
-        for key in self.template.keys():
-            if isinstance(self.template[key], list):
-                for item in self.template[key]:
-                    hash_key.update(item)
-            else:
-                hash_key.update(self.template[key])
-        self.template['hash_key'] = hash_key.hexdigest()
-        return self.template['hash_key']
-
-# TODO: add verbosity through LOG_LEVEL in config file and -v on command-line
-# TODO: consider raw content for issue content parser with complete regex to ensure template writing and parsing.
-# TODO: implement BitBucketIssue.history
-# TODO: implement BitBucketIssue.url
-# TODO: implement BitBucketIssue.responsible
-# TODO: implement BitBucketIssue.status
-# TODO: Handle Service interaction with errors in case of drs_id and version number does not exists
-# TODO: Handle Service interaction should consider dictionary to records hundreds/thousands of PIDs per issue
-
-    def create(self, bb):
-        """
-        Creates an issue on the BitBucket repository.
-
-        :param Bitbucket bb: The BitBucket object (as a :func:`bb_client.Bitbucket` class instance)
-        :raises Error: If the JSON template already has a hash key.
-        :raises Error: If the issue is already registered.
-        :raises Error: If the issue registration fails for any other reason.
+        :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+        :param str assignee: The GitHub login of the issue assignee
+        :param dict descriptions: The descriptions from all registered GitHub issues
+        :raises Error: If the issue registration fails without any result
 
         """
-        if 'hash_key' in self.attributes.keys():
-            logging.warning('Registration: FAIL')
-            raise Exception('The {0} template already has a hash key'.format(self.path))
-        local_key = self.hash()
-        remote_keys = self.get_remote_hash_keys(bb)
-        if local_key in remote_keys.values():
-            remote_id = remote_keys.keys()[remote_keys.values().index(local_key)]
-            logging.warning('Registration: FAIL')
-            raise Exception('Issue already registered as BitBucket issue #{0}'.format(remote_id))
-        success, result = bb.issue.create(title=self.attributes['title'],
-                                          content=self.issue_content(self.attributes),
-                                          component=self.attributes['project'],
-                                          status='new',
-                                          priority=self.attributes['severity'],
-                                          kind=self.attributes['type'])
-        if success:
-            logging.info('Registration: SUCCESSFUL as BitBucket issue #{0}'.format(result['local_id']))
+        gh_team, gh_repo = gh.full_name.split('/')
+        logging.info('Issue registration on GitHub repository "{0}/{1}"'.format(gh_team, gh_repo))
+        # Test if description is not already published
+        if self.attributes['description'] in descriptions.values():
+            number = [k for k, v in descriptions.iteritems() if v == self.attributes['description']]
+            logging.error('Result: FAILED // Issue description is already published'
+                          ' within issue(s) #{0}'.format(number))
+            logging.debug('Local "{0}" -> "{1}"'.format('description', self.attributes['description']))
+            for n in number:
+                logging.debug('Remote "{0}" #{1} <- "{2}"'.format('description', n, descriptions[n]))
+            sys.exit(1)
+        self.attributes.prepend('id', str(uuid4()))
+        self.attributes.update({'state': unicode('New')})
+        issue = gh.create_issue(title=self.attributes['title'],
+                                body=self.issue_content(self.attributes, self.dsets),
+                                assignee=assignee,
+                                labels=self.get_labels(gh, self.attributes))
+        if issue:
+            logging.info('Result: SUCCESSFUL')
+            self.attributes.prepend('number', issue.number)
+            logging.debug('Issue number <- {0}'.format(self.attributes['number']))
+            self.attributes.update({'created_at': issue.created_at.isoformat()})
+            logging.debug('Created at <- "{0}"'.format(self.attributes['created_at']))
+            self.attributes.update({'last_updated_at': issue.updated_at.isoformat()})
+            logging.debug('Updated at <- "{0}"'.format(self.attributes['last_updated_at']))
             self.write()
         else:
-            logging.error(result)
-            raise Exception('Registration: FAIL')
+            logging.error('Result: FAILED // "{0}" issue returned.'.format(issue))
+            sys.exit(1)
 
     @staticmethod
-    def get_remote_hash_keys(bb):
+    def get_labels(gh, attributes):
         """
-        Gets hash keys from all remote BitBucket issues.
+        Gets the labels to attach to an issue. Creates the corresponding labels is necessary.
 
-        :param Bitbucket bb: The BitBucket object (as a :func:`bb_client.Bitbucket` class instance)
-        :returns: The remote hash keys and issue ids
-        :rtype: *dict*
+        :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+        :param dict attributes: The issue attributes to get labels
+        :returns: The label names
+        :rtype: *list*
 
         """
-        remote_keys = {}
-        success, result = bb.issue.all()
-        if success:
-            for issue in result['values']:
-                html_content = BeautifulSoup(issue['content']['html'], 'html.parser')
-                hash_content = html_content.find('h2', id='markdown-header-hash-key').find_next_sibling('div').string
-                remote_keys[issue['id']] = hash_content.strip(' \n\r\t')
+        labels = dict()
+        labels['Severity: ' + attributes['severity']] = __LABELS__[attributes['severity']]
+        labels['Project: ' + attributes['project']] = __LABELS__['project']
+        labels['State: ' + attributes['state']] = __LABELS__[attributes['state']]
+        for model in attributes['models']:
+            labels['Model: ' + model] = __LABELS__['models']
+        for name, color in labels.items():
+            if not gh.label(name):
+                gh.create_label(name=name, color=color)
+                logging.warning('GitHub label "{0}" was created'.format(name))
+        return labels.keys()
+
+    def send(self, hs, repo):
+        """
+        Updates the errata id PID metadata for correspond affected datasets.
+
+        :param ESGF_PID_connector hs: The Handle Service PID ESGF_PID_connector (as a :func:`esgfpid.ESGF_PID_connector` class instance)
+        :param str repo: The BitBucket repository
+        :raises Error: If the PID update fails for any other reason.
+
+        """
+        logging.info('Update corresponding PID metadata on Handle Service')
+        try:
+            errat_id = '{0}.{1}.{2}'.format(repo, self.attributes['id'], self.attributes['esgf_id'])
+            for dset in self.dsets:
+                drs_id, version_number = dset.split('#')
+                hs.add_errata_ids(drs_id=drs_id,
+                                  version_number=version_number,
+                                  errata_ids=errat_id)
+            logging.info('   Result: SUCCESSFUL')
+        except:
+            logging.error('   Result: FAILED')
+
+    def update(self, gh, remote_issue):
+        """
+        Updates an issue on the GitHub repository.
+
+        :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+        :param GitHubIssue remote_issue: The corresponding GitHub issue (as a :func:`GitHubIssue` class instance)
+        :raises Error: If the id, title, project or dates are different
+        :raises Error: If the state changes back to new
+        :raises Error: If the issue update fails for any other reason
+
+        """
+        logging.info('Update GitHub issue #{0}'.format(remote_issue.number))
+        # Test that state should not change back to "New"
+        if remote_issue.attributes['state'] != 'New' and self.attributes['state'] == 'New':
+            logging.error('Result: FAILED // Issue state should not change back to "New"')
+            logging.debug('Local "{0}"  -> "{1}"'.format('state', self.attributes['state']))
+            logging.debug('Remote "{0}" <- "{1}"'.format('state', remote_issue.attributes['state']))
+            sys.exit(1)
+        # Test if id, title, project and dates are unchanged.
+        for key in ['id', 'title', 'project', 'created_at', 'last_updated_at']:
+            if self.attributes[key] != remote_issue.attributes[key]:
+                logging.error('Result: FAILED // "{0}" attribute should be unchanged'.format(key))
+                logging.debug('Local "{0}"  -> "{1}"'.format(key, self.attributes[key]))
+                logging.debug('Remote "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
+                sys.exit(1)
+        keys = DictDiff(remote_issue.attributes, self.attributes)
+        dsets = ListDiff(remote_issue.dsets, self.dsets)
+        if (not keys.changed() and not keys.added() and not keys.removed() and not dsets.added() and
+                not dsets.removed()):
+            logging.info('Nothing to change on GitHub issue #{0}'.format(remote_issue.number))
         else:
-            logging.warning('Update: FAIL')
-            raise Exception('Cannot retrieve all hash keys from BitBucket repository')
-        return remote_keys
-
-    def get_remote_id(self, bb):
-        """
-        Gets the corresponding BitBucket issue id/number.
-
-        :param Bitbucket bb: The BitBucket object (as a :func:`bb_client.Bitbucket` class instance)
-        :returns: The BitBucket issue id
-        :rtype: *int*
-
-        """
-        if 'hash_key' not in self.template.keys():
-            logging.warning('Update: FAIL')
-            raise Exception('Cannot retrieve the corresponding BitBucket issue because '
-                            'the {0} template does not have any hash key'.format(self.path))
-        old_local_key = self.template['hash_key']
-        remote_keys = self.get_remote_hash_keys(bb)
-        if old_local_key not in remote_keys.values():
-            logging.warning('Update: FAIL')
-            raise Exception('Issue not registered on BitBucket repository. '
-                            'Please run "esgissue create {0}".'.format(self.path))
-        return int(remote_keys.keys()[remote_keys.values().index(old_local_key)])
-
-    def update(self, bb, remote_issue):
-        """
-        Updates an issue on the BitBucket repository.
-
-        :param Bitbucket bb: The BitBucket object (as a :func:`bb_client.Bitbucket` class instance)
-        :param Bitbucket remote_issue: The BitBucket remote issue (as a :func:`BitBucketIssue` class instance)
-        :raises Error: If the issue is NOT already registered.
-        :raises Error: If the issue update fails for any other reason.
-
-        """
-        print set(self.template.keys() + ['url', 'materials'])
-        print self.template.keys()
-        print remote_issue.template.keys()
-        template_diff = DictDiff(self.template, remote_issue.template)
-        print template_diff.unchanged()
-        print template_diff.changed()
-        print template_diff.removed()
-        print template_diff.added()
-
-        # Probleme entre quoi et quoi on compare
-
-        if set(self.template.keys() + ['url','materials']) == template_diff.unchanged():
-            logging.info('Nothing to change on BitBucket issue #{0}'.format(remote_issue.id))
-        else:
-            self.hash()
-            changes = {'id': remote_issue.id}
-            for key in template_diff.changed():
-                changes.update({'key': key.upper()})
-                if key in ['dset_ids', 'materials']:
-                    list_diff = ListDiff(self.template[key], set(remote_issue.template[key]))
-                    added, removed = list_diff.added(), list_diff.removed()
-                    for item in added:
-                        changes.update({'item': item})
-                        logging.info('Update BitBucket issue #{id}: '
-                                     '{key} adds "{item}"'.format(**changes))
-                    for item in removed:
-                        changes.update({'item': item})
-                        logging.info('Update BitBucket issue #{id}: '
-                                     '{key} removes "{item}"'.format(**changes))
-                else:
-                    changes.update({'from_value': remote_issue.template[key],
-                                    'to_value': self.template[key]})
-                    logging.info('Update BitBucket issue #{id}: '
-                                 '{key} changes from "{from_value}" to "{to_value}"'.format(**changes))
-                remote_issue.template[key] = self.template[key]
-            for key in template_diff.removed():
-                # This can only concern "url" and "materials" keys because of __JSON_SCHEMA__
-                changes.update({'key': key.upper(),
-                                'to_value': 'Not documented'})
-                if key == 'materials':
-                    for item in remote_issue.template[key]:
-                        changes.update({'item': item})
-                        logging.info('Update BitBucket issue #{id}: '
-                                     '{key} removes "{item}"'.format(**changes))
-                    logging.info('Update BitBucket issue #{id}: '
-                                 '{key} changes to "{to_value}"'.format(**changes))
-                else:
-                    changes.update({'from_value': remote_issue.template[key]})
-                    logging.info('Update BitBucket issue #{id}: '
-                                 '{key} changes from "{from_value}" to "{to_value}"'.format(**changes))
-                del remote_issue.template[key]
-            for key in template_diff.added():
-                # This can only concern "url" and "materials" keys because of __JSON_SCHEMA__
-                changes.update({'key': key.upper(),
-                                'from_value': 'Not documented'})
-                if key == 'materials':
-                    for item in remote_issue.template[key]:
-                        changes.update({'item': item})
-                        logging.info('Update BitBucket issue #{id}: '
-                                     '{key} adds "{item}"'.format(**changes))
-                    logging.info('Update BitBucket issue #{id}: '
-                                 '{key} changes to "{to_value}"'.format(**changes))
-                else:
-                    changes.update({'to_value': self.template[key]})
-                    logging.info('Update BitBucket issue #{id}: '
-                                 '{key} changes from "{from_value}" to "{to_value}"'.format(**changes))
-                remote_issue.template[key] = self.template[key]
+            # for dset in dsets.removed():
+            for key in keys.changed():
+                logging.info('CHANGE {0}'.format(key))
+                logging.debug('Old "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
+                logging.debug('New "{0}" -> "{1}"'.format(key, self.attributes[key]))
+                remote_issue.attributes[key] = self.attributes[key]
+            for key in keys.added():
+                logging.info('ADD {0}'.format(key))
+                logging.debug('Old "{0}" <- "{1}"'.format(key, __FILL_VALUE__))
+                logging.debug('New "{0}" -> "{1}"'.format(key, self.attributes[key]))
+                remote_issue.attributes[key] = self.attributes[key]
+            for key in keys.removed():
+                logging.info('REMOVE {0}'.format(key))
+                logging.debug('Old "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
+                logging.debug('New "{0}" -> "{1}"'.format(key, __FILL_VALUE__))
+                del remote_issue.attributes[key]
+            for dset in dsets.removed():
+                logging.info('REMOVE {0}'.format(dset))
+            for dset in dsets.added():
+                logging.info('ADD {0}'.format(dset))
+            remote_issue.dsets = self.dsets
             # Update issue information keeping status unchanged
-            success, result = bb.issue.update(issue_id=remote_issue.id,
-                                              title=remote_issue.template['title'],
-                                              content=self.issue_content(remote_issue.template),
-                                              component=remote_issue.template['project'],
-                                              priority=remote_issue.template['severity'],
-                                              kind=remote_issue.template['type'])
+            issue = gh.issue(remote_issue.number)
+            success = issue.edit(title=remote_issue.attributes['title'],
+                                 body=self.issue_content(remote_issue.attributes,
+                                                         remote_issue.dsets),
+                                 labels=self.get_labels(gh, remote_issue.attributes))
             if success:
-                logging.info('Update BitBucket issue #{0}: SUCCESSFUL'.format(result['local_id']))
+                logging.info('Result: SUCCESSFUL')
+                self.attributes.update({'last_updated_at': issue.updated_at.isoformat()})
+                logging.debug('Updated at <- "{0}"'.format(self.attributes['last_updated_at']))
                 self.write()
             else:
-                raise Exception('Registration: FAIL')
+                logging.error('Result: FAILED // "{0}" issue returned.'.format(issue))
+                sys.exit(1)
 
-    def status_update(self, bb, status):
+    def close(self, gh, remote_issue):
         """
-        Close an issue on the BitBucket repo
+        Close the GitHub issue
 
-        :param Bitbucket bb: The BitBucket object (as a :func:`Bitbucket` class instance)
-        :param str status: The issue status to apply
-        :return: The update status
-        :rtype: *boolean*
-        :raises Error: If the issue update failed
+        :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+        :param GitHubIssue remote_issue: The corresponding GitHub issue (as a :func:`GitHubIssue` class instance)
+        :raises Error: If the state is not "Wontfix" or "Resolved"
+        :raises Error: If the issue status update fails
 
         """
-        success, _ = bb.issue.update(issue_id=self.id, status=status)
+        logging.info('Close GitHub issue #{0}'.format(remote_issue.number))
+        # Test if all attributes are unchanged.
+        for key in self.attributes:
+            if self.attributes[key] != remote_issue.attributes[key]:
+                logging.error('Result: FAILED // "{0}" attribute should be unchanged'.format(key))
+                logging.debug('Local "{0}"  -> "{1}"'.format(key, self.attributes[key]))
+                logging.debug('Remote "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
+                sys.exit(1)
+        # Test if issue state is "Wontfix" or "Resolved"
+        if not remote_issue.attributes['state'] in ['Wontfix', 'Resolved']:
+            logging.error('Result: FAILED // Issue state should be "Wontfix" or "Resolved')
+            logging.debug('Local "{0}"  -> "{1}"'.format('state', self.attributes['state']))
+            logging.debug('Remote "{0}" <- "{1}"'.format('state', remote_issue.attributes['state']))
+            sys.exit(1)
+        issue = gh.issue(remote_issue.number)
+        success = issue.close()
         if success:
-            print 'Issue #{0} status set to "{1}"'.format(self.id, status)
+            logging.info('Result: SUCCESSFUL')
+            self.attributes.update({'last_updated_at': issue.updated_at.isoformat()})
+            logging.debug('Updated at <- "{0}"'.format(self.attributes['last_updated_at']))
+            self.attributes.update({'closed_at': issue.closed_at.isoformat()})
+            logging.debug('Closed at <- "{0}"'.format(self.attributes['closed_at']))
+            self.write()
         else:
-            print 'Issue status update failed.'.format(self.id)
-        return success
-
+            logging.error('Result: FAILED // "{0}" issue returned.'.format(issue))
+            sys.exit(1)
 
     @staticmethod
-    def issue_content(template):
+    def issue_content(attributes, dsets):
         """
-        Format the issue content.
+        Format the ESGF issue content.
 
-        :param dict template: The issue template to format
-        :return: The formatted issue content
+        :param dict attributes: The issue attributes
+        :param list dsets: The affected datasets
+        :return: The html rendering
         :rtype: *str*
 
         """
-        # Embeds content into dictionary
-        content = template.copy()
-        if 'materials' in template.keys():
-            content['materials'] = ''.join(['![]({0})\n'.format(m) for m in template['materials']])
-        else:
-            content['materials'] = '*{0}*\n'.format(__FILL_VALUE__)
-        if 'url' not in template.keys():
-            content['url'] = '*{0}*\n'.format(__FILL_VALUE__)
-        content['hash_key'] = template['hash_key'].rjust(len(template['hash_key'])+4)
-        content['dset_ids'] = ''.join(['{0}\n'.format(m).rjust(len(m)+5) for m in template['dset_ids']])
-        # Format whole content using markdown
-        return '\n'.join(['##Description##',
-                          '{description}',
-                          '##Materials##',
-                          '{materials}',
-                          '----',
-                          '##Landing Page##',
-                          '{url}',
-                          '##Hash Key##',
-                          '{hash_key}',
-                          '##Affected Datasets##',
-                          '{dset_ids}']).format(**content)
+        template = copy(attributes)
+        template.update({'dsets': dsets})
+        for key in ['url', 'materials']:
+            if key not in attributes:
+                template.update({key: None})
+        engine = Engine(loader=FileLoader({os.getcwd()}), extensions=[CoreExtension()])
+        html_template = engine.get_template('template.html')
+        return html_template.render(template)
 
     def write(self):
         """
-        Writes an issue template into JSON file using the ``with`` statement.
+        Writes an ESGF issue into JSON file.
 
         """
+        logging.info('Writing ESGF issue into JSON template {0}'.format(self.issue_f.name))
         try:
-            with open(self.path, 'w') as json_file:
-                dump(self.template, json_file, indent=0)
-            logging.info('Dump new hash key to {0}: SUCCESSFUL'.format(self.path))
+            with open(self.issue_f.name, 'w') as json_file:
+                dump(self.attributes, json_file, indent=0)
+            logging.info('Result: SUCCESSFUL')
         except:
-            logging.warning('Registration: FAIL')
-            logging.exception('Dump new hash key to {0}: FAILED'.format(self.path))
+            logging.exception('Result: FAILED // JSON template {0} is not writable'.format(self.issue_f.name))
             sys.exit(1)
 
 
-class BitBucketIssue(object):
+class GitHubIssue(object):
     """
-    Encapsulates a remote BitBucket issue context/information and provides related methods to deal with:
+    Encapsulates the following issue context/information from GitHub and
+    provides related methods to deal with:
+
+    +--------------------+-------------+------------------------------------+
+    | Attribute          | Type        | Description                        |
+    +====================+=============+====================================+
+    | *self*.number      | *int*       | The issue number                   |
+    +--------------------+-------------+------------------------------------+
+    | *self*.raw         | *dict*      | The raw GitHub issue               |
+    +--------------------+-------------+------------------------------------+
+    | *self*.attributes  | *dict*      | The issues attributes              |
+    +--------------------+-------------+------------------------------------+
+    | *self*.dsets       | *list*      | The affected datasets              |
+    +--------------------+-------------+------------------------------------+
+    | *self*.status      | *str*       | The issue status                   |
+    +--------------------+-------------+------------------------------------+
+    | *self*.url         | *str*       | The issue HTML url                 |
+    +--------------------+-------------+------------------------------------+
+    | *self*.assignee    | *str*       | The GitHub login of issue assignee |
+    +--------------------+-------------+------------------------------------+
+
+    The attributes keys are the same as the :func:`ESGFIssue` class.
+
+    :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+    :param int number: The issue number
+    :returns: The issue context
+    :rtype: *GitHubIssue*
 
     """
-    def __init__(self, bb, bb_id):
-        self.id = bb_id
+    def __init__(self, gh, number):
+        self.number = number
+        self.attributes, self.dsets = self.get_template(gh)
         self.raw = None
-        self.template = self.get_template(bb)
+        self.status = None
+        self.url = None
+        self.assignee = None
 
-    def get_template(self, bb):
+    def get(self, key):
         """
-        Loads an issue template from the BitBucket repository.
+        Returns the attribute value corresponding to the key.
+        The submitted key can refer to `GitHubIssue.key` or `GitHubIssue.attributes[key]`.
 
-        :param Bitbucket bb: The BitBucket object (as a :func:`bb_client.Bitbucket` class instance)
-        :returns: The formatted template
+        :param str key: The key
+        :returns: The corresponding value
+        :rtype: *str* or *list* or *dict* depending on the key
+
+        """
+        if key in self.attributes:
+            return self.attributes[key]
+        elif key in self.__dict__.keys():
+            return self.__dict__[key]
+        else:
+            raise Exception('{0} not found. Available keys are {1}'.format(key, self.attributes.keys()))
+
+    def get_template(self, gh):
+        """
+        Loads an issue template from the GitHub repository.
+
+        :param *GitHubObj* gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+        :returns: The issue attributes
         :rtype: *dict*
-        :raises Error: If the BitBucket issue cannot be reached
-        :raises Error: If the Bitbucket issue parsing fails
+        :raises Error: If the GitHub issue cannot be reached
 
         """
-        success, self.raw = bb.issue.get(issue_id=self.id)
-        if not success:
-            logging.warning('Update: FAIL')
-            raise Exception('Cannot get BitBucket issue #{0}'.format(self.id))
-        try:
-            return self.format()
-        except:
-            logging.warning('Update: FAIL')
-            logging.exception('Cannot parse BitBucket issue #{0}'.format(self.id))
-            sys.exit(1)
+        self.raw = gh.issue(self.number)
+        if not self.raw:
+            raise Exception('Cannot get GitHub issue number {0}'.format(self.number))
+        self.status = self.raw.state
+        self.assignee = self.raw.assignee.login
+        self.url = self.raw.html_url
+        return self.format()
 
     def format(self):
         """
-        Formats a raw issue dictionary from BitBucket to template JSON schema.
+        Formats a GitHub issue to an ESGFIssue template.
 
         :returns: The formatted issue
         :rtype: *dict*
 
         """
-        content = self.issue_content_parser(self.raw['content']['html'])
-        issue = OrderedDict()
-        issue[unicode('title')] = self.raw['title']
+        content = self.issue_content_parser(self.raw.body)
+        labels = [tuple(label.name.split(': ')) for label in self.raw.labels]
+        issue = MyOrderedDict()
+        issue[unicode('number')] = self.raw.number
+        issue[unicode('id')] = content['id']
+        issue[unicode('title')] = self.raw.title
         issue[unicode('description')] = content['description']
-        issue[unicode('project')] = self.raw['component']['name']
-        issue[unicode('type')] = self.raw['kind']
-        issue[unicode('severity')] = self.raw['priority']
-        if content['materials']:
-            issue[unicode('materials')] = content['materials']
+        issue[unicode('project')] = [label[1] for label in labels if 'Project' in label][0]
+        issue[unicode('models')] = [label[1] for label in labels if 'Model' in label]
+        issue[unicode('severity')] = [label[1] for label in labels if 'Severity' in label][0]
         if content['url'] != __FILL_VALUE__:
             issue[unicode('url')] = content['url']
-        issue[unicode('dset_ids')] = content['dset_ids']
-        issue[unicode('hash_key')] = content['hash_key']
-        return issue
+        if content['materials'] != __FILL_VALUE__:
+            issue[unicode('materials')] = content['materials']
+        issue[unicode('state')] = [label[1] for label in labels if 'State' in label][0]
+        issue[unicode('created_at')] = self.raw.created_at.isoformat()
+        issue[unicode('last_updated_at')] = self.raw.updated_at.isoformat()
+        if self.raw.is_closed():
+            issue[unicode('closed_at')] = self.raw.closed_at.isoformat()
+        return issue, content['dsets']
 
     @staticmethod
     def issue_content_parser(content):
         """
-        Parse a raw issue content from BitBucket and translates it to the template JSON schema.
+        Parses a raw issue content from GitHub and translates it into an ESGF issue template.
+
         :param str content: The issue content
-        :returns: The issue(s) information
+        :returns: The issue attributes
         :rtype: *dict*
 
         """
-        html_content = BeautifulSoup(content, 'html.parser')
-        html_content.prettify()
-        # Get issue description from content
-        description_content = html_content.find('h2', id='markdown-header-description').find_next_sibling('p')
-        description = unicode(description_content.string.strip(' \n\r\t'))
-        # Get issue materials urls from content
-        materials_content = html_content.find('h2', id='markdown-header-materials').find_next_sibling('p')
-        materials = []
-        for material in materials_content.find_all('img'):
-            materials.append(unicode(material.get('src')))
-        # Get issue landing page url from content
-        url_content = html_content.find('h2', id='markdown-header-landing-page').find_next_sibling('p')
-        if url_content.find("a") is None:
-            url = unicode(url_content.string.strip(' \n\r\t'))
-        else:
-            url = unicode(url_content.find('a').get('href'))
-        # Get issue hash key from content
-        hash_content = html_content.find('h2', id='markdown-header-hash-key').find_next_sibling('div')
-        hash_key = unicode(hash_content.string.strip(' \n\r\t'))
-        # Get issue dsets from content
-        dset_ids = []
-        dset_ids_content = html_content.find('h2', id='markdown-header-affected-datasets').find_next_sibling('div')
-        for dset_id in dset_ids_content.string.split('\n'):
-            # re.sub('\r', '\n')
-            dset_ids.append(unicode(dset_id.strip(' \n\r\t')))
-        dset_ids = filter(None, dset_ids)
-        return {'description': description,
-                'url': url,
-                'materials': materials,
-                'hash_key': hash_key,
-                'dset_ids': dset_ids}
+        html_content = BeautifulSoup(re.sub('[\n\t\r]', '', content), "html.parser")
+        html_dict = dict()
+        for elt in html_content.find_all('div'):
+            output_img = []
+            output_dsets = []
+            for parent in elt.contents:
+                if parent.name == 'img':
+                    output_img.append(parent['src'])
+                    html_dict[elt['id']] = output_img
+                elif parent.name == 'ul':
+                    for child in parent.find_all('li'):
+                        output_dsets.append(child.string)
+                        html_dict[elt['id']] = output_dsets
+                else:
+                    html_dict[elt['id']] = parent.string
+        return html_dict
 
-    def validate(self):
+    def validate(self, action, projects):
         """
-        Validates JSON template against predefined JSON schema
+        Validates GitHub issue template against predefined JSON schema
 
-        :raises Error: If the template has an invalid JSON schema.
+        :param str action: The issue action/command
+        :param list projects: The projects options from esg.ini
+        :raises Error: If the template has an invalid JSON schema
+        :raises Error: If the project option does not exist in esg.ini
         :raises Error: If the landing page or materials urls cannot be reached.
+        :raises Error: If dataset ids are malformed
 
         """
+        logging.info('Validation of GitHub issue {0}'.format(self.attributes['number']))
+        # Load JSON schema for issue template
+        with open(__JSON_SCHEMA_PATHS__[action]) as f:
+            schema = load(f)
+        # Validate issue attributes against JSON issue schema
         try:
-            with open(__JSON_SCHEMA_PATH__) as f:
-                json_schema = load(f)
-            validate(self.template, json_schema)
+            validate(self.attributes, schema)
         except:
-            logging.warning('Registration: FAIL')
-            logging.exception('{0} has an invalid JSON schema'.format(self.id))
+            logging.exception('Result: FAILED // GitHub issue {0} has an invalid JSON schema'.format(self.number))
+            sys.exit(1)
+        # Test if project is declared in esg.ini
+        if not self.attributes['project'] in projects:
+            logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
+            logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
             sys.exit(1)
         # Test landing page and materials URLs
-        if 'url' in self.template.keys():
-            test_url(self.template['url'])
-        if 'materials' in self.template.keys():
-            for url in self.template['materials']:
-                test_url(url)
+        urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
+        if not all(map(test_url, urls)):
+            logging.error('Result: FAILED // URLs cannot be reached')
+            sys.exit(1)
+        # Validate the datasets list against the dataset id pattern
+        if not all(map(test_pattern, self.dsets)):
+            logging.error('Result: FAILED // Dataset IDs have invalid format')
+            sys.exit(1)
+        logging.info('Result: SUCCESSFUL')
 
+    def retrieve(self, issue_f, dsets_f):
+        """
+        Retrieves a GitHub issue and writes ESGF template into JSON file and affected datasets list into TXT file
 
+        :param FileObj issue_f: The JSON file to write in
+        :param FileObj dsets_f: The TXT file to write in
 
+        """
+        logging.info('Retrieve GitHub issue #{0} JSON template'.format(self.number))
+        try:
+            with issue_f as json_file:
+                dump(self.attributes, json_file, indent=0)
+            logging.info('Result: SUCCESSFUL')
+        except:
+            logging.exception('Result: FAILED // JSON template {0} is not writable'.format(issue_f.name))
+            sys.exit(1)
+        logging.info('Retrieve GitHub issue #{0} affected datasets list'.format(self.number))
+        try:
+            with dsets_f as list_file:
+                list_file.write('\n'.join(self.dsets))
+            logging.info('Result: SUCCESSFUL')
+        except:
+            logging.exception('Result: FAILED // Dataset list {0} is not writable'.format(dsets_f.name))
+            sys.exit(1)
