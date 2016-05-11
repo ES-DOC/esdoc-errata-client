@@ -5,11 +5,10 @@
 
 """
 
-# TODO: Add possibility to scan a directory of JSON issues to handle
-
 # Module imports
 import os
 import sys
+import uuid
 import logging
 import argparse
 from esgfpid import ESGF_PID_connector
@@ -33,12 +32,8 @@ def get_args():
 
     """
     __TEMPLATE_HELP__ = """Required path of the issue JSON template."""
-    __DSETS_HELP__ = """Required path of the dataset IDs list corresponding to the issue."""
+    __DSETS_HELP__ = """Required path of the affected dataset IDs list."""
     __HELP__ = """Show this help message and exit."""
-    __BB_USER_HELP__ = """BitBucket username. If not, the $BB_USER environment |n
-                       variable is used."""
-    __BB_PASSWORD_HELP__ = """BitBucket password. If not the $BB_PASSWORD environment |n
-                           variable is used."""
     __LOG_HELP__ = """Logfile directory. If not, standard output is used."""
     parser = argparse.ArgumentParser(
         prog='esgissue',
@@ -81,86 +76,39 @@ def get_args():
     create = subparsers.add_parser(
         'create',
         prog='esgissue create',
-        description=""""esgissue create" registers one or several issues. and returns:|n
-                    - the corresponding issue number,
-                    - |n
-                    |n|n
+        description=""""esgissue create" registers one or several issues on a defined GitHub repository. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
-                    The data provider submits an JSON file gathering all issues information (see
-                    http://esgissue.readthedocs.org/configuration.html to get a template). The issues
-                    with a status set to "new" are created on the BitBucket repository. Otherwise the issue attributes
-                    are updated/overwritten from the template to the BitBucket repository. In both cases the
-                    issue ID/number is returned from the BitBucket repository and overwritten to the JSON
-                    template.|n|n
+                    This action returns to the corresponding local JSON template:|n
+                    - the corresponding issue number,|n
+                    - the ESGF issue ID (as UUID),|n
+                    - the creation date,|n
+                    - the last updated date (same as the creation date).|n|n
 
-                    If one or several issue ID (i.e., the issue(s) key(s) from the template) are submitted, the
-                    corresponding issues are created if their status are set to "new". Otherwise the issue(s)
-                    attributes are updated/overwritten on the BitBucket repository. In both cases the issues IDs are
-                    returned from the BitBucket repository.|n|n
+                    The issue registration sets:|n
+                    - the issue status to "New",|n
+                    - the data provider GitHub login as the issue responsible,|n
+                    - the issue format using a fixed HTML schema.|n|n
 
-                    If another flag is set to True, only the corresponding issue information is updated/overwritten.
-                    The other flags are unchanged even they are different between the BitBucket repository and
-                    the JSON template.|n|n
-
-                    Usage examples:|n|n
-
-                    $> esgissue push myissues.json|n
-                    -> Creates all issues with "status = new" on the BitBucket repository,|n
-                    -> Updates all issues with "status != new" from the template to the BitBucket repository,|n
-                    -> (Over)writes issues IDs from the Bitbucket repository to the template in both cases.|n|n
-
-                    $> esgissue push myissues.json --issue-id ID|n
-                    -> Creates the issue #ID if "status = new" on the BitBucket repository,|n
-                    -> Updates the issue #ID if "status != new" from the template to the BitBucket repository,|n
-                    -> Overwrites the issue ID from the BitBucket repository to the template in both cases.|n|n
-
-                    $> esgissue push myissues.json --issue-id ID --status [...]|n
-                    -> Updates the issue #ID information from the template to the BitBucket repository,|n
-                    -> Overwrites the issue ID from the BitBucket repository to the template.|n|n
-
-                    An ESGF issue is defined by:|n|n
-
-                    - The project name affected by the issue, |n
-                    - A short but clear title (please avoid purposeless title as "Issue 1"),|n
-                    - A precise and concise description of the issue that makes sense for end users (please avoid brief
-                    description as "wrong data"),|n
-                    - The BitBucket username of the issue responsible (i.e., the data provider in charge of the
-                    issue),|n
-                    - The issue type. The accepted terms are:|n
-                    -- bug: the new version will correct an error in comparison with the previous version,|n
-                    -- enhancement: the new version will improve or complete the previous version.|n
-                    - The issue severity level. The accepted terms are:|n
-                    -- minor: the issue concerns file management (e.g., period extension, removal, etc.),|n
-                    -- major: the issue concerns metadata without undermining the values of the
-                    involved variable,|n
-                    -- critical: the issue concerns single point variable or axis values,|n
-                    -- blocker: the issue concerns the variable or axis values undermining the analysis. The use of
-                    this data is strongly discouraged.|n
-                    - The issue status. The accepted terms are:|n
-                    -- new: the issue has been registered,|n
-                    -- on hold: the issue is in the care of the corresponding data provider,|n
-                    -- wontfix: the issue cannot be fixed/corrected, |n
-                    -- closed: the issue has been fixed leading to a new dataset version.|n
-                    - The issue landing page with the complete description of the issue (or the issues list of the
-                    corresponding institute/model).|n
-                    - The list of URLs pointing to issue materials (e.g., pictures, graphs, documents).|n|n
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO REGISTER AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Creates/updates ESGF issues from a JSON template to the BitBucket repository. See |n
-             "esgissue push -h" for full help.""",
+        help="""Creates ESGF issues from a JSON template to the GitHub repository. See |n
+             "esgissue create -h" for full help.""",
         add_help=False)
     create._optionals.title = "Arguments"
     create._positionals.title = "Positional arguments"
     create.add_argument(
-        '-I',
+        '--issue',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
     create.add_argument(
-        '-D',
+        '--dsets',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
@@ -194,83 +142,30 @@ def get_args():
     update = subparsers.add_parser(
         'update',
         prog='esgissue update',
-        description=""""esgissue update" registers one or several issues and returns the corresponding issue numbers.|n|n
+        description=""""esgissue update" updates one or several issues on a defined GitHub repository. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
-                    The data provider submits an JSON file gathering all issues information (see
-                    http://esgissue.readthedocs.org/configuration.html to get a template). The issues
-                    with a status set to "new" are created on the BitBucket repository. Otherwise the issue attributes
-                    are updated/overwritten from the template to the BitBucket repository. In both cases the
-                    issue ID/number is returned from the BitBucket repository and overwritten to the JSON
-                    template.|n|n
+                    This action returns the last updated date to the corresponding local JSON template.|n|n
 
-                    If one or several issue ID (i.e., the issue(s) key(s) from the template) are submitted, the
-                    corresponding issues are created if their status are set to "new". Otherwise the issue(s)
-                    attributes are updated/overwritten on the BitBucket repository. In both cases the issues IDs are
-                    returned from the BitBucket repository.|n|n
-
-                    If another flag is set to True, only the corresponding issue information is updated/overwritten.
-                    The other flags are unchanged even they are different between the BitBucket repository and
-                    the JSON template.|n|n
-
-                    Usage examples:|n|n
-
-                    $> esgissue push myissues.json|n
-                    -> Creates all issues with "status = new" on the BitBucket repository,|n
-                    -> Updates all issues with "status != new" from the template to the BitBucket repository,|n
-                    -> (Over)writes issues IDs from the Bitbucket repository to the template in both cases.|n|n
-
-                    $> esgissue push myissues.json --issue-id ID|n
-                    -> Creates the issue #ID if "status = new" on the BitBucket repository,|n
-                    -> Updates the issue #ID if "status != new" from the template to the BitBucket repository,|n
-                    -> Overwrites the issue ID from the BitBucket repository to the template in both cases.|n|n
-
-                    $> esgissue push myissues.json --issue-id ID --status [...]|n
-                    -> Updates the issue #ID information from the template to the BitBucket repository,|n
-                    -> Overwrites the issue ID from the BitBucket repository to the template.|n|n
-
-                    An ESGF issue is defined by:|n|n
-
-                    - The project name affected by the issue, |n
-                    - A short but clear title (please avoid purposeless title as "Issue 1"),|n
-                    - A precise and concise description of the issue that makes sense for end users (please avoid brief
-                    description as "wrong data"),|n
-                    - The BitBucket username of the issue responsible (i.e., the data provider in charge of the
-                    issue),|n
-                    - The issue type. The accepted terms are:|n
-                    -- bug: the new version will correct an error in comparison with the previous version,|n
-                    -- enhancement: the new version will improve or complete the previous version.|n
-                    - The issue severity level. The accepted terms are:|n
-                    -- minor: the issue concerns file management (e.g., period extension, removal, etc.),|n
-                    -- major: the issue concerns metadata without undermining the values of the
-                    involved variable,|n
-                    -- critical: the issue concerns single point variable or axis values,|n
-                    -- blocker: the issue concerns the variable or axis values undermining the analysis. The use of
-                    this data is strongly discouraged.|n
-                    - The issue status. The accepted terms are:|n
-                    -- new: the issue has been registered,|n
-                    -- on hold: the issue is in the care of the corresponding data provider,|n
-                    -- wontfix: the issue cannot be fixed/corrected, |n
-                    -- closed: the issue has been fixed leading to a new dataset version.|n
-                    - The issue landing page with the complete description of the issue (or the issues list of the
-                    corresponding institute/model).|n
-                    - The list of URLs pointing to issue materials (e.g., pictures, graphs, documents).|n|n
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO UPDATE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Creates/updates ESGF issues from a JSON template to the BitBucket repository. See |n
-             "esgissue push -h" for full help.""",
+        help="""Updates ESGF issues from a JSON template to the GitHub repository. See |n
+             "esgissue -h" for full help.""",
         add_help=False)
     update._optionals.title = "Optional arguments"
     update._positionals.title = "Positional arguments"
     update.add_argument(
-        '-I',
+        '--issue',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
     update.add_argument(
-        '-D',
+        '--dsets',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
@@ -304,55 +199,30 @@ def get_args():
     close = subparsers.add_parser(
         'close',
         prog='esgissue close',
-        description=""""esgissue pull" retrieves or displays one or several issues from the BitBucket repository.|n|n
+        description=""""esgissue close" closes one or several issues on a defined GitHub repository. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
-                    If one or several issue ID is(are) submitted, the corresponding issue(s) is(are) returned from the
-                    BitBucket repository.|n|n
+                    This action returns the date of closure to the corresponding local JSON template (as the same of
+                    the last updated date).|n|n
 
-                    If a JSON file is submitted (see http://esgissue.readthedocs.org/configuration.html) the issues
-                    information are overwritten from the BitBucket repository to the JSON template (as the opposite of
-                    "esgissue push" mode).|n|n
-
-                    If another flag is set to True (e.g., --status), only the corresponding issue information is
-                    displayed or overwritten to the JSON template. The other flags are unchanged to the template even
-                    they are different between the BitBucket repository and the template.|n|n
-
-                    Usage examples:|n|n
-
-                    esgissue pull|n
-                    -> Gets all issues from the BitBucket repository|n|n
-
-                    esgissue pull --issue-id ID|n
-                    -> Gets issue #ID from the BitBucket repository|n|n
-
-                    esgissue pull --issue-id ID --project [...]|n
-                    -> Gets issue #ID information from the BitBucket repository|n|n
-
-                    esgissue pull --template myissues.json|n
-                    -> (Over)writes all issues from the BitBucket repository to the template|n|n
-
-                    esgissue pull --template --issue-id|n
-                    -> (Over)write issue #ID from the BitBucket repository to the template|n|n
-
-                    esgissue pull --template --issue-id --project|n
-                    -> (Over)write issue #ID information from the BitBucket repository to the template|n|n
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO CLOSE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Retrieves ESGF issues from the BitBucket repository to a JSON template. See |n
-             "esgissue pull -h" for full help.""",
+        help="""Closes ESGF issues on the GitHub repository. See "esgissue close -h" for full help.""",
         add_help=False)
     close._optionals.title = "Optional arguments"
     close._positionals.title = "Positional arguments"
     close.add_argument(
-        '-I',
+        '--issue',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=argparse.FileType('r'),
         help=__TEMPLATE_HELP__)
     close.add_argument(
-        '-D',
+        '--dsets',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
@@ -386,66 +256,43 @@ def get_args():
     retrieve = subparsers.add_parser(
         'retrieve',
         prog='esgissue retrieve',
-        description=""""esgissue pull" retrieves or displays one or several issues from the BitBucket repository.|n|n
+        description=""""esgissue retrieve" retrieves one or several issues from a defined GitHub repository. The data
+                    provider submits one or several issue number he wants to retrieve and optional paths to write
+                    them.|n|n
 
-                    If one or several issue ID is(are) submitted, the corresponding issue(s) is(are) returned from the
-                    BitBucket repository.|n|n
+                    This action rebuilds:|n
+                    - the corresponding issue template as a JSON file,|n
+                    - the attached affected datasets list as a TEXT file.|n|n
 
-                    If a JSON file is submitted (see http://esgissue.readthedocs.org/configuration.html) the issues
-                    information are overwritten from the BitBucket repository to the JSON template (as the opposite of
-                    "esgissue push" mode).|n|n
-
-                    If another flag is set to True (e.g., --status), only the corresponding issue information is
-                    displayed or overwritten to the JSON template. The other flags are unchanged to the template even
-                    they are different between the BitBucket repository and the template.|n|n
-
-                    Usage examples:|n|n
-
-                    esgissue pull|n
-                    -> Gets all issues from the BitBucket repository|n|n
-
-                    esgissue pull --issue-id ID|n
-                    -> Gets issue #ID from the BitBucket repository|n|n
-
-                    esgissue pull --issue-id ID --project [...]|n
-                    -> Gets issue #ID information from the BitBucket repository|n|n
-
-                    esgissue pull --template myissues.json|n
-                    -> (Over)writes all issues from the BitBucket repository to the template|n|n
-
-                    esgissue pull --template --issue-id|n
-                    -> (Over)write issue #ID from the BitBucket repository to the template|n|n
-
-                    esgissue pull --template --issue-id --project|n
-                    -> (Over)write issue #ID information from the BitBucket repository to the template|n|n
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO RETRIEVE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Retrieves ESGF issues from the BitBucket repository to a JSON template. See |n
-             "esgissue pull -h" for full help.""",
+        help="""Retrieves ESGF issues from the GitHub repository to a JSON template. See |n
+             "esgissue retrieve -h" for full help.""",
         add_help=False)
     retrieve._optionals.title = "Optional arguments"
     retrieve._positionals.title = "Positional arguments"
     retrieve.add_argument(
-        '-N',
-        metavar='INT',
-        type=int,
-        required=True,
-        help='GitHub issue number to retrieve')
+        '--id',
+        metavar='ID',
+        type=str,
+        nargs='+',
+        help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all GitHub issues.')
     retrieve.add_argument(
-        '-I',
+        '--issue',
         nargs='?',
-        metavar='$PWD/issue.json',
-        default='{0}/issue.json'.format(os.getcwd()),
-        type=argparse.FileType('w'),
-        help=__TEMPLATE_HELP__)
+        metavar='$PWD/issues',
+        default='{0}/issues'.format(os.getcwd()),
+        type=str,
+        help="""Output directory for the retrieved JSON templates.""")
     retrieve.add_argument(
-        '-D',
+        '--dsets',
         nargs='?',
-        metavar='$PWD/dsets.list',
-        default='{0}/dsets.list'.format(os.getcwd()),
-        type=argparse.FileType('w'),
-        help=__DSETS_HELP__)
+        metavar='$PWD/dsets',
+        default='{0}/dsets'.format(os.getcwd()),
+        type=str,
+        help="""Output directory for the retrieved lists of affected dataset IDs.""")
     retrieve.add_argument(
         '-i',
         metavar='/esg/config/esgcet/.',
@@ -560,15 +407,37 @@ def get_descriptions(gh):
 
     """
     descriptions = {}
-    issues = gh.iter_issues()
+    issues = gh.iter_issues(state='all')
     if issues:
         for issue in issues:
             content = GitHubIssue.issue_content_parser(issue.body)
             descriptions[issue.number] = content['description']
         return descriptions
     else:
-        logging.error('   Result: FAILED')
         raise Exception('Cannot retrieve all descriptions from GitHub repository')
+
+
+def get_number(gh, id):
+    """
+    Gets issue number depending on ESGF id.
+
+    :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
+    :param str id: The ESGF id
+    :returns: The corresponding issue number
+    :rtype: *int*
+    :raises Error: If retrieval fails without any results
+
+    """
+    if not isinstance(id, uuid.UUID):
+        return id
+    issues = gh.iter_issues(state='all')
+    if issues:
+        for issue in issues:
+            content = GitHubIssue.issue_content_parser(issue.body)
+            if id == content['id']:
+                return issue.number
+    else:
+        raise Exception('Cannot retrieve all ESGF IDs from GitHub repository')
 
 
 # Main entry point for stand-alone call.
@@ -604,10 +473,11 @@ if __name__ == "__main__":
         local_issue.validate(action=args.command,
                              projects=get_projects(cfg))
         # Create ESGF issue on GitHub repository
-        local_issue.create(assignee=gh_login,
-                           gh=gh,
-                           descriptions=get_descriptions(gh))
-        #local_issue.send(hs, gh_repo.name)  # Send issue id to Handle Service
+        local_issue.create(gh=gh,
+                           assignee=gh_login,
+                           sdescriptions=get_descriptions(gh))
+        # Send issue id to Handle Service
+#        local_issue.send(hs, gh_repo.name)
     elif args.command == 'update':
         # Instantiate ESGF issue from issue template and datasets list
         local_issue = ESGFIssue(issue_f=args.I,
@@ -615,7 +485,6 @@ if __name__ == "__main__":
         # Validate ESGF issue against JSON schema
         local_issue.validate(action=args.command,
                              projects=get_projects(cfg))
-        print local_issue.get('salut')
         # Get corresponding GitHub issue
         remote_issue = GitHubIssue(gh=gh,
                                    number=local_issue.get('number'))
@@ -625,7 +494,6 @@ if __name__ == "__main__":
         # Update ESGF issue information on GitHub repository
         local_issue.update(gh=gh,
                            remote_issue=remote_issue)
-        #issue.push(hs)    # Push new issue information to update Handle Service metadata
     elif args.command == 'close':
         # Instantiate ESGF issue from issue template and datasets list
         local_issue = ESGFIssue(issue_f=args.I,
@@ -643,12 +511,32 @@ if __name__ == "__main__":
         local_issue.close(gh=gh,
                           remote_issue=remote_issue)
     elif args.command == 'retrieve':
-        # Get corresponding GitHub issue
-        remote_issue = GitHubIssue(gh=gh,
-                                   number=args.N)
-        # Validate GitHub issue against JSON schema
-        remote_issue.validate(action=args.command,
-                              projects=get_projects(cfg))
-        # Retrieve the corresponding GitHub issue
-        remote_issue.retrieve(issue_f=args.I,
-                              dsets_f=args.D)
+        for directory in [args.I, args.D]:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+        if args.N:
+            for n in args.N:
+                # Get issue number
+                number = get_number(gh, n)
+                # Get corresponding GitHub issue
+                remote_issue = GitHubIssue(gh=gh,
+                                           number=number)
+                # Validate GitHub issue against JSON schema
+                remote_issue.validate(action=args.command,
+                                      projects=get_projects(cfg))
+                # Retrieve the corresponding GitHub issue
+                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.I), number), 'w'),
+                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.D), number), 'w'))
+        else:
+            for issue in gh.iter_issues(state='all'):
+                # Get corresponding GitHub issue
+                remote_issue = GitHubIssue(gh=gh,
+                                           number=get_number(gh, issue.number))
+                # Validate GitHub issue against JSON schema
+                remote_issue.validate(action=args.command,
+                                      projects=get_projects(cfg))
+                # Retrieve the corresponding GitHub issue
+                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.I),
+                                                                              issue.number), 'w'),
+                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.D),
+                                                                              issue.number), 'w'))

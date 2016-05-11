@@ -19,6 +19,7 @@ from bs4 import BeautifulSoup
 from utils import MyOrderedDict, DictDiff, ListDiff, test_url, test_pattern, traverse
 from json import dump, load
 from jsonschema import validate
+from fuzzywuzzy.fuzz import token_sort_ratio
 from wheezy.template.engine import Engine
 from wheezy.template.ext.core import CoreExtension
 from wheezy.template.loader import FileLoader
@@ -28,10 +29,10 @@ from wheezy.template.loader import FileLoader
 __FILL_VALUE__ = unicode('Not documented')
 
 # JSON issue schemas full path
-__JSON_SCHEMA_PATHS__ = {'create': "{0}/schema_create.json".format(os.path.dirname(os.path.abspath(__file__))),
-                         'update': "{0}/schema_update.json".format(os.path.dirname(os.path.abspath(__file__))),
-                         'close': "{0}/schema_update.json".format(os.path.dirname(os.path.abspath(__file__))),
-                         'retrieve': "{0}/schema_retrieve.json".format(os.path.dirname(os.path.abspath(__file__)))}
+__JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 
 # GitHub labels
 __LABELS__ = {'Low': '#e6b8af',
@@ -44,6 +45,9 @@ __LABELS__ = {'Low': '#e6b8af',
               'Resolved': '#38761d',
               'project': '#a4c2f4',
               'models': '#a2c4c9'}
+
+# Description ratio change
+__RATIO__ = 20
 
 
 class ESGFIssue(object):
@@ -108,7 +112,7 @@ class ESGFIssue(object):
         if not os.access(self.issue_f.name, os.W_OK):
             logging.error('Result: FAILED // JSON template {0} is not writable'.format(self.issue_f.name))
             sys.exit(1)
-        if not os.access(self.dsets.name, os.W_OK):
+        if not os.access(self.dsets_f.name, os.W_OK):
             logging.error('Result: FAILED // Dataset list {0} is not writable'.format(self.issue_f.name))
             sys.exit(1)
 
@@ -143,8 +147,7 @@ class ESGFIssue(object):
         try:
             return load(issue_f, object_pairs_hook=MyOrderedDict)
         except:
-            logging.exception('{0} is not a valid JSON file'.format(issue_f.name))
-            sys.exit(1)
+            raise Exception('{0} is not a valid JSON file'.format(issue_f.name))
 
     @staticmethod
     def get_dsets(dsets_f):
@@ -200,7 +203,7 @@ class ESGFIssue(object):
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
 
-    def create(self, assignee, gh, descriptions):
+    def create(self, gh, assignee, descriptions):
         """
         Creates an issue on the GitHub repository.
 
@@ -267,22 +270,24 @@ class ESGFIssue(object):
         """
         Updates the errata id PID metadata for correspond affected datasets.
 
-        :param ESGF_PID_connector hs: The Handle Service PID ESGF_PID_connector (as a :func:`esgfpid.ESGF_PID_connector` class instance)
+        :param ESGF_PID_connector hs: The Handle Service connector
+        (as a :func:`esgfpid.ESGF_PID_connector` class instance)
         :param str repo: The BitBucket repository
         :raises Error: If the PID update fails for any other reason.
 
         """
-        logging.info('Update corresponding PID metadata on Handle Service')
+        logging.info('Send issue information to the Handle Service')
         try:
-            errat_id = '{0}.{1}.{2}'.format(repo, self.attributes['id'], self.attributes['esgf_id'])
+            errata_id = '{0}.{1}.{2}'.format(repo, self.attributes['number'], self.attributes['esgf_id'])
             for dset in self.dsets:
                 drs_id, version_number = dset.split('#')
                 hs.add_errata_ids(drs_id=drs_id,
                                   version_number=version_number,
-                                  errata_ids=errat_id)
-            logging.info('   Result: SUCCESSFUL')
+                                  errata_ids=errata_id)
+            logging.info('Result: SUCCESSFUL')
         except:
-            logging.error('   Result: FAILED')
+            logging.exception('Result: FAILED')
+            sys.exit(1)
 
     def update(self, gh, remote_issue):
         """
@@ -309,6 +314,12 @@ class ESGFIssue(object):
                 logging.debug('Local "{0}"  -> "{1}"'.format(key, self.attributes[key]))
                 logging.debug('Remote "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
                 sys.exit(1)
+        # Test the description changes by no more than 80%
+        if token_sort_ratio(self.attributes['description'], remote_issue.attributes['description']) < __RATIO__:
+            logging.warning('Issue description changes by more than 80%'.format(key))
+            logging.debug('Local "{0}"  -> "{1}"'.format('description', self.attributes['description']))
+            logging.debug('Remote "{0}" <- "{1}"'.format('description', remote_issue.attributes['description']))
+            sys.exit(1)
         keys = DictDiff(remote_issue.attributes, self.attributes)
         dsets = ListDiff(remote_issue.dsets, self.dsets)
         if (not keys.changed() and not keys.added() and not keys.removed() and not dsets.added() and
@@ -404,8 +415,9 @@ class ESGFIssue(object):
         for key in ['url', 'materials']:
             if key not in attributes:
                 template.update({key: None})
-        engine = Engine(loader=FileLoader({os.getcwd()}), extensions=[CoreExtension()])
-        html_template = engine.get_template('template.html')
+        engine = Engine(loader=FileLoader({'{0}/templates'.format(os.path.dirname(os.path.abspath(__file__)))}),
+                        extensions=[CoreExtension()])
+        html_template = engine.get_template('issue_content.html')
         return html_template.render(template)
 
     def write(self):
@@ -456,11 +468,10 @@ class GitHubIssue(object):
     """
     def __init__(self, gh, number):
         self.number = number
-        self.attributes, self.dsets = self.get_template(gh)
         self.raw = None
         self.status = None
-        self.url = None
         self.assignee = None
+        self.attributes, self.dsets = self.get_template(gh)
 
     def get(self, key):
         """
@@ -494,7 +505,6 @@ class GitHubIssue(object):
             raise Exception('Cannot get GitHub issue number {0}'.format(self.number))
         self.status = self.raw.state
         self.assignee = self.raw.assignee.login
-        self.url = self.raw.html_url
         return self.format()
 
     def format(self):
