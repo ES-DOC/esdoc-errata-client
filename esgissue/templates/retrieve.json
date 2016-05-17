@@ -28,6 +28,10 @@
       "Critical"
     ]
   },
+  "institute": {
+    "type": "string",
+    "minLength": 1
+  },
   "project": {
     "type": "string",
     "minLength": 1
@@ -52,7 +56,7 @@
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
   },
-  "state": {
+  "workflow": {
     "type": "string",
     "enum": [
       "New",

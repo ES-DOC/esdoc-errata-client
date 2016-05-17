@@ -33,9 +33,7 @@ def get_args():
     """
     __TEMPLATE_HELP__ = """Required path of the issue JSON template."""
     __DSETS_HELP__ = """Required path of the affected dataset IDs list."""
-    __HELP__ = """Show this help message and exit."""
-    __LOG_HELP__ = """Logfile directory. If not, standard output is used."""
-    parser = argparse.ArgumentParser(
+    main = argparse.ArgumentParser(
         prog='esgissue',
         description="""The publication workflow on the ESGF nodes requires to deal with errata issues.
                     The background of the version changes has to be published alongside the data: what was updated,
@@ -57,22 +55,55 @@ def get_args():
         epilog="""Developed by:|n
                   Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)|n
                   Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr""")
-    parser._optionals.title = "Optional arguments"
-    parser._positionals.title = "Positional arguments"
-    parser.add_argument(
+    main._optionals.title = "Optional arguments"
+    main._positionals.title = "Positional arguments"
+    main.add_argument(
         '-h', '--help',
         action='help',
-        help=__HELP__)
-    parser.add_argument(
+        help="""Show this help message and exit.""")
+    main.add_argument(
         '-V',
         action='version',
         version='%(prog)s ({0})'.format(__version__),
         help="""Program version.""")
-    subparsers = parser.add_subparsers(
+    subparsers = main.add_subparsers(
         title='Issue actions',
         dest='command',
         metavar='',
         help='')
+
+    #######################################
+    # Parent parser with common arguments #
+    #######################################
+    parent = argparse.ArgumentParser(add_help=False)
+    parent.add_argument(
+        '-i',
+        metavar='/esg/config/esgcet/.',
+        type=str,
+        default='/esg/config/esgcet/.',
+        help="""Initialization/configuration directory containing "esg.ini"|n
+            and "esg.<project>.ini" files. If not specified, the usual|n
+            datanode directory is used.""")
+    parent.add_argument(
+        '--log',
+        metavar='$PWD',
+        type=str,
+        const=os.getcwd(),
+        nargs='?',
+        help="""Logfile directory. If not, standard output is used.""")
+    parent.add_argument(
+        '-v',
+        action='store_true',
+        default=False,
+        help="""Verbose mode.""")
+    parent.add_argument(
+        '-h', '--help',
+        action='help',
+        help="""Show this help message and exit.""")
+
+    ###################################
+    # Subparser for "esgissue create" #
+    ###################################
     create = subparsers.add_parser(
         'create',
         prog='esgissue create',
@@ -97,7 +128,8 @@ def get_args():
         formatter_class=MultilineFormatter,
         help="""Creates ESGF issues from a JSON template to the GitHub repository. See |n
              "esgissue create -h" for full help.""",
-        add_help=False)
+        add_help=False,
+        parents=[parent])
     create._optionals.title = "Arguments"
     create._positionals.title = "Positional arguments"
     create.add_argument(
@@ -114,31 +146,10 @@ def get_args():
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=__DSETS_HELP__)
-    create.add_argument(
-        '-i',
-        metavar='/esg/config/esgcet/.',
-        type=str,
-        default='/esg/config/esgcet/.',
-        help="""Initialization/configuration directory containing "esg.ini"|n
-                and "esg.<project>.ini" files. If not specified, the usual|n
-                datanode directory is used.""")
-    create.add_argument(
-        '--log',
-        metavar='$PWD',
-        type=str,
-        const=os.getcwd(),
-        nargs='?',
-        help=__LOG_HELP__)
-    create.add_argument(
-        '-v',
-        action='store_true',
-        default=False,
-        help="""Verbose mode.""")
-    create.add_argument(
-        '-h', '--help',
-        action='help',
-        help=__HELP__)
 
+    ###################################
+    # Subparser for "esgissue update" #
+    ###################################
     update = subparsers.add_parser(
         'update',
         prog='esgissue update',
@@ -154,7 +165,8 @@ def get_args():
         formatter_class=MultilineFormatter,
         help="""Updates ESGF issues from a JSON template to the GitHub repository. See |n
              "esgissue -h" for full help.""",
-        add_help=False)
+        add_help=False,
+        parents=[parent])
     update._optionals.title = "Optional arguments"
     update._positionals.title = "Positional arguments"
     update.add_argument(
@@ -171,31 +183,10 @@ def get_args():
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=__DSETS_HELP__)
-    update.add_argument(
-        '-i',
-        metavar='/esg/config/esgcet/.',
-        type=str,
-        default='/esg/config/esgcet/.',
-        help="""Initialization/configuration directory containing "esg.ini"|n
-                and "esg.<project>.ini" files. If not specified, the usual|n
-                datanode directory is used.""")
-    update.add_argument(
-        '--log',
-        metavar='$PWD',
-        type=str,
-        const=os.getcwd(),
-        nargs='?',
-        help=__LOG_HELP__)
-    update.add_argument(
-        '-v',
-        action='store_true',
-        default=False,
-        help="""Verbose mode.""")
-    update.add_argument(
-        '-h', '--help',
-        action='help',
-        help=__HELP__)
 
+    ##################################
+    # Subparser for "esgissue close" #
+    ##################################
     close = subparsers.add_parser(
         'close',
         prog='esgissue close',
@@ -211,7 +202,8 @@ def get_args():
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
         help="""Closes ESGF issues on the GitHub repository. See "esgissue close -h" for full help.""",
-        add_help=False)
+        add_help=False,
+        parents=[parent])
     close._optionals.title = "Optional arguments"
     close._positionals.title = "Positional arguments"
     close.add_argument(
@@ -228,31 +220,10 @@ def get_args():
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=__DSETS_HELP__)
-    close.add_argument(
-        '-i',
-        metavar='/esg/config/esgcet/.',
-        type=str,
-        default='/esg/config/esgcet/.',
-        help="""Initialization/configuration directory containing "esg.ini"|n
-                and "esg.<project>.ini" files. If not specified, the usual|n
-                datanode directory is used.""")
-    close.add_argument(
-        '--log',
-        metavar='$PWD',
-        type=str,
-        const=os.getcwd(),
-        nargs='?',
-        help=__LOG_HELP__)
-    close.add_argument(
-        '-v',
-        action='store_true',
-        default=False,
-        help="""Verbose mode.""")
-    close.add_argument(
-        '-h', '--help',
-        action='help',
-        help=__HELP__)
 
+    #####################################
+    # Subparser for "esgissue retrieve" #
+    #####################################
     retrieve = subparsers.add_parser(
         'retrieve',
         prog='esgissue retrieve',
@@ -270,7 +241,8 @@ def get_args():
         formatter_class=MultilineFormatter,
         help="""Retrieves ESGF issues from the GitHub repository to a JSON template. See |n
              "esgissue retrieve -h" for full help.""",
-        add_help=False)
+        add_help=False,
+        parents=[parent])
     retrieve._optionals.title = "Optional arguments"
     retrieve._positionals.title = "Positional arguments"
     retrieve.add_argument(
@@ -293,31 +265,9 @@ def get_args():
         default='{0}/dsets'.format(os.getcwd()),
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
-    retrieve.add_argument(
-        '-i',
-        metavar='/esg/config/esgcet/.',
-        type=str,
-        default='/esg/config/esgcet/.',
-        help="""Initialization/configuration directory containing "esg.ini"|n
-                and "esg.<project>.ini" files. If not specified, the usual|n
-                datanode directory is used.""")
-    retrieve.add_argument(
-        '--log',
-        metavar='$PWD',
-        type=str,
-        const=os.getcwd(),
-        nargs='?',
-        help=__LOG_HELP__)
-    retrieve.add_argument(
-        '-v',
-        action='store_true',
-        default=False,
-        help="""Verbose mode.""")
-    retrieve.add_argument(
-        '-h', '--help',
-        action='help',
-        help=__HELP__)
-    return parser.parse_args()
+
+
+    return main.parse_args()
 
 
 def github_connector(username, password, team, repo):
@@ -459,29 +409,30 @@ if __name__ == "__main__":
                                     team=cfg.get('issues', 'gh_team'),
                                     repo=cfg.get('issues', 'gh_repo'))
     # Connection to the Handle Service
-    # hs = pid_connector(prefix=cfg.get('issues', 'prefix'),
-    #                    url_messaging_service=cfg.get('issues', 'url_messaging_service'),
-    #                    messaging_exchange=cfg.get('issues', 'messaging_exchange'),
-    #                    rabbit_username=cfg.get('issues', 'rabbit_username'),
-    #                    rabbit_password=cfg.get('issues', 'rabbit_password'))
+    hs = pid_connector(prefix=cfg.get('issues', 'prefix'),
+                       url_messaging_service=cfg.get('issues', 'url_messaging_service'),
+                       messaging_exchange=cfg.get('issues', 'messaging_exchange'),
+                       rabbit_username=cfg.get('issues', 'rabbit_username'),
+                       rabbit_password=cfg.get('issues', 'rabbit_password'))
     # Run command
     if args.command == 'create':
         # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.I,
-                                dsets_f=args.D)
+        local_issue = ESGFIssue(issue_f=args.issue,
+                                dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
         local_issue.validate(action=args.command,
                              projects=get_projects(cfg))
         # Create ESGF issue on GitHub repository
         local_issue.create(gh=gh,
                            assignee=gh_login,
-                           sdescriptions=get_descriptions(gh))
+                           descriptions=get_descriptions(gh))
         # Send issue id to Handle Service
-#        local_issue.send(hs, gh_repo.name)
+        # TODO : Uncomment for master release
+        # #local_issue.send(hs, gh_repo.name)
     elif args.command == 'update':
         # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.I,
-                                dsets_f=args.D)
+        local_issue = ESGFIssue(issue_f=args.issue,
+                                dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
         local_issue.validate(action=args.command,
                              projects=get_projects(cfg))
@@ -494,10 +445,13 @@ if __name__ == "__main__":
         # Update ESGF issue information on GitHub repository
         local_issue.update(gh=gh,
                            remote_issue=remote_issue)
+        # Update issue id to Handle Service
+        # TODO : Uncomment for master release
+        #local_issue.send(hs, gh_repo.name)
     elif args.command == 'close':
         # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.I,
-                                dsets_f=args.D)
+        local_issue = ESGFIssue(issue_f=args.issue,
+                                dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
         local_issue.validate(action=args.command,
                              projects=get_projects(cfg))
@@ -511,7 +465,7 @@ if __name__ == "__main__":
         local_issue.close(gh=gh,
                           remote_issue=remote_issue)
     elif args.command == 'retrieve':
-        for directory in [args.I, args.D]:
+        for directory in [args.issue, args.dsets]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
         if args.N:
@@ -525,8 +479,10 @@ if __name__ == "__main__":
                 remote_issue.validate(action=args.command,
                                       projects=get_projects(cfg))
                 # Retrieve the corresponding GitHub issue
-                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.I), number), 'w'),
-                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.D), number), 'w'))
+                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.issue),
+                                                                              number), 'w'),
+                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
+                                                                              number), 'w'))
         else:
             for issue in gh.iter_issues(state='all'):
                 # Get corresponding GitHub issue
@@ -536,7 +492,7 @@ if __name__ == "__main__":
                 remote_issue.validate(action=args.command,
                                       projects=get_projects(cfg))
                 # Retrieve the corresponding GitHub issue
-                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.I),
+                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.issue),
                                                                               issue.number), 'w'),
-                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.D),
+                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
                                                                               issue.number), 'w'))

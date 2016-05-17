@@ -32,6 +32,10 @@
     "type": "string",
     "minLength": 1
   },
+  "institute": {
+    "type": "string",
+    "minLength": 1
+  },
   "models": {
     "type": "array",
     "uniqueItems": true,
@@ -52,7 +56,7 @@
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
   },
-  "state": {
+  "workflow": {
     "type": "string",
     "enum": [
       "New",

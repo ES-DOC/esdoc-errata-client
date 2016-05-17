@@ -24,6 +24,10 @@
     "type": "string",
     "minLength": 1
   },
+  "institute": {
+    "type": "string",
+    "minLength": 1
+  },
   "models": {
     "type": "array",
     "uniqueItems": true,

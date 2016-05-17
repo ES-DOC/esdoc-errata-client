@@ -1,20 +1,20 @@
 {
-"number": 9, 
-"id": "11221244-2194-4c1f-bdea-4887036a9e63", 
+"number": 10, 
+"id": "7649f8f8-02a1-4708-b276-918170783851", 
 "title": "Wrong pH computing", 
-"description": "Ocean (PISCES) the hydrogen ion (H+) concentration instead of pH. pH variable has to be computed as follows: pH = -log10[H+].", 
+"description": "Oceans (PISCES) the hydrogen ion (H+) concentration instead of pH. pH variable has to be computed as follows: pH = -log10[H+].", 
 "project": "CMIP5", 
+"institute": "IPSL", 
 "models": [
 "IPSL-CM5A-LR"
 ], 
-"severity": "High",
-"url": "http://errata.ipsl.upmc.fr/issue/2",
+"severity": "High", 
+"url": "http://errata.ipsl.upmc.fr/issue/2", 
 "materials": [
 "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg", 
 "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
 ], 
-"state": "New", 
-"created_at": "2016-04-13T09:53:42+00:00", 
-"last_updated_at": "2016-04-13T09:53:43+00:00",
-"closed_at": "2016-04-15T09:53:43+00:00"
+"workflow": "New", 
+"created_at": "2016-05-17T09:02:06+00:00", 
+"last_updated_at": "2016-05-17T09:02:06+00:00"
 }

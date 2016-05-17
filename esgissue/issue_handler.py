@@ -44,6 +44,7 @@ __LABELS__ = {'Low': '#e6b8af',
               'Wontfix': '#0c343d',
               'Resolved': '#38761d',
               'project': '#a4c2f4',
+              'institute': '#351c75',
               'models': '#a2c4c9'}
 
 # Description ratio change
@@ -83,13 +84,15 @@ class ESGFIssue(object):
     +--------------------+-------------+------------------------------------+
     | *self*.project     | *str*       | The affected project               |
     +--------------------+-------------+------------------------------------+
+    | *self*.institute   | *str*       | The affected institute             |
+    +--------------------+-------------+------------------------------------+
     | *self*.models      | *list*      | The affected models                |
     +--------------------+-------------+------------------------------------+
     | *self*.url         | *str*       | The landing page URL               |
     +--------------------+-------------+------------------------------------+
     | *self*.materials   | *list*      | The materials URLs                 |
     +--------------------+-------------+------------------------------------+
-    | *self*.state       | *str*       | The issue state                    |
+    | *self*.workflow    | *str*       | The issue workflow                 |
     +--------------------+-------------+------------------------------------+
     | *self*.created_at  | *str*       | The registration date (ISO format) |
     +--------------------+-------------+------------------------------------+
@@ -119,7 +122,7 @@ class ESGFIssue(object):
     def get(self, key):
         """
         Returns the attribute value corresponding to the key.
-        The submitted key can refer to `ESGFIssue.key` or `ESGFIssue.attributes[key]`.
+        The submitted key can refer to `File.key` or `File.attributes[key]`.
 
         :param str key: The key
         :returns: The corresponding value
@@ -131,7 +134,8 @@ class ESGFIssue(object):
         elif key in self.__dict__.keys():
             return self.__dict__[key]
         else:
-            raise Exception('{0} not found. Available keys are {1}'.format(key, self.attributes.keys()))
+            raise Exception('{0} not found. Available keys '
+                            'are {1}'.format(key, self.attributes.keys() + self.__dict__.keys()))
 
     @staticmethod
     def get_template(issue_f):
@@ -225,7 +229,7 @@ class ESGFIssue(object):
                 logging.debug('Remote "{0}" #{1} <- "{2}"'.format('description', n, descriptions[n]))
             sys.exit(1)
         self.attributes.prepend('id', str(uuid4()))
-        self.attributes.update({'state': unicode('New')})
+        self.attributes.update({'workflow': unicode('New')})
         issue = gh.create_issue(title=self.attributes['title'],
                                 body=self.issue_content(self.attributes, self.dsets),
                                 assignee=assignee,
@@ -257,7 +261,8 @@ class ESGFIssue(object):
         labels = dict()
         labels['Severity: ' + attributes['severity']] = __LABELS__[attributes['severity']]
         labels['Project: ' + attributes['project']] = __LABELS__['project']
-        labels['State: ' + attributes['state']] = __LABELS__[attributes['state']]
+        labels['State: ' + attributes['workflow']] = __LABELS__[attributes['workflow']]
+        labels['Institute: ' + attributes['institute']] = __LABELS__['institute']
         for model in attributes['models']:
             labels['Model: ' + model] = __LABELS__['models']
         for name, color in labels.items():
@@ -296,19 +301,19 @@ class ESGFIssue(object):
         :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
         :param GitHubIssue remote_issue: The corresponding GitHub issue (as a :func:`GitHubIssue` class instance)
         :raises Error: If the id, title, project or dates are different
-        :raises Error: If the state changes back to new
+        :raises Error: If the workflow changes back to new
         :raises Error: If the issue update fails for any other reason
 
         """
         logging.info('Update GitHub issue #{0}'.format(remote_issue.number))
-        # Test that state should not change back to "New"
-        if remote_issue.attributes['state'] != 'New' and self.attributes['state'] == 'New':
-            logging.error('Result: FAILED // Issue state should not change back to "New"')
-            logging.debug('Local "{0}"  -> "{1}"'.format('state', self.attributes['state']))
-            logging.debug('Remote "{0}" <- "{1}"'.format('state', remote_issue.attributes['state']))
+        # Test that workflow should not change back to "New"
+        if remote_issue.attributes['workflow'] != 'New' and self.attributes['workflow'] == 'New':
+            logging.error('Result: FAILED // Issue workflow should not change back to "New"')
+            logging.debug('Local "{0}"  -> "{1}"'.format('workflow', self.attributes['workflow']))
+            logging.debug('Remote "{0}" <- "{1}"'.format('workflow', remote_issue.attributes['workflow']))
             sys.exit(1)
-        # Test if id, title, project and dates are unchanged.
-        for key in ['id', 'title', 'project', 'created_at', 'last_updated_at']:
+        # Test if id, title, project, institute and dates are unchanged.
+        for key in ['id', 'title', 'project', 'institute', 'created_at', 'last_updated_at']:
             if self.attributes[key] != remote_issue.attributes[key]:
                 logging.error('Result: FAILED // "{0}" attribute should be unchanged'.format(key))
                 logging.debug('Local "{0}"  -> "{1}"'.format(key, self.attributes[key]))
@@ -316,7 +321,7 @@ class ESGFIssue(object):
                 sys.exit(1)
         # Test the description changes by no more than 80%
         if token_sort_ratio(self.attributes['description'], remote_issue.attributes['description']) < __RATIO__:
-            logging.warning('Issue description changes by more than 80%'.format(key))
+            logging.warning('Issue description changes by more than 80%')
             logging.debug('Local "{0}"  -> "{1}"'.format('description', self.attributes['description']))
             logging.debug('Remote "{0}" <- "{1}"'.format('description', remote_issue.attributes['description']))
             sys.exit(1)
@@ -368,7 +373,7 @@ class ESGFIssue(object):
 
         :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
         :param GitHubIssue remote_issue: The corresponding GitHub issue (as a :func:`GitHubIssue` class instance)
-        :raises Error: If the state is not "Wontfix" or "Resolved"
+        :raises Error: If the workflow is not "Wontfix" or "Resolved"
         :raises Error: If the issue status update fails
 
         """
@@ -380,11 +385,11 @@ class ESGFIssue(object):
                 logging.debug('Local "{0}"  -> "{1}"'.format(key, self.attributes[key]))
                 logging.debug('Remote "{0}" <- "{1}"'.format(key, remote_issue.attributes[key]))
                 sys.exit(1)
-        # Test if issue state is "Wontfix" or "Resolved"
-        if not remote_issue.attributes['state'] in ['Wontfix', 'Resolved']:
-            logging.error('Result: FAILED // Issue state should be "Wontfix" or "Resolved')
-            logging.debug('Local "{0}"  -> "{1}"'.format('state', self.attributes['state']))
-            logging.debug('Remote "{0}" <- "{1}"'.format('state', remote_issue.attributes['state']))
+        # Test if issue workflow is "Wontfix" or "Resolved"
+        if not remote_issue.attributes['workflow'] in ['Wontfix', 'Resolved']:
+            logging.error('Result: FAILED // Issue workflow should be "Wontfix" or "Resolved')
+            logging.debug('Local "{0}"  -> "{1}"'.format('workflow', self.attributes['workflow']))
+            logging.debug('Remote "{0}" <- "{1}"'.format('workflow', remote_issue.attributes['workflow']))
             sys.exit(1)
         issue = gh.issue(remote_issue.number)
         success = issue.close()
@@ -503,7 +508,7 @@ class GitHubIssue(object):
         self.raw = gh.issue(self.number)
         if not self.raw:
             raise Exception('Cannot get GitHub issue number {0}'.format(self.number))
-        self.status = self.raw.state
+        self.status = self.raw.workflow
         self.assignee = self.raw.assignee.login
         return self.format()
 
@@ -529,7 +534,7 @@ class GitHubIssue(object):
             issue[unicode('url')] = content['url']
         if content['materials'] != __FILL_VALUE__:
             issue[unicode('materials')] = content['materials']
-        issue[unicode('state')] = [label[1] for label in labels if 'State' in label][0]
+        issue[unicode('workflow')] = [label[1] for label in labels if 'State' in label][0]
         issue[unicode('created_at')] = self.raw.created_at.isoformat()
         issue[unicode('last_updated_at')] = self.raw.updated_at.isoformat()
         if self.raw.is_closed():
