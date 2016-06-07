@@ -254,7 +254,7 @@ def get_args():
         default=None,
         help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all GitHub issues.')
     retrieve.add_argument(
-        '--issue',
+        '--issues',
         nargs='?',
         metavar='$PWD/issues',
         default='{0}/issues'.format(os.getcwd()),
@@ -487,7 +487,7 @@ def run():
                 remote_issue.validate(action=args.command,
                                       projects=get_projects(cfg))
                 # Retrieve the corresponding GitHub issue
-                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.issue),
+                remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issue),
                                                                               number), 'w'),
                                       dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
                                                                               number), 'w'))
@@ -500,7 +500,7 @@ def run():
                 remote_issue.validate(action=args.command,
                                       projects=get_projects(cfg))
                 # Retrieve the corresponding GitHub issue
-                remote_issue.retrieve(issue_f=open('{0}/issue{1}.json'.format(os.path.realpath(args.issue),
+                remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issue),
                                                                               issue.number), 'w'),
                                       dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
                                                                               issue.number), 'w'))
