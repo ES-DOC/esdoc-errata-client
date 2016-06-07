@@ -251,6 +251,7 @@ def get_args():
         metavar='ID',
         type=str,
         nargs='+',
+        default=None,
         help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all GitHub issues.')
     retrieve.add_argument(
         '--issue',
@@ -475,8 +476,8 @@ def run():
         for directory in [args.issue, args.dsets]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
-        if args.N:
-            for n in args.N:
+        if args.id:
+            for n in args.id:
                 # Get issue number
                 number = get_number(gh, n)
                 # Get corresponding GitHub issue
