@@ -489,8 +489,8 @@ def run():
                 # Retrieve the corresponding GitHub issue
                 remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issues),
                                                                                number), 'w'),
-                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
-                                                                              number), 'w'))
+                                      dsets_f=open('{0}/dsets-{1}.list'.format(os.path.realpath(args.dsets),
+                                                                               number), 'w'))
         else:
             for issue in gh.iter_issues(state='all'):
                 # Get corresponding GitHub issue
@@ -502,8 +502,8 @@ def run():
                 # Retrieve the corresponding GitHub issue
                 remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issues),
                                                                                issue.number), 'w'),
-                                      dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
-                                                                              issue.number), 'w'))
+                                      dsets_f=open('{0}/dsets-{1}.list'.format(os.path.realpath(args.dsets),
+                                                                               issue.number), 'w'))
 
 
 # Main entry point for stand-alone call.
