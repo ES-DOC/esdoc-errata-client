@@ -267,7 +267,6 @@ def get_args():
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
-
     return main.parse_args()
 
 
