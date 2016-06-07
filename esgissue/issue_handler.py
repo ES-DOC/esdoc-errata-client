@@ -456,8 +456,6 @@ class GitHubIssue(object):
     +--------------------+-------------+------------------------------------+
     | *self*.dsets       | *list*      | The affected datasets              |
     +--------------------+-------------+------------------------------------+
-    | *self*.status      | *str*       | The issue status                   |
-    +--------------------+-------------+------------------------------------+
     | *self*.url         | *str*       | The issue HTML url                 |
     +--------------------+-------------+------------------------------------+
     | *self*.assignee    | *str*       | The GitHub login of issue assignee |
@@ -474,7 +472,6 @@ class GitHubIssue(object):
     def __init__(self, gh, number):
         self.number = number
         self.raw = None
-        self.status = None
         self.assignee = None
         self.attributes, self.dsets = self.get_template(gh)
 
@@ -508,7 +505,6 @@ class GitHubIssue(object):
         self.raw = gh.issue(self.number)
         if not self.raw:
             raise Exception('Cannot get GitHub issue number {0}'.format(self.number))
-        self.status = self.raw.workflow
         self.assignee = self.raw.assignee.login
         return self.format()
 
