@@ -126,8 +126,8 @@ def get_args():
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Creates ESGF issues from a JSON template to the GitHub repository. See |n
-             "esgissue create -h" for full help.""",
+        help="""Creates ESGF issues from a JSON template to the GitHub repository.|n
+                See "esgissue create -h" for full help.""",
         add_help=False,
         parents=[parent])
     create._optionals.title = "Arguments"
@@ -163,8 +163,8 @@ def get_args():
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Updates ESGF issues from a JSON template to the GitHub repository. See |n
-             "esgissue -h" for full help.""",
+        help="""Updates ESGF issues from a JSON template to the GitHub repository.|n
+                See "esgissue update -h" for full help.""",
         add_help=False,
         parents=[parent])
     update._optionals.title = "Optional arguments"
@@ -201,7 +201,8 @@ def get_args():
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Closes ESGF issues on the GitHub repository. See "esgissue close -h" for full help.""",
+        help="""Closes ESGF issues on the GitHub repository.|n
+                See "esgissue close -h" for full help.""",
         add_help=False,
         parents=[parent])
     close._optionals.title = "Optional arguments"
@@ -239,8 +240,8 @@ def get_args():
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Retrieves ESGF issues from the GitHub repository to a JSON template. See |n
-             "esgissue retrieve -h" for full help.""",
+        help="""Retrieves ESGF issues from the GitHub repository to a JSON template.|n
+                See "esgissue retrieve -h" for full help.""",
         add_help=False,
         parents=[parent])
     retrieve._optionals.title = "Optional arguments"
@@ -283,9 +284,7 @@ def github_connector(username, password, team, repo):
     :raises Error: If the GitHub connection fails because of invalid inputs
 
     """
-    gh_link = {'team': cfg.get('issues', 'gh_team'),
-               'repo': cfg.get('issues', 'gh_repo').lower()}
-    logging.info('Connection to the GitHub repository "{team}/{repo}"'.format(**gh_link))
+    logging.info('Connection to the GitHub repository "{0}/{1}"'.format(team, repo.lower()))
     try:
         gh_user = GitHub(username, password)
         gh_repo = gh_user.repository(team, repo.lower())

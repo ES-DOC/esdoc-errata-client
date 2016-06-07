@@ -4,3 +4,4 @@ fuzzywuzzy
 requests
 esgfpid
 wheezy.template
+python-Levenshtein
