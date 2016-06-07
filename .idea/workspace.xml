@@ -41,14 +41,44 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="issue_handler.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="issue_handler.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="348" column="45" selection-start-line="348" selection-start-column="45" selection-end-line="348" selection-end-column="45" />
+            <state relative-caret-position="403">
+              <caret line="526" column="33" selection-start-line="526" selection-start-column="33" selection-end-line="526" selection-end-column="33" />
               <folding>
                 <element signature="e#328#337#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="issue2.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/esgissue/samples/issue2.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="retrieve.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/esgissue/templates/retrieve.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="593">
+              <caret line="76" column="21" selection-start-line="76" selection-start-column="21" selection-end-line="76" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="update.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/esgissue/templates/update.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="695">
+              <caret line="85" column="11" selection-start-line="85" selection-start-column="11" selection-end-line="85" selection-end-column="11" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -62,8 +92,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/esgissue/templates/create.json" />
-        <option value="$PROJECT_DIR$/esgissue/templates/retrieve.json" />
-        <option value="$PROJECT_DIR$/esgissue/templates/update.json" />
         <option value="$PROJECT_DIR$/esgissue/samples/orig/issue1.json" />
         <option value="$PROJECT_DIR$/esgissue/samples/orig/issue3.json" />
         <option value="$PROJECT_DIR$/esgissue/samples/issue1.json" />
@@ -80,6 +108,9 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/MANIFEST.in" />
         <option value="$PROJECT_DIR$/esgissue/esgissue.py" />
+        <option value="$PROJECT_DIR$/esgissue/templates/retrieve.json" />
+        <option value="$PROJECT_DIR$/esgissue/samples/issue2.json" />
+        <option value="$PROJECT_DIR$/esgissue/templates/update.json" />
         <option value="$PROJECT_DIR$/esgissue/issue_handler.py" />
       </list>
     </option>
@@ -180,6 +211,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="esgf-issue-manager" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="esgf-issue-manager" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="esgissue" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="samples" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -585,13 +634,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/esgissue/samples/issue2.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="8" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/esgissue/samples/orig/dsets4.txt" />
     <entry file="file://$PROJECT_DIR$/esgissue/samples/orig/issue4.json" />
     <entry file="file://$PROJECT_DIR$/esgissue/samples/orig/dsets3.txt" />
@@ -688,6 +730,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/esgissue/templates/create.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="26" column="16" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/esgissue/templates/retrieve.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="593">
+          <caret line="76" column="21" selection-start-line="76" selection-start-column="21" selection-end-line="76" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/esgissue/samples/issue2.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/esgissue/esgissue.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="318">
@@ -698,37 +764,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/esgissue/templates/retrieve.json">
+    <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="62" column="16" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
-          <folding />
+        <state relative-caret-position="403">
+          <caret line="526" column="33" selection-start-line="526" selection-start-column="33" selection-end-line="526" selection-end-column="33" />
+          <folding>
+            <element signature="e#328#337#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/esgissue/templates/update.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="59" column="21" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="21" />
+        <state relative-caret-position="695">
+          <caret line="85" column="11" selection-start-line="85" selection-start-column="11" selection-end-line="85" selection-end-column="11" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/esgissue/templates/create.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="16" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="348" column="45" selection-start-line="348" selection-start-column="45" selection-end-line="348" selection-end-column="45" />
-          <folding>
-            <element signature="e#328#337#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

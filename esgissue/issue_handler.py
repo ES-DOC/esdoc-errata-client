@@ -524,6 +524,7 @@ class GitHubIssue(object):
         issue[unicode('title')] = self.raw.title
         issue[unicode('description')] = content['description']
         issue[unicode('project')] = [label[1] for label in labels if 'Project' in label][0]
+        issue[unicode('institute')] = [label[1] for label in labels if 'Institute' in label][0]
         issue[unicode('models')] = [label[1] for label in labels if 'Model' in label]
         issue[unicode('severity')] = [label[1] for label in labels if 'Severity' in label][0]
         if content['url'] != __FILL_VALUE__:
