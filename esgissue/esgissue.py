@@ -473,7 +473,7 @@ def run():
         local_issue.close(gh=gh,
                           remote_issue=remote_issue)
     elif args.command == 'retrieve':
-        for directory in [args.issue, args.dsets]:
+        for directory in [args.issues, args.dsets]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
         if args.id:

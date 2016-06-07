@@ -44,8 +44,8 @@
       <file leaf-file-name="esgissue.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/esgissue/esgissue.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="495" column="48" selection-start-line="495" selection-start-column="48" selection-end-line="495" selection-end-column="48" />
+            <state relative-caret-position="250">
+              <caret line="479" column="29" selection-start-line="479" selection-start-column="29" selection-end-line="479" selection-end-column="29" />
               <folding>
                 <element signature="e#127#136#0" expanded="true" />
               </folding>
@@ -744,8 +744,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/esgissue/esgissue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="495" column="48" selection-start-line="495" selection-start-column="48" selection-end-line="495" selection-end-column="48" />
+        <state relative-caret-position="250">
+          <caret line="479" column="29" selection-start-line="479" selection-start-column="29" selection-end-line="479" selection-end-column="29" />
           <folding>
             <element signature="e#127#136#0" expanded="true" />
           </folding>
