@@ -390,8 +390,17 @@ def get_number(gh, id):
         raise Exception('Cannot retrieve all ESGF IDs from GitHub repository')
 
 
-# Main entry point for stand-alone call.
-if __name__ == "__main__":
+def run():
+    """
+    Main process that\:
+     * Parse command-line arguments,
+     * Parse configuration file,
+     * Initiates logger,
+     * Check GitHub permissions,
+     * Check Handle Service connection,
+     * Run the issue action.
+
+    """
     # Get command-line arguments
     args = get_args()
     # Parse configuration INI file
@@ -496,3 +505,8 @@ if __name__ == "__main__":
                                                                               issue.number), 'w'),
                                       dsets_f=open('{0}/dsets{1}.list'.format(os.path.realpath(args.dsets),
                                                                               issue.number), 'w'))
+
+
+# Main entry point for stand-alone call.
+if __name__ == "__main__":
+    run()
