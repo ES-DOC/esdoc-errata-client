@@ -29,13 +29,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="esgissue.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="esgissue.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/esgissue/esgissue.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3524">
-              <caret line="254" column="45" selection-start-line="254" selection-start-column="45" selection-end-line="254" selection-end-column="45" />
+            <state relative-caret-position="318">
+              <caret line="479" column="29" selection-start-line="479" selection-start-column="29" selection-end-line="479" selection-end-column="29" />
               <folding>
                 <element signature="e#127#136#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="issue_handler.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="242">
+              <caret line="540" column="46" selection-start-line="540" selection-start-column="46" selection-end-line="540" selection-end-column="46" />
+              <folding>
+                <element signature="e#328#337#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -52,7 +64,6 @@
         <option value="$PROJECT_DIR$/esgissue/templates/create.json" />
         <option value="$PROJECT_DIR$/esgissue/templates/retrieve.json" />
         <option value="$PROJECT_DIR$/esgissue/templates/update.json" />
-        <option value="$PROJECT_DIR$/esgissue/issue_handler.py" />
         <option value="$PROJECT_DIR$/esgissue/samples/orig/issue1.json" />
         <option value="$PROJECT_DIR$/esgissue/samples/orig/issue3.json" />
         <option value="$PROJECT_DIR$/esgissue/samples/issue1.json" />
@@ -69,6 +80,7 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/MANIFEST.in" />
         <option value="$PROJECT_DIR$/esgissue/esgissue.py" />
+        <option value="$PROJECT_DIR$/esgissue/issue_handler.py" />
       </list>
     </option>
   </component>
@@ -623,14 +635,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="27" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docs/autodoc.rst">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -707,10 +711,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/esgissue/esgissue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3524">
-          <caret line="254" column="45" selection-start-line="254" selection-start-column="45" selection-end-line="254" selection-end-column="45" />
+        <state relative-caret-position="318">
+          <caret line="479" column="29" selection-start-line="479" selection-start-column="29" selection-end-line="479" selection-end-column="29" />
           <folding>
             <element signature="e#127#136#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/esgissue/issue_handler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="540" column="46" selection-start-line="540" selection-start-column="46" selection-end-line="540" selection-end-column="46" />
+          <folding>
+            <element signature="e#328#337#0" expanded="true" />
           </folding>
         </state>
       </provider>

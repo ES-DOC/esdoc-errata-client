@@ -261,7 +261,7 @@ class ESGFIssue(object):
         labels = dict()
         labels['Severity: ' + attributes['severity']] = __LABELS__[attributes['severity']]
         labels['Project: ' + attributes['project']] = __LABELS__['project']
-        labels['State: ' + attributes['workflow']] = __LABELS__[attributes['workflow']]
+        labels['Workflow: ' + attributes['workflow']] = __LABELS__[attributes['workflow']]
         labels['Institute: ' + attributes['institute']] = __LABELS__['institute']
         for model in attributes['models']:
             labels['Model: ' + model] = __LABELS__['models']
@@ -534,7 +534,7 @@ class GitHubIssue(object):
             issue[unicode('url')] = content['url']
         if content['materials'] != __FILL_VALUE__:
             issue[unicode('materials')] = content['materials']
-        issue[unicode('workflow')] = [label[1] for label in labels if 'State' in label][0]
+        issue[unicode('workflow')] = [label[1] for label in labels if 'Workflow' in label][0]
         issue[unicode('created_at')] = self.raw.created_at.isoformat()
         issue[unicode('last_updated_at')] = self.raw.updated_at.isoformat()
         if self.raw.is_closed():
