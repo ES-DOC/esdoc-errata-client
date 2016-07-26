@@ -9,19 +9,26 @@
 import os
 import re
 import sys
-import requests
 import logging
 import string
 import ConfigParser
 import textwrap
 from collections import OrderedDict
 from argparse import HelpFormatter
+import datetime
+import json
+import requests
+from jsonschema import validate
+__JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                         'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 
 
 class MultilineFormatter(HelpFormatter):
     """
     Custom formatter class for argument parser to use with the Python
-    `argparse <https://docs.python.org/2/library/argparse.html>`_ module.
+    `argparse <https://docs.python.org/2/library/argparse.ht__JSON_SCHEMA_PATHS__ml>`_ module.
 
     """
     def __init__(self, prog):
@@ -271,3 +278,118 @@ def split_line(line, sep='|'):
     """
     fields = map(string.strip, line.split(sep))
     return fields
+
+
+def _get_issue(path):
+    """reads json file containing issue from path to file.
+
+    """
+    with open(path, 'r') as file_stream:
+        return json.loads(file_stream.read())
+
+
+def _get_datasets(path, file_id):
+    """Returns test affected  datasets by a given issue from the respective txt file.
+
+    """
+    # Derive path to datasets list file.
+    for fext in {"list", "txt"}:
+        fpath = "{0}/dsets/dsets-{1}.{2}".format(path, file_id, fext)
+        if os.path.isfile(fpath):
+            break
+
+    # Error if not found.
+    if not os.path.isfile(fpath):
+        raise ValueError("Datasets list file not found: {}".format(file_id))
+
+    # Return set of dataset identifiers.
+    with open(fpath, 'r') as fstream:
+        return [l.replace("\n", "") for l in fstream.readlines() if l]
+
+
+def create_json(issue, datasets):
+    """
+    This stub stands for the function that will create the json used in a errata ws call.
+    :param issue: path to issue json file.
+    :param datasets: path to dataset text file.
+    :return: issue json including the attribute datasets.
+    """
+
+
+    pass
+
+
+def create_ws():
+    """
+    creates a create request
+    :return:
+    """
+    pass
+
+
+def update_ws():
+    """
+    creates an update request
+    :return:
+    """
+    pass
+
+
+def close_ws():
+    """
+    creates a close request
+    :return:
+    """
+    pass
+
+
+def retrieve_ws():
+    """
+    creates a retrieve request
+    :return:
+    """
+    pass
+
+
+def validate_schema(json_schema, action):
+        """
+        Validates ESGF issue template against predefined JSON schema
+
+        :param str action: The issue action/command
+        :param list projects: The projects options from esg.ini
+        :raises Error: If the template has an invalid JSON schema
+        :raises Error: If the project option does not exist in esg.ini
+        :raises Error: If the description is already published on GitHub
+        :raises Error: If the landing page or materials urls cannot be reached
+        :raises Error: If dataset ids are malformed
+
+        """
+        logging.info('Validation of template {0}'.format(json_schema['uid']))
+        # Load JSON schema for issue template
+        with open(__JSON_SCHEMA_PATHS__[action]) as f:
+            schema = json.load(f)
+        # Validate issue attributes against JSON issue schema
+        try:
+            validate(json_schema, schema)
+        except Exception as e:
+            logging.exception(repr(e.message))
+            logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(json_schema['uid']))
+            sys.exit(1)
+        # Test if project is declared in esg.ini
+        # TODO remove this since project control will be embedded within the json templates
+        # if not self.attributes['project'] in projects:
+        #     logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
+        #     logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
+        #     sys.exit(1)
+
+        # Test landing page and materials URLs
+        urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
+        if not all(map(test_url, urls)):
+            logging.error('Result: FAILED // URLs cannot be reached')
+            sys.exit(1)
+        # Validate the datasets list against the dataset id pattern
+
+        if not all(map(test_pattern, self.dsets)):
+            logging.error('Result: FAILED // Dataset IDs have invalid format')
+            sys.exit(1)
+        logging.info('Result: SUCCESSFUL')
