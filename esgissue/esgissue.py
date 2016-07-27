@@ -9,8 +9,9 @@
 import uuid
 import argparse
 from issue_handler import ESGFIssue, GitHubIssue
-from utils import *
-
+from utils import _get_datasets, MultilineFormatter, split_line, config_parse, init_logging
+import datetime
+import os
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
 
@@ -418,6 +419,11 @@ def run():
     #                    rabbit_password=cfg.get('issues', 'rabbit_password'))
     # Run command
     if args.command == 'create':
+        # First step: get dataset list.
+        # TODO solve the file_id issue.
+        datasets = _get_datasets(args.dsets, None)
+
+
         # Instantiate ESGF issue from issue template and datasets list
         local_issue = ESGFIssue(issue_f=args.issue,
                                 dsets_f=args.dsets)
@@ -433,18 +439,19 @@ def run():
         # TODO : Uncomment for master release
         # #local_issue.send(hs, gh_repo.name)
     elif args.command == 'update':
+        pass
         # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.issue,
-                                dsets_f=args.dsets)
+        # local_issue = ESGFIssue(issue_f=args.issue,
+        #                         dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
-        local_issue.validate(action=args.command,
-                             projects=get_projects(cfg))
+        # local_issue.validate(action=args.command,
+        #                      projects=get_projects(cfg))
         # Get corresponding GitHub issue
-        remote_issue = GitHubIssue(gh=gh,
-                                   number=local_issue.get('number'))
+        # remote_issue = GitHubIssue(gh=gh,
+        #                            number=local_issue.get('number'))
         # Validate GitHub issue against JSON schema
-        remote_issue.validate(action=args.command,
-                              projects=get_projects(cfg))
+        # remote_issue.validate(action=args.command,
+        #                       projects=get_projects(cfg))
         # Update ESGF issue information on GitHub repository
         # TODO UPDATE ISSUE REQUEST.
         # local_issue.update(gh=gh,

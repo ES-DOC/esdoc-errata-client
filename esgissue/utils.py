@@ -356,7 +356,7 @@ def validate_schema(json_schema, action):
         Validates ESGF issue template against predefined JSON schema
 
         :param str action: The issue action/command
-        :param list projects: The projects options from esg.ini
+        :param list json_schema: the json to be validated.
         :raises Error: If the template has an invalid JSON schema
         :raises Error: If the project option does not exist in esg.ini
         :raises Error: If the description is already published on GitHub
@@ -382,14 +382,15 @@ def validate_schema(json_schema, action):
         #     logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
         #     sys.exit(1)
 
+        # TODO TEST URLS FOR URL AND MATERIALS ENTRY.
         # Test landing page and materials URLs
-        urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
-        if not all(map(test_url, urls)):
-            logging.error('Result: FAILED // URLs cannot be reached')
-            sys.exit(1)
+        # urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
+        # if not all(map(test_url, urls)):
+        #     logging.error('Result: FAILED // URLs cannot be reached')
+        #     sys.exit(1)
         # Validate the datasets list against the dataset id pattern
 
-        if not all(map(test_pattern, self.dsets)):
+        if not all(map(test_pattern, json_schema['datasets'])):
             logging.error('Result: FAILED // Dataset IDs have invalid format')
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
