@@ -9,8 +9,8 @@
 import uuid
 import argparse
 from issue_handler import ESGFIssue, GitHubIssue
-from utils import _get_datasets, MultilineFormatter, split_line, config_parse, init_logging
-import datetime
+from utils import _get_datasets, _get_issue, MultilineFormatter, split_line, config_parse, init_logging
+from datetime import datetime
 import os
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
@@ -71,21 +71,21 @@ def get_args():
     # Parent parser with common arguments #
     #######################################
     parent = argparse.ArgumentParser(add_help=False)
-    parent.add_argument(
-        '-i',
-        metavar='/esg/config/esgcet/.',
-        type=str,
-        default='/esg/config/esgcet/.',
-        help="""Initialization/configuration directory containing "esg.ini"|n
-            and "esg.<project>.ini" files. If not specified, the usual|n
-            datanode directory is used.""")
-    parent.add_argument(
-        '--log',
-        metavar='$PWD',
-        type=str,
-        const=os.getcwd(),
-        nargs='?',
-        help="""Logfile directory. If not, standard output is used.""")
+    # parent.add_argument(
+    #     '-i',
+    #     metavar='/esg/config/esgcet/.',
+    #     type=str,
+    #     default='/esg/config/esgcet/.',
+    #     help="""Initialization/configuration directory containing "esg.ini"|n
+    #         and "esg.<project>.ini" files. If not specified, the usual|n
+    #         datanode directory is used.""")
+    # parent.add_argument(
+    #     '--log',
+    #     metavar='$PWD',
+    #     type=str,
+    #     const=os.getcwd(),
+    #     nargs='?',
+    #     help="""Logfile directory. If not, standard output is used.""")
     parent.add_argument(
         '-v',
         action='store_true',
@@ -398,14 +398,14 @@ def run():
     # Get command-line arguments
     args = get_args()
     # Parse configuration INI file
-    cfg = config_parse(args.i)
+    # cfg = config_parse(args.i)
     # Init logging
     if args.v:
         init_logging(args.log, level='DEBUG')
-    elif cfg.has_option('initialize', 'log_level'):
-        init_logging(args.log, cfg.get('initialize', 'log_level'))
-    else:
-        init_logging(args.log)
+    # elif cfg.has_option('initialize', 'log_level'):
+    #     init_logging(args.log, cfg.get('initialize', 'log_level'))
+    # else:
+    #     init_logging(args.log)
     # Connection to the GitHub repository
     # gh_login, gh = github_connector(username=cfg.get('issues', 'gh_login'),
     #                                 password=cfg.get('issues', 'gh_password'),
@@ -420,24 +420,13 @@ def run():
     # Run command
     if args.command == 'create':
         # First step: get dataset list.
-        # TODO solve the file_id issue.
-        datasets = _get_datasets(args.dsets, None)
-
-
         # Instantiate ESGF issue from issue template and datasets list
         local_issue = ESGFIssue(issue_f=args.issue,
                                 dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
-        local_issue.validate(action=args.command,
-                             projects=get_projects(cfg))
-        # Create ESGF issue on GitHub repository
-        # TODO CREATE REQUEST FOR ISSUE CREATION
-        # local_issue.create(gh=gh,
-        #                    assignee=gh_login,
-        #                    descriptions=get_descriptions(gh))
-        # Send issue id to Handle Service
-        # TODO : Uncomment for master release
-        # #local_issue.send(hs, gh_repo.name)
+        # local_issue.validate(action=args.command,
+        #                      projects=get_projects(cfg))
+        # local_issue.create_request()
     elif args.command == 'update':
         pass
         # Instantiate ESGF issue from issue template and datasets list
@@ -462,15 +451,15 @@ def run():
         local_issue = ESGFIssue(issue_f=args.issue,
                                 dsets_f=args.dsets)
         # Validate ESGF issue against JSON schema
-        local_issue.validate(action=args.command,
-                             projects=get_projects(cfg))
+        # local_issue.validate(action=args.command,
+        #                      projects=get_projects(cfg))
         # Get corresponding GitHub issue
         # remote_issue = GitHubIssue(gh=gh,
         #                            number=local_issue.get('number'))
         # Validate GitHub issue against JSON schema
         # remote_issue.validate(action=args.command,
         #                       projects=get_projects(cfg))
-        # TODO CLOSE ISSUE REQUEST.
+
         # local_issue.close(gh=gh,
         #                   remote_issue=remote_issue)
     elif args.command == 'retrieve':

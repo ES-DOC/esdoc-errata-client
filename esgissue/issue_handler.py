@@ -168,12 +168,11 @@ class ESGFIssue(object):
             dsets.append(unicode(dset.strip(' \n\r\t')))
         return dsets
 
-    def validate(self, action, projects):
+    def validate(self, action):
         """
         Validates ESGF issue template against predefined JSON schema
 
         :param str action: The issue action/command
-        :param list projects: The projects options from esg.ini
         :raises Error: If the template has an invalid JSON schema
         :raises Error: If the project option does not exist in esg.ini
         :raises Error: If the description is already published on GitHub
@@ -188,13 +187,9 @@ class ESGFIssue(object):
         # Validate issue attributes against JSON issue schema
         try:
             validate(self.attributes, schema)
-        except:
+        except Exception as e:
+            logging.exception(repr(e.message))
             logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(self.issue_f.name))
-            sys.exit(1)
-        # Test if project is declared in esg.ini
-        if not self.attributes['project'] in projects:
-            logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
-            logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
             sys.exit(1)
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
@@ -207,45 +202,32 @@ class ESGFIssue(object):
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
 
-    def create(self, gh, assignee, descriptions):
+    def create(self):
         """
         Creates an issue on the GitHub repository.
-
-        :param GitHubObj gh: The GitHub repository connector (as a :func:`github3.repos.repo` class instance)
-        :param str assignee: The GitHub login of the issue assignee
-        :param dict descriptions: The descriptions from all registered GitHub issues
         :raises Error: If the issue registration fails without any result
 
         """
-        gh_team, gh_repo = gh.full_name.split('/')
-        logging.info('Issue registration on GitHub repository "{0}/{1}"'.format(gh_team, gh_repo))
+        logging.info('Started issue creation process...')
         # Test if description is not already published
-        if self.attributes['description'] in descriptions.values():
-            number = [k for k, v in descriptions.iteritems() if v == self.attributes['description']]
-            logging.error('Result: FAILED // Issue description is already published'
-                          ' within issue(s) #{0}'.format(number))
-            logging.debug('Local "{0}" -> "{1}"'.format('description', self.attributes['description']))
-            for n in number:
-                logging.debug('Remote "{0}" #{1} <- "{2}"'.format('description', n, descriptions[n]))
-            sys.exit(1)
+        # if self.attributes['description'] in descriptions.values():
+        #     number = [k for k, v in descriptions.iteritems() if v == self.attributes['description']]
+        #     logging.error('Result: FAILED // Issue description is already published'
+        #                   ' within issue(s) #{0}'.format(number))
+        #     logging.debug('Local "{0}" -> "{1}"'.format('description', self.attributes['description']))
+        #     for n in number:
+        #         logging.debug('Remote "{0}" #{1} <- "{2}"'.format('description', n, descriptions[n]))
+        #     sys.exit(1)
+        logging.info('Adding id and workflow to json file.')
         self.attributes.prepend('id', str(uuid4()))
+        print(self.attributes['id'])
         self.attributes.update({'workflow': unicode('New')})
-        issue = gh.create_issue(title=self.attributes['title'],
-                                body=self.issue_content(self.attributes, self.dsets),
-                                assignee=assignee,
-                                labels=self.get_labels(gh, self.attributes))
-        if issue:
-            logging.info('Result: SUCCESSFUL')
-            self.attributes.prepend('number', issue.number)
-            logging.debug('Issue number <- {0}'.format(self.attributes['number']))
-            self.attributes.update({'created_at': issue.created_at.isoformat()})
-            logging.debug('Created at <- "{0}"'.format(self.attributes['created_at']))
-            self.attributes.update({'last_updated_at': issue.updated_at.isoformat()})
-            logging.debug('Updated at <- "{0}"'.format(self.attributes['last_updated_at']))
-            self.write()
-        else:
-            logging.error('Result: FAILED // "{0}" issue returned.'.format(issue))
-            sys.exit(1)
+        logging.info('Json file has been completed.')
+        # issue = gh.create_issue(title=self.attributes['title'],
+        #                         body=self.issue_content(self.attributes, self.dsets),
+        #                         assignee=assignee,
+        #                         labels=self.get_labels(gh, self.attributes))
+        print(self.attributes)
 
     @staticmethod
     def get_labels(gh, attributes):

@@ -315,7 +315,6 @@ def create_json(issue, datasets):
     :return: issue json including the attribute datasets.
     """
 
-
     pass
 
 
@@ -376,7 +375,6 @@ def validate_schema(json_schema, action):
             logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(json_schema['uid']))
             sys.exit(1)
         # Test if project is declared in esg.ini
-        # TODO remove this since project control will be embedded within the json templates
         # if not self.attributes['project'] in projects:
         #     logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
         #     logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
