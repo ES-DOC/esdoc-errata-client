@@ -12,6 +12,8 @@ from issue_handler import ESGFIssue, GitHubIssue
 from utils import _get_datasets, _get_issue, MultilineFormatter, split_line, config_parse, init_logging
 from datetime import datetime
 import os
+import json, simplejson
+import requests
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
 
@@ -421,8 +423,34 @@ def run():
     if args.command == 'create':
         # First step: get dataset list.
         # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.issue,
-                                dsets_f=args.dsets)
+        print(args.issue)
+        with args.issue as data_file:
+            payload = json.load(data_file)
+        # Adding id and workflow
+        payload['id'] = str(uuid.uuid4())
+        payload['workflow'] = unicode('new')
+        dsets = list()
+        for dset in args.dsets:
+            dsets.append(unicode(dset.strip(' \n\r\t')))
+        payload['datasets'] = dsets
+
+        print(payload)
+        print("issue created..")
+        print(type(payload))
+        url = 'http://localhost:5001/1/issue/create'
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        try:
+            r = requests.post(url, json.dumps(payload), headers=headers)
+            print(r.json())
+
+            payload['date_created'] = r.json()['dateCreated']
+            payload['date_updated'] = r.json()['dateUpdated']
+
+            with open(args.issue.name, 'w') as data_file:
+                data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
+                json.dump(payload, data_file)
+        except Exception as e:
+            print(repr(e))
         # Validate ESGF issue against JSON schema
         # local_issue.validate(action=args.command,
         #                      projects=get_projects(cfg))

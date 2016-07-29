@@ -17,13 +17,13 @@ from uuid import uuid4
 from copy import copy
 from bs4 import BeautifulSoup
 from utils import MyOrderedDict, DictDiff, ListDiff, test_url, test_pattern, traverse
-from json import dump, load
+from json import dump, load, dumps
 from jsonschema import validate
 from fuzzywuzzy.fuzz import token_sort_ratio
 from wheezy.template.engine import Engine
 from wheezy.template.ext.core import CoreExtension
 from wheezy.template.loader import FileLoader
-
+import requests
 
 # Fill value for undocumented URL or MATERIALS
 __FILL_VALUE__ = unicode('Not documented')
@@ -220,9 +220,16 @@ class ESGFIssue(object):
         #     sys.exit(1)
         logging.info('Adding id and workflow to json file.')
         self.attributes.prepend('id', str(uuid4()))
-        print(self.attributes['id'])
         self.attributes.update({'workflow': unicode('New')})
-        logging.info('Json file has been completed.')
+        self.attributes['datasets'] = self.dsets
+        print('here..')
+        print(type(self.attributes))
+        logging.info('json has been completed.')
+        url = 'http://localhost:5001/1/issue/create'
+        payload = load(self.attributes)
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        r = requests.post(url, dumps(payload), headers=headers)
+        print(r.text)
         # issue = gh.create_issue(title=self.attributes['title'],
         #                         body=self.issue_content(self.attributes, self.dsets),
         #                         assignee=assignee,
