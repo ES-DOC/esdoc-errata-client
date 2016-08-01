@@ -11,7 +11,7 @@ import argparse
 from issue_handler import ESGFIssue, GitHubIssue
 from utils import _get_datasets, _get_issue, MultilineFormatter, split_line, config_parse, init_logging
 from datetime import datetime
-import os
+import os, sys
 import json, simplejson
 import requests
 # Program version
@@ -134,7 +134,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
-        type=argparse.FileType('r'),
+        type=str,
         help=__TEMPLATE_HELP__)
     create.add_argument(
         '--dsets',
@@ -423,8 +423,8 @@ def run():
     if args.command == 'create':
         # First step: get dataset list.
         # Instantiate ESGF issue from issue template and datasets list
-        print(args.issue)
-        with args.issue as data_file:
+        with open(args.issue, 'r') as data_file:
+            print(data_file)
             payload = json.load(data_file)
         # Adding id and workflow
         payload['id'] = str(uuid.uuid4())
@@ -433,22 +433,36 @@ def run():
         for dset in args.dsets:
             dsets.append(unicode(dset.strip(' \n\r\t')))
         payload['datasets'] = dsets
-
-        print(payload)
         print("issue created..")
-        print(type(payload))
         url = 'http://localhost:5001/1/issue/create'
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        # Updating local issue with webservice response.
         try:
+            print('preparing request...')
             r = requests.post(url, json.dumps(payload), headers=headers)
-            print(r.json())
-
-            payload['date_created'] = r.json()['dateCreated']
-            payload['date_updated'] = r.json()['dateUpdated']
-
-            with open(args.issue.name, 'w') as data_file:
+            print('query sent, heres the response')
+            if r.status_code == requests.codes.ok:
+                print('query success!')
+                print(r.json())
+            else:
+                print('query failed')
+                print('Some issue has occurred please make sure your request is well formed, here is the response text:')
+                print(r.text)
+                sys.exit(1)
+            print('updating fields of payload')
+            if r.json()['status'] == 0:
+                payload['date_created'] = r.json()['dateCreated']
+                payload['date_updated'] = r.json()['dateUpdated']
+                print('fields updated.')
+            else:
+                print('Something went wrong, error message:')
+                print(r.json()['message'])
+            with open(args.issue, 'w+') as data_file:
+                if 'datasets' in payload.keys():
+                    del payload['datasets']
+                print('Opened file attempting update..')
                 data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
-                json.dump(payload, data_file)
+                print('dumped updated version!')
         except Exception as e:
             print(repr(e))
         # Validate ESGF issue against JSON schema

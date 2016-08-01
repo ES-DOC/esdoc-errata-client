@@ -1,1 +1,21 @@
-{"datasets": ["cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119"], "description": "DRESTA", "title": "Wrong units for variables related to runoff", "institute": "IPSL", "workflow": "new", "project": "CMIP5", "models": ["IPSL-CM5A-LR", "IPSL-CM5A-MR"], "materials": ["http://errata.ipsl.upmc.fr/static/images_errata/mrro_old.jpg", "http://errata.ipsl.upmc.fr/static/images_errata/mrro_new.jpg", "http://errata.ipsl.upmc.fr/static/images_errata/mrro_diff.jpg"], "url": "http://errata.ipsl.upmc.fr/issue/8", "date_updated": "2016/07/29 07:31:12 PM", "date_created": "2016/07/29 07:31:12 PM", "id": "514050f3-c2ac-4c1e-afb3-85be9a3d9955", "severity": "high"}
+{
+    "date_created": "2016/08/01 06:01:51 PM",
+    "date_updated": "2016/08/01 06:01:51 PM",
+    "description": "DRESTA Studio gangsta",
+    "id": "520d8cc9-92da-4859-b93f-fd267d1a0794",
+    "institute": "IPSL",
+    "materials": [
+        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_old.jpg",
+        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_new.jpg",
+        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_diff.jpg"
+    ],
+    "models": [
+        "IPSL-CM5A-LR",
+        "IPSL-CM5A-MR"
+    ],
+    "project": "CMIP5",
+    "severity": "high",
+    "title": "Wrong units for variables related to runoff",
+    "url": "http://errata.ipsl.upmc.fr/issue/8",
+    "workflow": "new"
+}
