@@ -117,6 +117,9 @@ class MyOrderedDict(OrderedDict):
             root[1] = first[0] = self._OrderedDict__map[key] = [root, first, key]
             dict_setitem(self, key, value)
 
+    def convert_dict(self):
+        pass
+
 
 class DictDiff(object):
     """
@@ -392,3 +395,16 @@ def validate_schema(json_schema, action):
             logging.error('Result: FAILED // Dataset IDs have invalid format')
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
+
+
+def get_ws_call(url, payload):
+    """
+    This function builds the url for the outgoing call to the different errata ws.
+    :param url:
+    :param payload:
+    :return:
+    """
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    requests.post(url, payload)
+    call = None
+    return call

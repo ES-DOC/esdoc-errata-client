@@ -9,10 +9,12 @@
 import uuid
 import argparse
 from issue_handler import ESGFIssue, GitHubIssue
-from utils import _get_datasets, _get_issue, MultilineFormatter, split_line, config_parse, init_logging
+from utils import MultilineFormatter, split_line, init_logging
 from datetime import datetime
-import os, sys
-import json, simplejson
+import os
+import sys
+import json
+import simplejson
 import requests
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
@@ -171,7 +173,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
-        type=argparse.FileType('r'),
+        type=str,
         help=__TEMPLATE_HELP__)
     update.add_argument(
         '--dsets',
@@ -209,7 +211,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
-        type=argparse.FileType('r'),
+        type=str,
         help=__TEMPLATE_HELP__)
     close.add_argument(
         '--dsets',
@@ -262,7 +264,7 @@ def get_args():
         nargs='?',
         metavar='$PWD/dsets',
         default='{0}/dsets'.format(os.getcwd()),
-        type=str,
+        type=argparse.FileType('r'),
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
     return main.parse_args()
@@ -408,17 +410,6 @@ def run():
     #     init_logging(args.log, cfg.get('initialize', 'log_level'))
     # else:
     #     init_logging(args.log)
-    # Connection to the GitHub repository
-    # gh_login, gh = github_connector(username=cfg.get('issues', 'gh_login'),
-    #                                 password=cfg.get('issues', 'gh_password'),
-    #                                 team=cfg.get('issues', 'gh_team'),
-    #                                 repo=cfg.get('issues', 'gh_repo'))
-    # # Connection to the Handle Service
-    # hs = pid_connector(prefix=cfg.get('issues', 'prefix'),
-    #                    url_messaging_service=cfg.get('issues', 'url_messaging_service'),
-    #                    messaging_exchange=cfg.get('issues', 'messaging_exchange'),
-    #                    rabbit_username=cfg.get('issues', 'rabbit_username'),
-    #                    rabbit_password=cfg.get('issues', 'rabbit_password'))
     # Run command
     if args.command == 'create':
         # First step: get dataset list.
@@ -428,12 +419,12 @@ def run():
             payload = json.load(data_file)
         # Adding id and workflow
         payload['id'] = str(uuid.uuid4())
+        print('creating issue with id {}'.format(payload['id']))
         payload['workflow'] = unicode('new')
         dsets = list()
         for dset in args.dsets:
             dsets.append(unicode(dset.strip(' \n\r\t')))
         payload['datasets'] = dsets
-        print("issue created..")
         url = 'http://localhost:5001/1/issue/create'
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         # Updating local issue with webservice response.
@@ -453,11 +444,11 @@ def run():
             if r.json()['status'] == 0:
                 payload['date_created'] = r.json()['dateCreated']
                 payload['date_updated'] = r.json()['dateUpdated']
-                print('fields updated.')
+                print('fields updated for payload json.')
             else:
                 print('Something went wrong, error message:')
                 print(r.json()['message'])
-            with open(args.issue, 'w+') as data_file:
+            with open(args.issue, 'w') as data_file:
                 if 'datasets' in payload.keys():
                     del payload['datasets']
                 print('Opened file attempting update..')
@@ -465,82 +456,92 @@ def run():
                 print('dumped updated version!')
         except Exception as e:
             print(repr(e))
-        # Validate ESGF issue against JSON schema
-        # local_issue.validate(action=args.command,
-        #                      projects=get_projects(cfg))
-        # local_issue.create_request()
     elif args.command == 'update':
-        pass
-        # Instantiate ESGF issue from issue template and datasets list
-        # local_issue = ESGFIssue(issue_f=args.issue,
-        #                         dsets_f=args.dsets)
-        # Validate ESGF issue against JSON schema
-        # local_issue.validate(action=args.command,
-        #                      projects=get_projects(cfg))
-        # Get corresponding GitHub issue
-        # remote_issue = GitHubIssue(gh=gh,
-        #                            number=local_issue.get('number'))
-        # Validate GitHub issue against JSON schema
-        # remote_issue.validate(action=args.command,
-        #                       projects=get_projects(cfg))
-        # Update ESGF issue information on GitHub repository
-        # TODO UPDATE ISSUE REQUEST.
-        # local_issue.update(gh=gh,
-        #                    remote_issue=remote_issue)
-        # Update issue id to Handle Service
-    elif args.command == 'close':
-        # Instantiate ESGF issue from issue template and datasets list
-        local_issue = ESGFIssue(issue_f=args.issue,
-                                dsets_f=args.dsets)
-        # Validate ESGF issue against JSON schema
-        # local_issue.validate(action=args.command,
-        #                      projects=get_projects(cfg))
-        # Get corresponding GitHub issue
-        # remote_issue = GitHubIssue(gh=gh,
-        #                            number=local_issue.get('number'))
-        # Validate GitHub issue against JSON schema
-        # remote_issue.validate(action=args.command,
-        #                       projects=get_projects(cfg))
+        print(args.issue)
+        print(type(args.issue))
+        with open(args.issue, 'r') as data_file:
+            payload = json.load(data_file)
+        url = 'http://localhost:5001/1/issue/update'
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        dsets = list()
+        for dset in args.dsets:
+            dsets.append(unicode(dset.strip(' \n\r\t')))
+        payload['datasets'] = dsets
+        print('here is the uid {}'.format(payload['id']))
+        try:
+            print('preparing request...')
+            r = requests.post(url, json.dumps(payload), headers=headers)
+            print('query sent, heres the response')
+            if r.status_code == requests.codes.ok:
+                print('query success!')
+                print(r.json())
+            else:
+                print('query failed')
+                print('Some issue has occurred please make sure your request is well formed,'
+                      ' here is the response text:')
+                print(r.text)
+                sys.exit(1)
+            if r.json()['status'] == 0:
+                payload['date_updated'] = r.json()['dateUpdated']
+                del payload['datasets']
+                # updating the issue body.
+                with open(args.issue, 'w+') as data_file:
+                    data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
+                print('Local issue updated.')
+            else:
+                print('Webservice rejected your call for the following reasons:{}'.format(r.text))
+            print('update operation over.')
+        except Exception as e:
+            print(repr(e))
 
-        # local_issue.close(gh=gh,
-        #                   remote_issue=remote_issue)
+    elif args.command == 'close':
+        with open(args.issue, 'r') as data_file:
+            payload = json.load(data_file)
+        url = 'http://localhost:5001/1/issue/close'
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        try:
+            r = requests.post(url, json.dumps(payload), headers=headers)
+            # Catch the case where the http webservice call failed.
+            if r.status_code != requests.codes.ok:
+                print('query failed')
+                print('Some issue has occurred please make sure your request is well formed,'
+                      ' here is the response text:')
+                print(r.text)
+                sys.exit(1)
+
+            # Only in case the webservice operation succeeded.
+            if r.json()['status'] == 0:
+                payload['date_updated'] = r.json()['dateClosed']
+                payload['date_closed'] = r.json()['dateClosed']
+                if 'datasets' in payload.keys():
+                    del payload['datasets']
+                with open(args.issue, 'w+') as data_file:
+                    data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
+            else:
+                print('Webservice rejected your call for the following reasons:{}'.format(r.text))
+            print('Close operation ended.')
+        except Exception as e:
+            print(repr(e))
+
     elif args.command == 'retrieve':
         for directory in [args.issues, args.dsets]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
         if args.id:
             for n in args.id:
-                pass
-                # Get issue number
-                # Get corresponding GitHub issue
-                # TODO RETRIEVE ISSUE REQUEST
-                # remote_issue = GitHubIssue(gh=gh,
-                #                            number=number)
-                # Validate GitHub issue against JSON schema
-                # TODO VALIDATE RECEIVED ISSUE
-                # remote_issue.validate(action=args.command,
-                #                       projects=get_projects(cfg))
-                # Retrieve the corresponding GitHub issue
-                # TODO OPEN THE LOCAL JSON ?
-                # remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issues),
-                #                                                                number), 'w'),
-                #                       dsets_f=open('{0}/dsets-{1}.list'.format(os.path.realpath(args.dsets),
-                #                                                                number), 'w'))
-        else:
-            pass
-            # for issue in gh.iter_issues(state='all'):
-            #     # Get corresponding GitHub issue
-            #     remote_issue = GitHubIssue(gh=gh,
-            #                                number=get_number(gh, issue.number))
-            #     # Validate GitHub issue against JSON schema
-            #     remote_issue.validate(action=args.command,
-            #                           projects=get_projects(cfg))
-            #     # Retrieve the corresponding GitHub issue
-            #     remote_issue.retrieve(issue_f=open('{0}/issue-{1}.json'.format(os.path.realpath(args.issues),
-            #                                                                    issue.number), 'w'),
-            #                           dsets_f=open('{0}/dsets-{1}.list'.format(os.path.realpath(args.dsets),
-            #                                                                    issue.number), 'w'))
+                url = 'http://localhost:5001/1/issue/retrieve?uid='
+                try:
+                    r = requests.get(url+n)
+                    if r.status_code == requests.codes.ok:
+                        payload = r.json()
+                        with open(args.issue, 'w+') as data_file:
+                            data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
+                    else:
+                        print('something went wrong, here is the server response:')
+                        print(r.text)
 
+                except Exception as e:
+                    print(repr(e))
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":

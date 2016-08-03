@@ -605,7 +605,7 @@ class GitHubIssue(object):
             with issue_f as json_file:
                 dump(self.attributes, json_file, indent=0)
             logging.info('Result: SUCCESSFUL')
-        except:
+        except Exception as e:
             logging.exception('Result: FAILED // JSON template {0} is not writable'.format(issue_f.name))
             sys.exit(1)
         logging.info('Retrieve GitHub issue #{0} affected datasets list'.format(self.number))

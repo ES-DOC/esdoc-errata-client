@@ -1,8 +1,9 @@
 {
-    "date_created": "2016/08/01 06:01:51 PM",
-    "date_updated": "2016/08/01 06:01:51 PM",
-    "description": "DRESTA Studio gangsta",
-    "id": "520d8cc9-92da-4859-b93f-fd267d1a0794",
+    "date_closed": "2016-08-02 16:19:57.212337",
+    "date_created": "2016-08-02 16:04:41.256670",
+    "date_updated": "2016-08-02 16:19:57.212337",
+    "description": "This is a new description for testing purposes",
+    "id": "a2b3f27b-3fb1-4551-8ec7-70641d18166a",
     "institute": "IPSL",
     "materials": [
         "http://errata.ipsl.upmc.fr/static/images_errata/mrro_old.jpg",
@@ -17,5 +18,5 @@
     "severity": "high",
     "title": "Wrong units for variables related to runoff",
     "url": "http://errata.ipsl.upmc.fr/issue/8",
-    "workflow": "new"
+    "workflow": "resolved"
 }
