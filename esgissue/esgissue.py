@@ -9,7 +9,7 @@
 import uuid
 import argparse
 from issue_handler import ESGFIssue, GitHubIssue
-from utils import MultilineFormatter, split_line, init_logging, get_file_path
+from utils import MultilineFormatter, split_line, init_logging, get_file_path, get_ws_call
 from datetime import datetime
 import os
 import sys
@@ -429,13 +429,8 @@ def run():
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         # Updating local issue with webservice response.
         try:
-            print('preparing request...')
-            r = requests.post(url, json.dumps(payload), headers=headers)
-            print('query sent, heres the response')
-            if r.status_code == requests.codes.ok:
-                print('query success!')
-                print(r.json())
-            else:
+            r = get_ws_call(args.command, payload, None)
+            if r.status_code != requests.codes.ok:
                 print('query failed')
                 print('Some issue has occurred please make sure your request is well formed, here is the response text:')
                 print(r.text)
@@ -461,8 +456,6 @@ def run():
         print(type(args.issue))
         with open(args.issue, 'r') as data_file:
             payload = json.load(data_file)
-        url = 'http://localhost:5001/1/issue/update'
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         dsets = list()
         for dset in args.dsets:
             dsets.append(unicode(dset.strip(' \n\r\t')))
@@ -470,12 +463,9 @@ def run():
         print('here is the uid {}'.format(payload['id']))
         try:
             print('preparing request...')
-            r = requests.post(url, json.dumps(payload), headers=headers)
+            r = get_ws_call(args.command, json.dumps(payload), None)
             print('query sent, heres the response')
-            if r.status_code == requests.codes.ok:
-                print('query success!')
-                print(r.json())
-            else:
+            if r.status_code != requests.codes.ok:
                 print('query failed')
                 print('Some issue has occurred please make sure your request is well formed,'
                       ' here is the response text:')
@@ -497,10 +487,8 @@ def run():
     elif args.command == 'close':
         with open(args.issue, 'r') as data_file:
             payload = json.load(data_file)
-        url = 'http://localhost:5001/1/issue/close'
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         try:
-            r = requests.post(url, json.dumps(payload), headers=headers)
+            r = get_ws_call(args.command, payload, None)
             # Catch the case where the http webservice call failed.
             if r.status_code != requests.codes.ok:
                 print('query failed')
@@ -524,7 +512,6 @@ def run():
             print(repr(e))
 
     elif args.command == 'retrieve':
-        url = 'http://localhost:5001/1/issue/retrieve?uid='
         list_of_ids = args.id
         # In the case the user is requesting more than one issue
         for directory in [args.issues, args.dsets]:
@@ -540,7 +527,7 @@ def run():
         for n in list_of_ids:
             print('processing id {}'.format(n))
             try:
-                r = requests.get(url+n)
+                r = get_ws_call(args.command, None, n)
                 if r.status_code == requests.codes.ok:
                     payload = r.json()['issue']
                     path_to_issue, path_to_dataset = get_file_path(args.issues, args.dsets, payload['uid'])

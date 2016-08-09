@@ -24,6 +24,14 @@ __JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.di
                          'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
                          'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 
+actions = ['create', 'update', 'close', 'retrieve']
+urls = {
+        'create': 'http://localhost:5001/1/issue/create',
+        'update': 'http://localhost:5001/1/issue/update',
+        'close': 'http://localhost:5001/1/issue/close',
+        'retrieve': 'http://localhost:5001/1/issue/retrieve?uid='
+        }
+
 
 class MultilineFormatter(HelpFormatter):
     """
@@ -78,8 +86,6 @@ def init_logging(logdir, level='INFO'):
                       'DEBUG': logging.DEBUG,
                       'NOTSET': logging.NOTSET}
     logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
-    logging.getLogger("github3").setLevel(logging.CRITICAL)  # Disables logging message from github3 library
-    logging.getLogger("esgfpid").setLevel(logging.CRITICAL)  # Disables logging message from esgfpid library
     if logdir:
         logfile = 'esgissue-{0}-{1}.log'.format(datetime.now().strftime("%Y%m%d-%H%M%S"),
                                                 os.getpid())
@@ -310,49 +316,6 @@ def _get_datasets(path, file_id):
         return [l.replace("\n", "") for l in fstream.readlines() if l]
 
 
-def create_json(issue, datasets):
-    """
-    This stub stands for the function that will create the json used in a errata ws call.
-    :param issue: path to issue json file.
-    :param datasets: path to dataset text file.
-    :return: issue json including the attribute datasets.
-    """
-
-    pass
-
-
-def create_ws():
-    """
-    creates a create request
-    :return:
-    """
-    pass
-
-
-def update_ws():
-    """
-    creates an update request
-    :return:
-    """
-    pass
-
-
-def close_ws():
-    """
-    creates a close request
-    :return:
-    """
-    pass
-
-
-def retrieve_ws():
-    """
-    creates a retrieve request
-    :return:
-    """
-    pass
-
-
 def validate_schema(json_schema, action):
         """
         Validates ESGF issue template against predefined JSON schema
@@ -397,17 +360,23 @@ def validate_schema(json_schema, action):
         logging.info('Result: SUCCESSFUL')
 
 
-def get_ws_call(url, payload):
+def get_ws_call(action, payload, uid):
     """
     This function builds the url for the outgoing call to the different errata ws.
-    :param url:
-    :param payload:
-    :return:
+    :param payload: payload to be posted
+    :param action: one of the 4 actions: create, update, close, retrieve
+    :param uid: in case of a retrieve call, uid is needed
+    :return: requests call
     """
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    requests.post(url, payload)
-    call = None
-    return call
+    if action not in actions:
+        print('Action is not in allowed actions to be performed via the issue client, please check the docs.')
+        sys.exit(1)
+    if action in ['create', 'update', 'close']:
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        r = requests.post(urls[action], json.dumps(payload), headers)
+    else:
+        r = requests.get(urls[action]+uid)
+    return r
 
 
 def get_file_path(path_to_issues, path_to_dsets, uid):
