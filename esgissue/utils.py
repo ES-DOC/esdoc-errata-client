@@ -408,3 +408,21 @@ def get_ws_call(url, payload):
     requests.post(url, payload)
     call = None
     return call
+
+
+def get_file_path(path_to_issues, path_to_dsets, uid):
+    """
+    Based on the user input, this function returns the destination of the issue and datasets' file.
+    :param path_to_issues: args.issues
+    :param path_to_dsets: args.dsets
+    :param uid: the issue's identifier
+    :return: path_to_issue, path_to_datasets
+    """
+    print(os.path.isdir(path_to_issues), os.path.isdir(path_to_dsets))
+    if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
+        path_to_issues = os.path.join(path_to_issues, 'issue_'+uid+'.json')
+        path_to_dsets = os.path.join(path_to_dsets, 'dset_'+uid+'.txt')
+        return path_to_issues, path_to_dsets
+    else:
+        return path_to_issues, path_to_dsets
+

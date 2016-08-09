@@ -1,22 +1,18 @@
 {
-    "date_closed": "2016-08-02 16:19:57.212337",
-    "date_created": "2016-08-02 16:04:41.256670",
-    "date_updated": "2016-08-02 16:19:57.212337",
-    "description": "This is a new description for testing purposes",
-    "id": "a2b3f27b-3fb1-4551-8ec7-70641d18166a",
-    "institute": "IPSL",
-    "materials": [
-        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_old.jpg",
-        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_new.jpg",
-        "http://errata.ipsl.upmc.fr/static/images_errata/mrro_diff.jpg"
-    ],
-    "models": [
-        "IPSL-CM5A-LR",
-        "IPSL-CM5A-MR"
-    ],
-    "project": "CMIP5",
-    "severity": "high",
-    "title": "Wrong units for variables related to runoff",
-    "url": "http://errata.ipsl.upmc.fr/issue/8",
-    "workflow": "resolved"
+    "dateClosed": "2016-08-02 13:25:43.935914",
+    "dateCreated": "2016-06-05 15:19:18.360602",
+    "dateUpdated": "2016-06-07 15:19:18.360602",
+    "description": "Rocket League is a physics based videogame",
+    "id": 169,
+    "institute": "badc",
+    "materials": "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg,http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg",
+    "project": "cmip6",
+    "rowCreateDate": "2016-07-15 13:19:18.380950",
+    "rowUpdateDate": "2016-08-02 13:25:43.936267",
+    "severity": "low",
+    "state": "closed",
+    "title": "Test issue title - b9c42f6e-cff7-4ad4-9a62-27d0ccbfb14d",
+    "uid": "65f13031-5a25-469b-aecc-85ab9c2ef6d4",
+    "url": "http://websitetest.com/",
+    "workflow": "wontfix"
 }

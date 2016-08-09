@@ -9,7 +9,7 @@
 import uuid
 import argparse
 from issue_handler import ESGFIssue, GitHubIssue
-from utils import MultilineFormatter, split_line, init_logging
+from utils import MultilineFormatter, split_line, init_logging, get_file_path
 from datetime import datetime
 import os
 import sys
@@ -264,7 +264,7 @@ def get_args():
         nargs='?',
         metavar='$PWD/dsets',
         default='{0}/dsets'.format(os.getcwd()),
-        type=argparse.FileType('r'),
+        type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
     return main.parse_args()
@@ -524,24 +524,41 @@ def run():
             print(repr(e))
 
     elif args.command == 'retrieve':
+        url = 'http://localhost:5001/1/issue/retrieve?uid='
+        list_of_ids = args.id
+        # In the case the user is requesting more than one issue
         for directory in [args.issues, args.dsets]:
-            if not os.path.exists(directory):
+            # Added the '.' test to avoid creating directories that are intended to be files.
+            if not os.path.exists(directory) and '.' not in directory:
                 os.makedirs(directory)
-        if args.id:
-            for n in args.id:
-                url = 'http://localhost:5001/1/issue/retrieve?uid='
-                try:
-                    r = requests.get(url+n)
-                    if r.status_code == requests.codes.ok:
-                        payload = r.json()
-                        with open(args.issue, 'w+') as data_file:
-                            data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
-                    else:
-                        print('something went wrong, here is the server response:')
-                        print(r.text)
+            # This tests whether a list of ids is provided with a directory where to dump the retrieved
+            # issues and related datasets.
+        if len(list_of_ids) > 1 and not os.path.isdir(directory):
+            print('For multiple issue retrieval please provide a directory path.')
+            sys.exit(1)
+        # Looping over list of ids provided
+        for n in list_of_ids:
+            print('processing id {}'.format(n))
+            try:
+                r = requests.get(url+n)
+                if r.status_code == requests.codes.ok:
+                    payload = r.json()['issue']
+                    path_to_issue, path_to_dataset = get_file_path(args.issues, args.dsets, payload['uid'])
+                    with open(path_to_dataset, 'w') as dset_file:
+                        if not r.json()['datasets']:
+                            print('The issue {} seems to be affecting no datasets.'.format(payload['uid']))
+                            dset_file.write('No datasets provided with issue.')
+                        for dset in r.json()['datasets']:
+                            print('Now writing this element {}'.format(dset[0]))
+                            dset_file.write(dset[0] + '\n')
+                    with open(path_to_issue, 'w') as data_file:
+                        data_file.write(simplejson.dumps(payload, indent=4, sort_keys=True))
+                else:
+                    print('something went wrong, here is the server response:')
+                    print(r.text)
+            except Exception as e:
+                print(repr(e))
 
-                except Exception as e:
-                    print(repr(e))
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":
