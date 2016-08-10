@@ -43,6 +43,12 @@ __LABELS__ = {'Low': '#e6b8af',
 # Description ratio change
 __RATIO__ = 20
 
+# Fields to remove from retrieved issue
+fields_to_remove = ['rowCreateDate', 'rowUpdateDate', 'state']
+# Fields to modify from retrieved issue
+fields_to_modify = {'dateUpdated': 'date_updated', 'dateCreated': 'date_created', 'dateClosed': 'date_closed'
+                    , 'uid': 'id'}
+
 
 class LocalIssue(object):
     """
@@ -77,16 +83,17 @@ class LocalIssue(object):
             validate(self.json, schema)
         except Exception as e:
             logging.exception(repr(e.message))
-            logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(self.issue_path))
+            logging.exception('Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.format(self.issue_path
+                                                                                                         , 1))
             sys.exit(1)
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.json.get, ['url', 'materials'])))
         if not all(map(test_url, urls)):
-            logging.error('Result: FAILED // URLs cannot be reached')
+            logging.error('Result: FAILED // URLs cannot be reached, error code {}'.format(2))
             sys.exit(1)
         # Validate the datasets list against the dataset id pattern
         if not all(map(test_pattern, self.json['datasets'])):
-            logging.error('Result: FAILED // Dataset IDs have invalid format')
+            logging.error('Result: FAILED // Dataset IDs have invalid format, error code: {}'.format(3))
             sys.exit(1)
         logging.info('Result: SUCCESSFUL')
 
@@ -105,8 +112,8 @@ class LocalIssue(object):
                 self.json['date_updated'] = r.json()['dateUpdated']
                 logging.info('Issue json schema has been updated, persisting in file...')
             else:
-                logging.error('Errata service rejected the request for the following reasons: {}'.format(
-                                                                                                r.json()['message']))
+                logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
+                              .format(r.json()['message']), 4)
                 sys.exit(1)
             with open(self.issue_path, 'w') as issue_file:
                 if 'datasets' in self.json.keys():
@@ -119,7 +126,7 @@ class LocalIssue(object):
                 issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue file has been created successfully!')
         except Exception as e:
-            logging.error('An error occurred {}'.format(repr(e)))
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
 
     def update(self):
         """
@@ -141,11 +148,11 @@ class LocalIssue(object):
                     data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue has been updated successfully!')
             else:
-                logging.error('Errata service rejected the request for the following reasons: {}'.format(
-                                                                                                r.json()['message']))
+                logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
+                              .format(r.json()['message']), 4)
                 sys.exit(1)
         except Exception as e:
-            logging.error('An error occurred {}'.format(repr(e)))
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
 
     def close(self):
         """
@@ -166,10 +173,10 @@ class LocalIssue(object):
                     data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue has been closed successfully!')
             else:
-                logging.error('Errata service rejected the request for the following reasons: {}'.format(
-                                                                                                r.json()['message']))
+                logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
+                              .format(r.json()['message']), 4)
         except Exception as e:
-            logging.error('An error occurred {}'.format(repr(e)))
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
 
     def retrieve(self, n, issues, dsets):
         """
@@ -189,6 +196,17 @@ class LocalIssue(object):
                 self.json['datasets'] = []
             self.validate('retrieve')
             path_to_issue, path_to_dataset = get_file_path(issues, dsets, self.json['uid'])
+            # Todo find a better fix
+            for key in fields_to_remove:
+                del self.json[key]
+            for key, value in fields_to_modify.iteritems():
+                self.json[value] = self.json[key]
+                del self.json[key]
+            # Todo raise this issue of non existence of Models field in the db
+            if 'models' not in self.json.keys():
+                self.json['models'] = []
+            # Todo investigate a better fix than this.
+            self.json['project'] = self.json['project'].upper()
             with open(path_to_dataset, 'w') as dset_file:
                 if not r.json()['datasets']:
                     logging.info('The issue {} seems to be affecting no datasets.'.format(self.json['uid']))
@@ -200,7 +218,8 @@ class LocalIssue(object):
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
 
         except Exception as e:
-            logging.error('An error occurred {}'.format(repr(e)))
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
+
 
 
 

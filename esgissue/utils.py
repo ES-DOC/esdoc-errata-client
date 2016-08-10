@@ -16,7 +16,6 @@ from argparse import HelpFormatter
 import datetime
 import json
 import requests
-from jsonschema import validate
 __JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                          'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
                          'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -96,6 +95,7 @@ def init_logging(logdir, level='INFO'):
         logging.basicConfig(level=__LOG_LEVELS__[level],
                             format='%(asctime)s %(levelname)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
+
 
 def test_url(url):
     """
@@ -183,45 +183,6 @@ def _get_datasets(dataset_file):
     return dsets
 
 
-def validate_schema(json_schema, action):
-        """
-        Validates ESGF issue template against predefined JSON schema
-
-        :param str action: The issue action/command
-        :param list json_schema: the json to be validated.
-        :raises Error: If the template has an invalid JSON schema
-        :raises Error: If the project option does not exist in esg.ini
-        :raises Error: If the description is already published on GitHub
-        :raises Error: If the landing page or materials urls cannot be reached
-        :raises Error: If dataset ids are malformed
-
-        """
-        logging.info('Validation of template {0}'.format(json_schema['uid']))
-        # Load JSON schema for issue template
-        with open(__JSON_SCHEMA_PATHS__[action]) as f:
-            schema = json.load(f)
-        # Validate issue attributes against JSON issue schema
-        try:
-            validate(json_schema, schema)
-        except Exception as e:
-            logging.exception(repr(e.message))
-            logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(json_schema['uid']))
-            sys.exit(1)
-
-        # TODO TEST URLS FOR URL AND MATERIALS ENTRY.
-        # Test landing page and materials URLs
-        # urls = filter(None, traverse(map(self.attributes.get, ['url', 'materials'])))
-        # if not all(map(test_url, urls)):
-        #     logging.error('Result: FAILED // URLs cannot be reached')
-        #     sys.exit(1)
-        # Validate the datasets list against the dataset id pattern
-
-        if not all(map(test_pattern, json_schema['datasets'])):
-            logging.error('Result: FAILED // Dataset IDs have invalid format')
-            sys.exit(1)
-        logging.info('Result: SUCCESSFUL')
-
-
 def get_ws_call(action, payload, uid):
     """
     This function builds the url for the outgoing call to the different errata ws.
@@ -231,7 +192,7 @@ def get_ws_call(action, payload, uid):
     :return: requests call
     """
     if action not in actions:
-        print('Action is not in allowed actions to be performed via the issue client, please check the docs.')
+        logging.error('Unrecognized command, refer to the docs for help or use -h, error code: {}.'.format(6))
         sys.exit(1)
     if action in ['create', 'update', 'close']:
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -239,8 +200,8 @@ def get_ws_call(action, payload, uid):
     else:
         r = requests.get(urls[action]+uid)
     if r.status_code != requests.codes.ok:
-        logging.warn('Create ws call has failed, please refer to the error text for further information: ')
-        logging.warn(r.text)
+        logging.error('Errata WS call has failed, please refer to the error text for further information: {0}'
+                      ', error code: {1}'.format(r.text, 5))
         sys.exit(1)
     return r
 

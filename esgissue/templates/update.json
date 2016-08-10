@@ -29,7 +29,9 @@
     "minLength": 1,
     "enum": [
       "CMIP5",
-      "CMIP6"
+      "CMIP6",
+      "cmip6",
+      "cmip5"
     ]
   },
   "institute": {

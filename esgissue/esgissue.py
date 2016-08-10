@@ -8,12 +8,10 @@
 # Module imports
 from uuid import uuid4
 import argparse
-from utils import MultilineFormatter, init_logging, get_file_path, get_ws_call, _get_datasets, _get_issue
+from utils import MultilineFormatter, init_logging, _get_datasets, _get_issue
 from datetime import datetime
 import os
 import sys
-import simplejson
-import requests
 from issue_handler import LocalIssue
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
@@ -74,21 +72,13 @@ def get_args():
     # Parent parser with common arguments #
     #######################################
     parent = argparse.ArgumentParser(add_help=False)
-    # parent.add_argument(
-    #     '-i',
-    #     metavar='/esg/config/esgcet/.',
-    #     type=str,
-    #     default='/esg/config/esgcet/.',
-    #     help="""Initialization/configuration directory containing "esg.ini"|n
-    #         and "esg.<project>.ini" files. If not specified, the usual|n
-    #         datanode directory is used.""")
-    # parent.add_argument(
-    #     '--log',
-    #     metavar='$PWD',
-    #     type=str,
-    #     const=os.getcwd(),
-    #     nargs='?',
-    #     help="""Logfile directory. If not, standard output is used.""")
+    parent.add_argument(
+        '--log',
+        metavar='$PWD',
+        type=str,
+        const=os.getcwd(),
+        nargs='?',
+        help="""Logfile directory. If not, standard output is used.""")
     parent.add_argument(
         '-v',
         action='store_true',
@@ -302,15 +292,15 @@ def run():
     # Get command-line arguments
     args = get_args()
     # init logging
-    # if args.v and args.log is not None:
-    #     init_logging(args.log, level='DEBUG')
-    # elif args.log is not None:
-    #     init_logging(args.log)
-    # else:
-    #     init_logging(None)
-    init_logging(None)
-    # Run command
+    if args.v and args.log is not None:
+        init_logging(args.log, level='DEBUG')
+    elif args.log is not None:
+        init_logging(args.log)
+    else:
+        init_logging(None)
 
+    # Run command
+    # Retrieve command has a slightly different behavior from the rest so it's singled out
     if args.command != 'retrieve':
         issue_file = _get_issue(args.issue)
         dataset_file = _get_datasets(args.dsets)
