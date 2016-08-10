@@ -3,6 +3,10 @@
 "title": "ESGF issue JSON schema",
 "type": "object",
 "properties": {
+  "id": {
+    "type": "string",
+    "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+  },
   "title": {
     "type": "string",
     "minLength": 1
@@ -14,15 +18,19 @@
   "severity": {
     "type": "string",
     "enum": [
-      "Low",
-      "Medium",
-      "High",
-      "Critical"
+      "low",
+      "medium",
+      "high",
+      "critical"
     ]
   },
   "project": {
     "type": "string",
-    "minLength": 1
+    "minLength": 1,
+    "enum": [
+      "CMIP5",
+      "CMIP6"
+    ]
   },
   "institute": {
     "type": "string",
@@ -47,14 +55,32 @@
       "type": "string",
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
+  },
+  "datasets":{ "items": {
+      "minLength": 1,
+      "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+  },
+  "workflow": {
+    "type": "string",
+    "enum": [
+      "new",
+      "on hold",
+      "wontfix",
+      "resolved"
+    ]
   }
 },
+
 "additionalProperties": false,
 "required": [
   "title",
   "description",
   "severity",
   "project",
-  "models"
+  "models",
+  "datasets"
 ]
 }

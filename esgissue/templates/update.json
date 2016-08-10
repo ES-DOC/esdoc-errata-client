@@ -3,10 +3,6 @@
 "title": "ESGF issue JSON schema",
 "type": "object",
 "properties": {
-  "number": {
-    "type": "integer",
-    "minimum": 0
-  },
   "id": {
     "type": "string",
     "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
@@ -22,15 +18,19 @@
   "severity": {
     "type": "string",
     "enum": [
-      "Low",
-      "Medium",
-      "High",
-      "Critical"
+      "low",
+      "medium",
+      "high",
+      "critical"
     ]
   },
   "project": {
     "type": "string",
-    "minLength": 1
+    "minLength": 1,
+    "enum": [
+      "CMIP5",
+      "CMIP6"
+    ]
   },
   "institute": {
     "type": "string",
@@ -46,7 +46,7 @@
   },
   "url": {
     "type": "string",
-    "minLength": 1
+    "minLength": 0
   },
   "materials": {
     "type": "array",
@@ -59,24 +59,34 @@
   "workflow": {
     "type": "string",
     "enum": [
-      "New",
-      "On hold",
-      "Wontfix",
-      "Resolved"
+      "new",
+      "on hold",
+      "wontfix",
+      "resolved"
     ]
   },
-  "created_at": {
+  "date_created": {
     "type": "string",
     "format": "date-time"
   },
-  "last_updated_at": {
+  "date_updated": {
     "type": "string",
     "format": "date-time"
+  },
+  "date_closed": {
+    "type": "string",
+    "format": "date-time"
+  },
+  "datasets":{ "items": {
+      "minLength": 1,
+      "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
   }
 },
 "additionalProperties": false,
 "required": [
-  "number",
   "id",
   "title",
   "description",
@@ -84,7 +94,7 @@
   "project",
   "models",
   "workflow",
-  "created_at",
-  "last_updated_at"
+  "date_updated",
+  "datasets"
 ]
 }

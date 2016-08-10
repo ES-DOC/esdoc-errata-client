@@ -11,9 +11,7 @@ import re
 import sys
 import logging
 import string
-import ConfigParser
 import textwrap
-from collections import OrderedDict
 from argparse import HelpFormatter
 import datetime
 import json
@@ -87,8 +85,7 @@ def init_logging(logdir, level='INFO'):
                       'NOTSET': logging.NOTSET}
     logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
     if logdir:
-        logfile = 'esgissue-{0}-{1}.log'.format(datetime.now().strftime("%Y%m%d-%H%M%S"),
-                                                os.getpid())
+        logfile = 'esgissue-{0}-{1}.log'.format(datetime.now().strftime("%Y%m%d-%H%M%S"), os.getpid())
         if not os.path.isdir(logdir):
             os.makedirs(logdir)
         logging.basicConfig(filename=os.path.join(logdir, logfile),
@@ -99,127 +96,6 @@ def init_logging(logdir, level='INFO'):
         logging.basicConfig(level=__LOG_LEVELS__[level],
                             format='%(asctime)s %(levelname)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
-
-
-class MyOrderedDict(OrderedDict):
-    """
-    OrderedDict instance with prepend method to add key as first.
-
-    """
-    def prepend(self, key, value, dict_setitem=dict.__setitem__):
-
-        root = self._OrderedDict__root
-        first = root[1]
-
-        if key in self:
-            link = self._OrderedDict__map[key]
-            link_prev, link_next, _ = link
-            link_prev[1] = link_next
-            link_next[0] = link_prev
-            link[0] = root
-            link[1] = first
-            root[1] = first[0] = link
-        else:
-            root[1] = first[0] = self._OrderedDict__map[key] = [root, first, key]
-            dict_setitem(self, key, value)
-
-    def convert_dict(self):
-        pass
-
-
-class DictDiff(object):
-    """
-    Returns the difference between two dictionaries as:
-     * keys added,
-     * keys removed,
-     * changed keys,
-     * unchanged keys.
-
-    :param dict old_dict: The first/old dictionary
-    :param dict old_dict: The last/new dictionary to compare with
-    :returns: Lists of keys
-    :rtype: *list*
-
-    """
-    def __init__(self, old_dict, new_dict):
-        self.new_dict, self.old_dict = new_dict, old_dict
-        self.new_keys, self.old_keys = [set(d.keys()) for d in (new_dict, old_dict)]
-        self.intersect = self.new_keys.intersection(self.old_keys)
-
-    def added(self):
-        return self.new_keys.difference(self.intersect)
-
-    def removed(self):
-        return self.old_keys.difference(self.intersect)
-
-    def changed(self):
-        return set(item for item in self.intersect
-                   if self.old_dict[item] != self.new_dict[item])
-
-    def unchanged(self):
-        return set(item for item in self.intersect
-                   if self.old_dict[item] == self.new_dict[item])
-
-
-class ListDiff(object):
-    """
-    Returns the difference between two lists as:
-     * items added,
-     * items removed.
-
-    :param list old_list: The first/old list
-    :param list new_list: The last/new list to compare with
-    :returns: Lists of items
-    :rtype: *list*
-
-    """
-    def __init__(self, old_list, new_list):
-        self.new_list, self.old_list = set(new_list), set(old_list)
-        self.intersect = self.new_list.intersection(self.old_list)
-
-    def added(self):
-        return self.new_list.difference(self.intersect)
-
-    def removed(self):
-        return self.old_list.difference(self.intersect)
-
-
-def config_parse(config_dir):
-    """
-    Parses the configuration file if exists. Tests if required options are declared.
-
-    :param str config_dir: The absolute or relative path of the configuration file directory
-    :returns: The configuration file parser
-    :rtype: *dict*
-    :raises Error: If no configuration file exists
-    :raises Error: If sections are missing
-    :raises Error: If options are missing
-    :raises Error: If the configuration file parsing fails
-
-    """
-    __CONFIG_SCHEMA__ = {'issues': ['gh_login',
-                                    'gh_password',
-                                    'gh_team',
-                                    'gh_repo',
-                                    'prefix',
-                                    'url_messaging_service',
-                                    'messaging_exchange',
-                                    'rabbit_username',
-                                    'rabbit_password']}
-    if not os.path.isfile('{0}/esg.ini'.format(os.path.normpath(config_dir))):
-        raise Exception('"esg.ini" file not found')
-    cfg = ConfigParser.ConfigParser()
-    cfg.read('{0}/esg.ini'.format(os.path.normpath(config_dir)))
-    if not cfg:
-        raise Exception('Configuration file parsing failed')
-    for section in __CONFIG_SCHEMA__:
-        if not cfg.has_section(section):
-            raise Exception('No "{0}" section found in "esg.ini"'.format(section))
-        for option in __CONFIG_SCHEMA__[section]:
-            if not cfg.has_option(section, option):
-                raise Exception('"{0}" option is missing in section "{1}" of "esg.ini"'.format(option, section))
-    return cfg
-
 
 def test_url(url):
     """
@@ -293,27 +169,18 @@ def _get_issue(path):
     """reads json file containing issue from path to file.
 
     """
-    with open(path, 'r') as file_stream:
-        return json.loads(file_stream.read())
+    with open(path, 'r') as data_file:
+        return json.load(data_file)
 
 
-def _get_datasets(path, file_id):
+def _get_datasets(dataset_file):
     """Returns test affected  datasets by a given issue from the respective txt file.
 
     """
-    # Derive path to datasets list file.
-    for fext in {"list", "txt"}:
-        fpath = "{0}/dsets/dsets-{1}.{2}".format(path, file_id, fext)
-        if os.path.isfile(fpath):
-            break
-
-    # Error if not found.
-    if not os.path.isfile(fpath):
-        raise ValueError("Datasets list file not found: {}".format(file_id))
-
-    # Return set of dataset identifiers.
-    with open(fpath, 'r') as fstream:
-        return [l.replace("\n", "") for l in fstream.readlines() if l]
+    dsets = list()
+    for dset in dataset_file:
+        dsets.append(unicode(dset.strip(' \n\r\t')))
+    return dsets
 
 
 def validate_schema(json_schema, action):
@@ -340,11 +207,6 @@ def validate_schema(json_schema, action):
             logging.exception(repr(e.message))
             logging.exception('Result: FAILED // {0} has an invalid JSON schema'.format(json_schema['uid']))
             sys.exit(1)
-        # Test if project is declared in esg.ini
-        # if not self.attributes['project'] in projects:
-        #     logging.error('Result: FAILED // Project should be one of {0}'.format(projects))
-        #     logging.debug('Local "{0}" -> "{1}"'.format('project', self.attributes['project']))
-        #     sys.exit(1)
 
         # TODO TEST URLS FOR URL AND MATERIALS ENTRY.
         # Test landing page and materials URLs
@@ -376,6 +238,10 @@ def get_ws_call(action, payload, uid):
         r = requests.post(urls[action], json.dumps(payload), headers)
     else:
         r = requests.get(urls[action]+uid)
+    if r.status_code != requests.codes.ok:
+        logging.warn('Create ws call has failed, please refer to the error text for further information: ')
+        logging.warn(r.text)
+        sys.exit(1)
     return r
 
 
@@ -387,11 +253,12 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-    print(os.path.isdir(path_to_issues), os.path.isdir(path_to_dsets))
     if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
         path_to_issues = os.path.join(path_to_issues, 'issue_'+uid+'.json')
         path_to_dsets = os.path.join(path_to_dsets, 'dset_'+uid+'.txt')
         return path_to_issues, path_to_dsets
     else:
         return path_to_issues, path_to_dsets
+
+
 
