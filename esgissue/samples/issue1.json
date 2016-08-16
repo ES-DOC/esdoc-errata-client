@@ -1,0 +1,20 @@
+{
+    "date_created": "2016-08-10 15:59:19.618197",
+    "date_updated": "2016-08-10 16:45:26.808069",
+    "description": "Testing the new architecture number 312...",
+    "id": "b7f8ec38-1824-4ec6-8af6-bcf9820f71a9",
+    "institute": "badc",
+    "materials": [
+        "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+        "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+    ],
+    "models": [
+        "IPSL-CM5A-LR",
+        "IPSL-CM5A-MR"
+    ],
+    "project": "CMIP6",
+    "severity": "high",
+    "title": "Test issue title - b9c42f6e-cff7-4ad4-9a62-27d0ccbfb14d",
+    "url": "http://websitetest.com/",
+    "workflow": "wontfix"
+}

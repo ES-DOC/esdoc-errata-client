@@ -1,0 +1,7 @@
+bs4
+jsonschema
+fuzzywuzzy
+requests
+esgfpid
+wheezy.template
+python-Levenshtein

@@ -1,0 +1,16 @@
+{
+"title": "Seasonal term is missing in carbon fluxes",
+"description": "The fVegLitter variable corresponds to the carbon flux from vegetation to litter. This variable only takes into account the term TOTAL_BM_LITTER and has to be completed adding the seasonal term TOTAL_TURN.",
+"project": "CMIP5",
+"institute": "IPSL",
+"models": [
+"IPSL-CM5A-MR"
+],
+"severity": "High",
+"url": "http://errata.ipsl.upmc.fr/issue/18",
+"materials": [
+"http://errata.ipsl.upmc.fr/static/images_errata/fveglitter_old.jpg",
+"http://errata.ipsl.upmc.fr/static/images_errata/fveglitter_new.jpg",
+"http://errata.ipsl.upmc.fr/static/images_errata/fveglitter_diff.jpg"
+]
+}
