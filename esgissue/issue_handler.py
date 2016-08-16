@@ -14,7 +14,7 @@ import sys
 import logging
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path
 from json import load
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 import simplejson
 import datetime
 
@@ -56,6 +56,7 @@ class LocalIssue(object):
     """
     def __init__(self, issue_json, dset_list, issue_path, dataset_path, action):
         self.action = action
+
         if issue_json is not None:
             self.json = issue_json
             self.json['datasets'] = dset_list
@@ -81,6 +82,13 @@ class LocalIssue(object):
         # Validate issue attributes against JSON issue schema
         try:
             validate(self.json, schema)
+        except ValidationError as ve:
+            logging.exception('Validation has encountered an issue, error stack {}'.format(ve.message), 6)
+            logging.exception('The value that has caused this behavior is {0}, picked up by the validator {1}'.format(
+                ve.validator_value, ve.validator))
+            sys.exit(6)
+        except ValueError as e:
+            logging.exception(e.message)
         except Exception as e:
             logging.exception(repr(e.message))
             logging.exception('Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.format(self.issue_path
@@ -113,7 +121,7 @@ class LocalIssue(object):
                 logging.info('Issue json schema has been updated, persisting in file...')
             else:
                 logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
-                              .format(r.json()['message']), 4)
+                              .format(r.json()['message'], 4))
                 sys.exit(1)
             with open(self.issue_path, 'w') as issue_file:
                 if 'datasets' in self.json.keys():
@@ -126,7 +134,7 @@ class LocalIssue(object):
                 issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue file has been created successfully!')
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
     def update(self):
         """
@@ -138,7 +146,7 @@ class LocalIssue(object):
             r = get_ws_call(self.action, self.json, None)
             if r.json()['status'] == 0:
                 # TODO fix ws return to ensure the value is not null
-                if 'dateUpdated' in r.json().keys():
+                if 'dateUpdated' in r.json().keys() and r.json()['dateUpdated'] is not None:
                     self.json['date_updated'] = r.json()['dateUpdated']
                 else:
                     self.json['date_updated'] = datetime.datetime.utcnow
@@ -149,10 +157,10 @@ class LocalIssue(object):
                 logging.info('Issue has been updated successfully!')
             else:
                 logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
-                              .format(r.json()['message']), 4)
+                              .format(r.json()['message'], 4))
                 sys.exit(1)
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
     def close(self):
         """
@@ -174,9 +182,9 @@ class LocalIssue(object):
                 logging.info('Issue has been closed successfully!')
             else:
                 logging.error('Errata service rejected the request for the following reasons: {0}, error code: {1}'
-                              .format(r.json()['message']), 4)
+                              .format(r.json()['message'], 4))
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
     def retrieve(self, n, issues, dsets):
         """
@@ -195,30 +203,46 @@ class LocalIssue(object):
             else:
                 self.json['datasets'] = []
             self.validate('retrieve')
+            del self.json['datasets']
             path_to_issue, path_to_dataset = get_file_path(issues, dsets, self.json['uid'])
             # Todo find a better fix
             for key in fields_to_remove:
                 del self.json[key]
+
+            # Modifying keys to keep a constant naming schema.
             for key, value in fields_to_modify.iteritems():
                 self.json[value] = self.json[key]
                 del self.json[key]
+
+            # Removing the closing date to avoid having null value for currently active issues.
+            if 'date_closed' in self.json.keys() and self.json['date_closed'] is None:
+                del self.json['date_closed']
+
+            # Fix models from string to list
+            if 'models' in self.json.keys() and self.json['models'] is not None:
+                models = self.json['models']
+                models = models.replace('{', '')
+                models = models.replace('}', '')
+                models = models.split(',')
+                self.json['models'] = models
             # Todo raise this issue of non existence of Models field in the db
             if 'models' not in self.json.keys():
                 self.json['models'] = []
             # Todo investigate a better fix than this.
             self.json['project'] = self.json['project'].upper()
+            # Writing dataset file
             with open(path_to_dataset, 'w') as dset_file:
                 if not r.json()['datasets']:
                     logging.info('The issue {} seems to be affecting no datasets.'.format(self.json['uid']))
                     dset_file.write('No datasets provided with issue.')
                 for dset in r.json()['datasets']:
-                    logging.info('Now writing this element {}'.format(dset[0]))
                     dset_file.write(dset[0] + '\n')
+            # Writing issue file.
             with open(path_to_issue, 'w') as data_file:
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
 
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e)), 99)
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
 
 

@@ -62,7 +62,7 @@
     "type": "string",
     "enum": [
       "new",
-      "on hold",
+      "onhold",
       "wontfix",
       "resolved"
     ]
