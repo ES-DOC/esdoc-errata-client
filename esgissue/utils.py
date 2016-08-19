@@ -10,24 +10,14 @@ import os
 import re
 import sys
 import logging
-import string
 import textwrap
 from argparse import HelpFormatter
 import datetime
 import json
 import requests
-__JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
+from ConfigParser import ConfigParser
 
 actions = ['create', 'update', 'close', 'retrieve']
-urls = {
-        'create': 'http://localhost:5001/1/issue/create',
-        'update': 'http://localhost:5001/1/issue/update',
-        'close': 'http://localhost:5001/1/issue/close',
-        'retrieve': 'http://localhost:5001/1/issue/retrieve?uid='
-        }
 
 
 class MultilineFormatter(HelpFormatter):
@@ -84,7 +74,7 @@ def init_logging(logdir, level='INFO'):
                       'NOTSET': logging.NOTSET}
     logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
     if logdir:
-        logfile = 'esgissue-{0}-{1}.log'.format(datetime.now().strftime("%Y%m%d-%H%M%S"), os.getpid())
+        logfile = 'esgissue-{0}-{1}.log'.format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"), os.getpid())
         if not os.path.isdir(logdir):
             os.makedirs(logdir)
         logging.basicConfig(filename=os.path.join(logdir, logfile),
@@ -110,10 +100,10 @@ def test_url(url):
     try:
         r = requests.head(url)
         if r.status_code != requests.codes.ok:
-            logging.debug('{0}: {1}'.format(r.status_code, url))
+            logging.debug('The url {0} is invalid, HTTP response: {1}'.format(url, r.status_code))
         return r.status_code == requests.codes.ok
-    except:
-        logging.exception('Result: FAILED // Bad HTTP request')
+    except Exception as e:
+        logging.exception('Validation Result: FAILED // Bad HTTP request: {}'.format(repr(e)))
         sys.exit(1)
 
 
@@ -152,19 +142,6 @@ def traverse(l, tree_types=(list, tuple)):
         yield l
 
 
-def split_line(line, sep='|'):
-    """
-    Split a line into fields removing trailing and leading characters.
-
-    :param str line: String line to split
-    :param str sep: Separator character
-    :returns:  A list of string fields
-
-    """
-    fields = map(string.strip, line.split(sep))
-    return fields
-
-
 def _get_issue(path):
     """reads json file containing issue from path to file.
 
@@ -191,14 +168,21 @@ def get_ws_call(action, payload, uid):
     :param uid: in case of a retrieve call, uid is needed
     :return: requests call
     """
+    config = ConfigParser()
+    # config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
+    config.read(os.path.join('/home/abennasser/Bureau/esgfissue_client/esgf-issue-manager', 'esgf-client.ini'))
     if action not in actions:
         logging.error('Unrecognized command, refer to the docs for help or use -h, error code: {}.'.format(6))
         sys.exit(1)
-    if action in ['create', 'update', 'close']:
+
+    url = config.get('WebService', 'url_base')+config.get('WebService', action)
+    if action in ['create', 'update']:
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(urls[action], json.dumps(payload), headers)
+        r = requests.post(url, json.dumps(payload), headers=headers)
+    elif action == 'close':
+        r = requests.post(url+uid)
     else:
-        r = requests.get(urls[action]+uid)
+        r = requests.get(url+uid)
     if r.status_code != requests.codes.ok:
         logging.error('Errata WS call has failed, please refer to the error text for further information: {0}'
                       ', error code: {1}'.format(r.text, 5))
@@ -220,6 +204,3 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
         return path_to_issues, path_to_dsets
     else:
         return path_to_issues, path_to_dsets
-
-
-

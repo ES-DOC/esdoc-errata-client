@@ -3,7 +3,7 @@
 "title": "ESGF issue JSON schema",
 "type": "object",
 "properties": {
-  "id": {
+  "uid": {
     "type": "string",
     "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
   },
@@ -28,8 +28,8 @@
     "type": "string",
     "minLength": 1,
     "enum": [
-      "CMIP5",
-      "CMIP6"
+      "cmip5",
+      "cmip6"
     ]
   },
   "institute": {
@@ -63,11 +63,15 @@
       "type": "array",
       "uniqueItems": true
   },
+  "dateCreated": {
+            "type": "string",
+            "format": "date-time"
+  },
   "workflow": {
     "type": "string",
     "enum": [
       "new",
-      "on hold",
+      "onhold",
       "wontfix",
       "resolved"
     ]
@@ -76,6 +80,7 @@
 
 "additionalProperties": false,
 "required": [
+  "dateCreated",
   "title",
   "description",
   "severity",

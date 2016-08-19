@@ -61,7 +61,7 @@
         "workflow": {
             "enum": [
                 "new",
-                "on hold",
+                "onhold",
                 "wontfix",
                 "resolved"
             ],

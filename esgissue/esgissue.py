@@ -266,8 +266,9 @@ def process_command(command, issue_file, dataset_file, issue_path, dataset_path)
     else:
         dsets = None
     if command == 'create':
-        payload['id'] = str(uuid4())
+        payload['uid'] = str(uuid4())
         payload['workflow'] = unicode('new')
+        payload['dateCreated'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     local_issue = LocalIssue(payload, dsets, issue_path, dataset_path, command)
     local_issue.validate(command)
     if command == 'create':
@@ -304,6 +305,7 @@ def run():
     if args.command != 'retrieve':
         issue_file = _get_issue(args.issue)
         dataset_file = _get_datasets(args.dsets)
+        print(args.issue, issue_file)
         process_command(args.command, issue_file, dataset_file, args.issue, args.dsets)
 
     elif args.command == 'retrieve':

@@ -3,7 +3,7 @@
 "title": "ESGF issue JSON schema",
 "type": "object",
 "properties": {
-  "id": {
+  "uid": {
     "type": "string",
     "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
   },
@@ -67,15 +67,15 @@
       "resolved"
     ]
   },
-  "date_created": {
+  "dateCreated": {
     "type": "string",
     "format": "date-time"
   },
-  "date_updated": {
+  "dateUpdated": {
     "type": "string",
     "format": "date-time"
   },
-  "date_closed": {
+  "dateClosed": {
     "type": "string",
     "format": "date-time"
   },
@@ -89,14 +89,14 @@
 },
 "additionalProperties": false,
 "required": [
-  "id",
+  "uid",
   "title",
   "description",
   "severity",
   "project",
   "models",
   "workflow",
-  "date_updated",
+  "dateUpdated",
   "datasets"
 ]
 }

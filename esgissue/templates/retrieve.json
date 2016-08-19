@@ -64,7 +64,7 @@
 },
 "additionalProperties": true,
 "required": [
-  "id",
+  "uid",
   "title",
   "description",
   "severity",

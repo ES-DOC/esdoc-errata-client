@@ -1,6 +1,7 @@
 {
+    "dateClosed": "2016-08-19 16:22:41",
     "dateCreated": "2016-08-19 14:14:15",
-    "dateUpdated": "2016-08-19 14:19:25",
+    "dateUpdated": "2016-08-19 16:22:41",
     "description": "Testing the new architecture number 1...",
     "institute": "badc",
     "materials": [
@@ -8,8 +9,7 @@
         "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
     ],
     "models": [
-        "IPSL-CM5A-LR",
-        "IPSL-CM5A-MR"
+        "IPSL-CM5A-LR"
     ],
     "project": "cmip5",
     "severity": "medium",

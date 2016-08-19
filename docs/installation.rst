@@ -68,5 +68,3 @@ environment includes:
  * *esgfpid*
  * `bs4 <https://www.crummy.com/software/BeautifulSoup/bs4/doc/>`_
  * `jsonschema <https://pypi.python.org/pypi/jsonschema>`_
- * `wheezy <https://pythonhosted.org/wheezy.web/>`_
- * `fuzzywuzzy <https://pypi.python.org/pypi/fuzzywuzzy>`_
