@@ -1,0 +1,21 @@
+{
+    "dateClosed": "2016-08-22 12:59:41.786122",
+    "dateCreated": "2016-08-22 10:04:29",
+    "dateUpdated": "2016-08-22 13:07:13",
+    "description": "This is a test description, void of meaning.",
+    "institute": "badc",
+    "materials": [
+        "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+        "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+    ],
+    "models": [
+        "IPSL-CM5A-LR",
+        "IPSL-CM5A-MR"
+    ],
+    "project": "cmip5",
+    "severity": "high",
+    "title": "Test issue title - b9c42f6e-cff7-4ad4-9a62-27d0ccbfb14d",
+    "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
+    "url": "http://websitetest.com/",
+    "workflow": "resolved"
+}
