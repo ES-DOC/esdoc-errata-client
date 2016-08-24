@@ -142,17 +142,17 @@ def traverse(l, tree_types=(list, tuple)):
         yield l
 
 
-def _get_issue(path):
+def get_issue(path):
     """reads json file containing issue from path to file.
-
+    :param path: issue json file
     """
     with open(path, 'r') as data_file:
         return json.load(data_file)
 
 
-def _get_datasets(dataset_file):
+def get_datasets(dataset_file):
     """Returns test affected  datasets by a given issue from the respective txt file.
-
+    :param dataset_file: txt file
     """
     dsets = list()
     for dset in dataset_file:

@@ -58,7 +58,7 @@
             "minLength": 1,
             "type": "string"
         },
-        "workflow": {
+        "status": {
             "enum": [
                 "new",
                 "onhold",
@@ -75,7 +75,7 @@
         "severity",
         "project",
         "models",
-        "workflow"
+        "status"
     ],
     "title": "ESGF issue JSON schema",
     "type": "object"

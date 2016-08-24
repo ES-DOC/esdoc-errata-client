@@ -8,7 +8,7 @@
 # Module imports
 from uuid import uuid4
 import argparse
-from utils import MultilineFormatter, init_logging, _get_datasets, _get_issue
+from utils import MultilineFormatter, init_logging, get_datasets, get_issue
 from datetime import datetime
 import os
 import sys
@@ -31,13 +31,14 @@ def get_args():
     __DSETS_HELP__ = """Required path of the affected dataset IDs list."""
     main = argparse.ArgumentParser(
         prog='esgissue',
-        description="""The publication workflow on the ESGF nodes requires to deal with errata issues.
+        description="""
+                    The publication workflow on the ESGF nodes requires to deal with errata issues.
                     The background of the version changes has to be published alongside the data: what was updated,
                     retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
                     be motivated by an issue.|n|n
 
                     "esgissue" allows the referenced data providers to easily create, document, update, close or remove
-                    a validated issue. "esgissue" relies on the GitHub API v3 to deal with private repositories.|n|n
+                    a validated issue.
 
                     The issue registration always appears prior to the publication process and should be mandatory
                     for additional version, version removal or retraction.|n|n
@@ -95,26 +96,23 @@ def get_args():
     create = subparsers.add_parser(
         'create',
         prog='esgissue create',
-        description=""""esgissue create" registers one or several issues on a defined GitHub repository. The data
+        description=""""esgissue create" registers one or several issues on a defined errata repository. The data
                     provider submits one or several JSON files gathering all issues information with a list of all
                     affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
                     This action returns to the corresponding local JSON template:|n
-                    - the corresponding issue number,|n
                     - the ESGF issue ID (as UUID),|n
                     - the creation date,|n
                     - the last updated date (same as the creation date).|n|n
 
                     The issue registration sets:|n
-                    - the issue status to "New",|n
-                    - the data provider GitHub login as the issue responsible,|n
-                    - the issue format using a fixed HTML schema.|n|n
+                    - the issue status to "new",|n
 
                     SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO REGISTER AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Creates ESGF issues from a JSON template to the GitHub repository.|n
+        help="""Creates ESGF issues from a JSON template to the errata database.|n
                 See "esgissue create -h" for full help.""",
         add_help=False,
         parents=[parent])
@@ -141,17 +139,17 @@ def get_args():
     update = subparsers.add_parser(
         'update',
         prog='esgissue update',
-        description=""""esgissue update" updates one or several issues on a defined GitHub repository. The data
+        description=""""esgissue update" updates one or several issues on a defined errata repository. The data
                     provider submits one or several JSON files gathering all issues information with a list of all
                     affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
-                    This action returns the last updated date to the corresponding local JSON template.|n|n
+                    This action returns the time and date of the update to the corresponding local JSON template.|n|n
 
                     SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO UPDATE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Updates ESGF issues from a JSON template to the GitHub repository.|n
+        help="""Updates ESGF issues from a JSON template to the errata database.|n
                 See "esgissue update -h" for full help.""",
         add_help=False,
         parents=[parent])
@@ -178,18 +176,18 @@ def get_args():
     close = subparsers.add_parser(
         'close',
         prog='esgissue close',
-        description=""""esgissue close" closes one or several issues on a defined GitHub repository. The data
+        description=""""esgissue close" closes one or several issues on a defined errata database. The data
                     provider submits one or several JSON files gathering all issues information with a list of all
                     affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
 
-                    This action returns the date of closure to the corresponding local JSON template (as the same of
-                    the last updated date).|n|n
+                    This action returns the date of closure to the corresponding local JSON template (which is the same
+                    as the date of the last update).|n|n
 
                     SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO CLOSE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Closes ESGF issues on the GitHub repository.|n
+        help="""Closes ESGF issues on the errata repository.|n
                 See "esgissue close -h" for full help.""",
         add_help=False,
         parents=[parent])
@@ -216,7 +214,7 @@ def get_args():
     retrieve = subparsers.add_parser(
         'retrieve',
         prog='esgissue retrieve',
-        description=""""esgissue retrieve" retrieves one or several issues from a defined GitHub repository. The data
+        description=""""esgissue retrieve" retrieves one or several issues from a defined errata repository. The data
                     provider submits one or several issue number he wants to retrieve and optional paths to write
                     them.|n|n
 
@@ -228,7 +226,7 @@ def get_args():
 
                     See "esgissue -h" for global help.""",
         formatter_class=MultilineFormatter,
-        help="""Retrieves ESGF issues from the GitHub repository to a JSON template.|n
+        help="""Retrieves ESGF issues from the errata repository to a JSON template.|n
                 See "esgissue retrieve -h" for full help.""",
         add_help=False,
         parents=[parent])
@@ -240,7 +238,7 @@ def get_args():
         type=str,
         nargs='+',
         default=None,
-        help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all GitHub issues.')
+        help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all errata issues.')
     retrieve.add_argument(
         '--issues',
         nargs='?',
@@ -262,12 +260,12 @@ def get_args():
 def process_command(command, issue_file, dataset_file, issue_path, dataset_path):
     payload = issue_file
     if dataset_file is not None:
-        dsets = _get_datasets(dataset_file)
+        dsets = get_datasets(dataset_file)
     else:
         dsets = None
     if command == 'create':
         payload['uid'] = str(uuid4())
-        payload['workflow'] = unicode('new')
+        payload['status'] = unicode('new')
         payload['dateCreated'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     local_issue = LocalIssue(payload, dsets, issue_path, dataset_path, command)
     local_issue.validate(command)
@@ -285,7 +283,6 @@ def run():
      * Parse command-line arguments,
      * Parse configuration file,
      * Initiates logger,
-     * Check GitHub permissions,
      * Check Handle Service connection,
      * Run the issue action.
 
@@ -303,9 +300,8 @@ def run():
     # Run command
     # Retrieve command has a slightly different behavior from the rest so it's singled out
     if args.command != 'retrieve':
-        issue_file = _get_issue(args.issue)
-        dataset_file = _get_datasets(args.dsets)
-        print(args.issue, issue_file)
+        issue_file = get_issue(args.issue)
+        dataset_file = get_datasets(args.dsets)
         process_command(args.command, issue_file, dataset_file, args.issue, args.dsets)
 
     elif args.command == 'retrieve':

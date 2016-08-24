@@ -44,7 +44,7 @@
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
   },
-  "workflow": {
+  "status": {
     "type": "string",
     "enum": [
       "new",
@@ -69,6 +69,6 @@
   "description",
   "severity",
   "project",
-  "workflow"
+  "status"
 ]
 }

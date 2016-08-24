@@ -58,7 +58,7 @@
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
   },
-  "workflow": {
+  "status": {
     "type": "string",
     "enum": [
       "new",
@@ -83,6 +83,7 @@
       "minLength": 1,
       "type": "string"
       },
+      "minItems": 1,
       "type": "array",
       "uniqueItems": true
   }
@@ -95,7 +96,7 @@
   "severity",
   "project",
   "models",
-  "workflow",
+  "status",
   "dateUpdated",
   "datasets"
 ]

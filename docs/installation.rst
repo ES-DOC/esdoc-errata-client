@@ -66,5 +66,5 @@ environment includes:
 ``esgissue`` requires the following libraries not included in most Python distributions:
 
  * *esgfpid*
- * `bs4 <https://www.crummy.com/software/BeautifulSoup/bs4/doc/>`_
  * `jsonschema <https://pypi.python.org/pypi/jsonschema>`_
+ * `requests <https://pypi.python.org/pypi/requests/2.11.1>`
