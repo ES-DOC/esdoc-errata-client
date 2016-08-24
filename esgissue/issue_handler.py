@@ -25,7 +25,7 @@ __JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.di
                          'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 
 # Fields to remove from retrieved issue
-fields_to_remove = ['state']
+# fields_to_remove = ['state']
 
 
 class LocalIssue(object):
@@ -151,9 +151,6 @@ class LocalIssue(object):
             r = get_ws_call('retrieve', None, n)
             self.json = r.json()['issue']
             path_to_issue, path_to_dataset = get_file_path(issues, dsets, self.json['uid'])
-            # Todo find a better fix
-            for key in fields_to_remove:
-                del self.json[key]
 
             # Removing the closing date to avoid having null value for currently active issues.
             if 'dateClosed' in self.json.keys() and self.json['dateClosed'] is None:
