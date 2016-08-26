@@ -322,9 +322,13 @@ def run():
                 local_issue = LocalIssue(None, None, None, None, args.command)
                 local_issue.retrieve(n, args.issues, args.dsets)
         else:
-            # TODO provide possibility to flush database contents from a dedicated webservice?
-            pass
-
+            # in case the ids were not specified the client proceeds to download the errata issue db.
+            for directory in [args.issues, args.dsets]:
+                if not os.path.isdir(directory):
+                    print('If you wish to download all issues, please provide a directory not a file.')
+                    sys.exit(1)
+            local_issue = LocalIssue(None, None, None, None, args.command)
+            local_issue.retrieve_all(args.issues, args.dsets)
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":

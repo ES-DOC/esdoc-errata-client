@@ -149,29 +149,51 @@ class LocalIssue(object):
         logging.info('processing id {}'.format(n))
         try:
             r = get_ws_call('retrieve', None, n)
-            self.json = r.json()['issue']
-            path_to_issue, path_to_dataset = get_file_path(issues, dsets, self.json['uid'])
-
-            # Removing the closing date to avoid having null value for currently active issues.
-            if 'dateClosed' in self.json.keys() and self.json['dateClosed'] is None:
-                del self.json['dateClosed']
-
-            if 'models' not in self.json.keys():
-                self.json['models'] = []
-            # Writing dataset file
-            with open(path_to_dataset, 'w') as dset_file:
-                if not self.json['datasets']:
-                    logging.info('The issue {} seems to be affecting no datasets.'.format(self.json['uid']))
-                    dset_file.write('No datasets provided with issue.')
-                for dset in self.json['datasets']:
-                    dset_file.write(dset + '\n')
-                del self.json['datasets']
-            # Writing issue file.
-            with open(path_to_issue, 'w') as data_file:
-                data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
-
+            if r.json() is not None:
+                self.dump_issue(r.json()['issue'], issues, dsets)
+                logging.info('Issue has been downloaded.')
+            else:
+                logging.info("Issue id didn't match any issues in the errata db")
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+
+    def retrieve_all(self, issues, dsets):
+        """
+
+        :param issues:
+        :param dsets:
+        :return:
+        """
+        try:
+            print('Calling WS')
+            r = get_ws_call('retrieve_all', None, None)
+            print('Answer received')
+            results = r.json()['issues']
+            for issue in results:
+                self.dump_issue(issue, issues, dsets)
+        except Exception as e:
+            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+
+    @staticmethod
+    def dump_issue(issue, issues, dsets):
+
+        if 'dateClosed' in issue.keys() and issue['dateClosed'] is None:
+            del issue['dateClosed']
+        path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue['uid'])
+        with open(path_to_dataset, 'w') as dset_file:
+            if not issue['datasets']:
+                logging.info('The issue {} seems to be affecting no datasets.'.format(issue['uid']))
+                dset_file.write('No datasets provided with issue.')
+            for dset in issue['datasets']:
+                dset_file.write(dset + '\n')
+            del issue['datasets']
+        with open(path_to_issue, 'w') as data_file:
+            data_file.write(simplejson.dumps(issue, indent=4, sort_keys=True))
+
+
+
+
+
 
 
 

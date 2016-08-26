@@ -17,7 +17,7 @@ import json
 import requests
 from ConfigParser import ConfigParser
 
-actions = ['create', 'update', 'close', 'retrieve']
+actions = ['create', 'update', 'close', 'retrieve', 'retrieve_all']
 
 
 class MultilineFormatter(HelpFormatter):
@@ -181,8 +181,10 @@ def get_ws_call(action, payload, uid):
         r = requests.post(url, json.dumps(payload), headers=headers)
     elif action == 'close':
         r = requests.post(url+uid)
-    else:
+    elif action == 'retrieve':
         r = requests.get(url+uid)
+    else:
+        r = requests.get(url)
     if r.status_code != requests.codes.ok:
         logging.error('Errata WS call has failed, please refer to the error text for further information: {0}'
                       ', error code: {1}'.format(r.text, 5))
