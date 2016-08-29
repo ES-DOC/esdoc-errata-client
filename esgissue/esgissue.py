@@ -6,13 +6,13 @@
 """
 
 # Module imports
-from uuid import uuid4
+import sys
 import argparse
+from uuid import uuid4
 from utils import MultilineFormatter, init_logging, get_datasets, get_issue
 from datetime import datetime
-import os
-import sys
 from issue_handler import LocalIssue
+from constants import *
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
 
@@ -263,17 +263,17 @@ def process_command(command, issue_file, dataset_file, issue_path, dataset_path)
         dsets = get_datasets(dataset_file)
     else:
         dsets = None
-    if command == 'create':
-        payload['uid'] = str(uuid4())
-        payload['status'] = unicode('new')
-        payload['dateCreated'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    if command == CREATE:
+        payload[UID] = str(uuid4())
+        payload[STATUS] = unicode(STATUS_NEW)
+        payload[DATE_CREATED] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     local_issue = LocalIssue(payload, dsets, issue_path, dataset_path, command)
     local_issue.validate(command)
-    if command == 'create':
+    if command == CREATE:
         local_issue.create()
-    elif command == 'update':
+    elif command == UPDATE:
         local_issue.update()
-    elif command == 'close':
+    elif command == CLOSE:
         local_issue.close()
 
 
@@ -297,14 +297,13 @@ def run():
     else:
         init_logging(None)
 
-    # Run command
     # Retrieve command has a slightly different behavior from the rest so it's singled out
-    if args.command != 'retrieve':
+    if args.command != RETRIEVE:
         issue_file = get_issue(args.issue)
         dataset_file = get_datasets(args.dsets)
         process_command(args.command, issue_file, dataset_file, args.issue, args.dsets)
 
-    elif args.command == 'retrieve':
+    elif args.command == RETRIEVE:
         if args.id is not None:
             list_of_ids = args.id
             # In the case the user is requesting more than one issue

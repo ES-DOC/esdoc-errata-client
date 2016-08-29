@@ -6,7 +6,6 @@
 """
 
 # Module imports
-import os
 import re
 import sys
 import logging
@@ -16,8 +15,7 @@ import datetime
 import json
 import requests
 from ConfigParser import ConfigParser
-
-actions = ['create', 'update', 'close', 'retrieve', 'retrieve_all']
+from constants import *
 
 
 class MultilineFormatter(HelpFormatter):
@@ -171,17 +169,16 @@ def get_ws_call(action, payload, uid):
     config = ConfigParser()
     # config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
     config.read(os.path.join('/home/abennasser/Bureau/esgfissue_client/esgf-issue-manager', 'esgf-client.ini'))
-    if action not in actions:
+    if action not in ACTIONS:
         logging.error('Unrecognized command, refer to the docs for help or use -h, error code: {}.'.format(6))
         sys.exit(1)
 
-    url = config.get('WebService', 'url_base')+config.get('WebService', action)
-    if action in ['create', 'update']:
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(url, json.dumps(payload), headers=headers)
-    elif action == 'close':
+    url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
+    if action in [CREATE, UPDATE]:
+        r = requests.post(url, json.dumps(payload), headers=HEADERS)
+    elif action == CLOSE:
         r = requests.post(url+uid)
-    elif action == 'retrieve':
+    elif action == RETRIEVE:
         r = requests.get(url+uid)
     else:
         r = requests.get(url)
@@ -201,8 +198,8 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
     :return: path_to_issue, path_to_datasets
     """
     if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
-        path_to_issues = os.path.join(path_to_issues, 'issue_'+uid+'.json')
-        path_to_dsets = os.path.join(path_to_dsets, 'dset_'+uid+'.txt')
+        path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
+        path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
         return path_to_issues, path_to_dsets
     else:
         return path_to_issues, path_to_dsets

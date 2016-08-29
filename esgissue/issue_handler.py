@@ -9,7 +9,6 @@
 # TODO: Handle Service interaction should consider dictionary to records hundreds of PIDs per issue
 
 # Module imports
-import os
 import sys
 import logging
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path
@@ -17,12 +16,7 @@ from json import load
 from jsonschema import validate, ValidationError
 import simplejson
 import datetime
-
-# JSON issue schemas full path
-__JSON_SCHEMA_PATHS__ = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                         'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
+from constants import *
 
 # Fields to remove from retrieved issue
 # fields_to_remove = ['state']
@@ -36,7 +30,7 @@ class LocalIssue(object):
         self.action = action
         if issue_json is not None:
             self.json = issue_json
-            self.json['datasets'] = dset_list
+            self.json[DATASETS] = dset_list
         self.issue_path = issue_path
         self.dataset_path = dataset_path
 
@@ -54,7 +48,7 @@ class LocalIssue(object):
         """
         logging.info('Validating of issue...')
         # Load JSON schema for issue template
-        with open(__JSON_SCHEMA_PATHS__[action]) as f:
+        with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
         # Validate issue attributes against JSON issue schema
         try:
@@ -72,12 +66,12 @@ class LocalIssue(object):
                               format(self.issue_path, 1))
             sys.exit(1)
         # Test landing page and materials URLs
-        urls = filter(None, traverse(map(self.json.get, ['url', 'materials'])))
+        urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
         if not all(map(test_url, urls)):
             logging.error('Validation Result: FAILED // URLs cannot be reached, error code {}'.format(2))
             sys.exit(1)
         # Validate the datasets list against the dataset id pattern
-        if not all(map(test_pattern, self.json['datasets'])):
+        if not all(map(test_pattern, self.json[DATASETS])):
             logging.error('Validation Result: FAILED // Dataset IDs have invalid format, error code: {}'.format(3))
             sys.exit(1)
         logging.info('Validation Result: SUCCESSFUL')
@@ -89,14 +83,14 @@ class LocalIssue(object):
 
         """
         try:
-            logging.info('Requesting issue #{} creation from errata service...'.format(self.json['uid']))
+            logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
             get_ws_call(self.action, self.json, None)
             logging.info('Updating fields of payload after remote issue creation...')
-            self.json['dateUpdated'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
-                if 'datasets' in self.json.keys():
-                    del self.json['datasets']
+                if DATASETS in self.json.keys():
+                    del self.json[DATASETS]
                 issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue file has been created successfully!')
         except Exception as e:
@@ -106,13 +100,13 @@ class LocalIssue(object):
         """
         Updates an issue on the GitHub repository.
         """
-        logging.info('Update issue #{}'.format(self.json['uid']))
+        logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
             get_ws_call(self.action, self.json, None)
             print(self.json)
-            self.json['dateUpdated'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            del self.json['datasets']
+            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
@@ -124,14 +118,14 @@ class LocalIssue(object):
         """
         Close the GitHub issue
         """
-        logging.info('Closing issue #{}'.format(self.json['uid']))
+        logging.info('Closing issue #{}'.format(self.json[UID]))
         try:
-            get_ws_call(self.action, None, self.json['uid'])
+            get_ws_call(self.action, None, self.json[UID])
             # Only in case the webservice operation succeeded.
-            self.json['dateUpdated'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            self.json['dateClosed'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            if 'datasets' in self.json.keys():
-                del self.json['datasets']
+            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            if DATASETS in self.json.keys():
+                del self.json[DATASETS]
             with open(self.issue_path, 'w+') as data_file:
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
             logging.info('Issue has been closed successfully!')
@@ -148,9 +142,9 @@ class LocalIssue(object):
         """
         logging.info('processing id {}'.format(n))
         try:
-            r = get_ws_call('retrieve', None, n)
+            r = get_ws_call(RETRIEVE, None, n)
             if r.json() is not None:
-                self.dump_issue(r.json()['issue'], issues, dsets)
+                self.dump_issue(r.json()[ISSUE], issues, dsets)
                 logging.info('Issue has been downloaded.')
             else:
                 logging.info("Issue id didn't match any issues in the errata db")
@@ -166,9 +160,9 @@ class LocalIssue(object):
         """
         try:
             print('Calling WS')
-            r = get_ws_call('retrieve_all', None, None)
+            r = get_ws_call(RETRIEVE_ALL, None, None)
             print('Answer received')
-            results = r.json()['issues']
+            results = r.json()[ISSUES]
             for issue in results:
                 self.dump_issue(issue, issues, dsets)
         except Exception as e:
@@ -177,16 +171,16 @@ class LocalIssue(object):
     @staticmethod
     def dump_issue(issue, issues, dsets):
 
-        if 'dateClosed' in issue.keys() and issue['dateClosed'] is None:
-            del issue['dateClosed']
-        path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue['uid'])
+        if DATE_CLOSED in issue.keys() and issue[DATE_CLOSED] is None:
+            del issue[DATE_CLOSED]
+        path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue[UID])
         with open(path_to_dataset, 'w') as dset_file:
-            if not issue['datasets']:
-                logging.info('The issue {} seems to be affecting no datasets.'.format(issue['uid']))
+            if not issue[DATASETS]:
+                logging.info('The issue {} seems to be affecting no datasets.'.format(issue[UID]))
                 dset_file.write('No datasets provided with issue.')
-            for dset in issue['datasets']:
+            for dset in issue[DATASETS]:
                 dset_file.write(dset + '\n')
-            del issue['datasets']
+            del issue[DATASETS]
         with open(path_to_issue, 'w') as data_file:
             data_file.write(simplejson.dumps(issue, indent=4, sort_keys=True))
 
