@@ -167,8 +167,7 @@ def get_ws_call(action, payload, uid):
     :return: requests call
     """
     config = ConfigParser()
-    # config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
-    config.read(os.path.join('/home/abennasser/Bureau/esgfissue_client/esgf-issue-manager', 'esgf-client.ini'))
+    config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
     if action not in ACTIONS:
         logging.error('Unrecognized command, refer to the docs for help or use -h, error code: {}.'.format(6))
         sys.exit(1)

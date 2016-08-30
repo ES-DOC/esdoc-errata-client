@@ -1,0 +1,13 @@
+# Creating environment variable to be used by the client.
+
+export ISSUE_CLIENT_HOME=$(dirname ${BASH_SOURCE[0]})
+echo $ISSUE_CLIENT_HOME
+
+# Extending pythonpath
+
+export PYTHONPATH=$PYTHONPATH:$ISSUE_CLIENT_HOME
+
+
+# Creating commands.
+
+alias issue-manager="python ${ISSUE_CLIENT_HOME}/esgissue/esgissue.py"
