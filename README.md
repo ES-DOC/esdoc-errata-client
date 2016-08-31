@@ -1,6 +1,9 @@
 ## Description
 
-Ocean biogeochemical model (PISCES) provides the hydrogen ion (H+) concentration instead of pH. pH variable has to be computed as follows: pH = -log10[H+].
+ESGF errata client is a piece of software that enables the interaction with the errata service. 
+It can be used to create, update, close and retrieve issues. 
+The client is basically aimed to be used by publishing teams that are notified of the existence of an issue regarding one or many datasets/files.
+ 
 
 ## Installation
 
