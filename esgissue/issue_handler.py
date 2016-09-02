@@ -18,9 +18,6 @@ import simplejson
 import datetime
 from constants import *
 
-# Fields to remove from retrieved issue
-# fields_to_remove = ['state']
-
 
 class LocalIssue(object):
     """
@@ -54,13 +51,15 @@ class LocalIssue(object):
         try:
             validate(self.json, schema)
         except ValidationError as ve:
-            logging.exception('Validation has encountered an issue, error stack {}'.format(ve.message), 6)
-            logging.exception('The value that has caused this behavior is {0}, picked up by the validator {1}'.format(
-                ve.validator_value, ve.validator))
+            logging.error('Validation error: {} for {}, while validating {}.'.format(ve.message,ve.validator,
+                                                                                     ve.relative_path))
+            logging.error('The responsible schema part is: {}'.format(ve.schema))
             sys.exit(6)
         except ValueError as e:
-            logging.exception(e.message)
+            print('VALUE ERROR')
+            logging.exception(repr(e.message))
         except Exception as e:
+            print('GENERIC ERROR')
             logging.exception(repr(e.message))
             logging.exception('Validation Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.
                               format(self.issue_path, 1))
