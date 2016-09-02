@@ -9,14 +9,14 @@ Usual PIP installation
 
 .. code-block:: bash
 
-  pip install esgissue
+  pip install esdoc-errata-client
 
 PIP installation from GitHub
 ****************************
 
 .. code-block:: bash
 
-  pip install -e git@github.com:Prodiguer/esgf-issue-manager.git@devel#egg=esgissue
+  pip install -e git@github.com:ES-DOC/esdoc-errata-client.git@master#egg=esgissue
 
 Installation from GitHub
 ************************
@@ -28,12 +28,12 @@ Installation from GitHub
   mkdir esgissue
   cd esgissue
 
-2. Clone `our GitHub project <https://github.com/Prodiguer/esgf-issue-manager/>`_:
+2. Clone `our GitHub project <http://github.com/ES-DOC/esdoc-errata-client/>`_:
 
 .. code-block:: bash
 
   git init
-  git clone git@github.com:Prodiguer/esgf-issue-manager.git
+  git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
 
 3. Run the ``setup.py``:
 
@@ -41,7 +41,12 @@ Installation from GitHub
 
   python setup.py install
 
-4. The ``esgissue`` command-line is ready.
+4. Set up environment variables:
+
+.. code-block:: bash
+  source activate
+
+5. The ``esgissue`` command-line is ready.
 
 
 Dependencies
