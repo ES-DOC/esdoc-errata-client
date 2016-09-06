@@ -53,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'esgissue'
+project = u'esgf-errata-client'
 copyright = u'2016, G. Levavasseur'
 author = u'G. Levavasseur'
 
