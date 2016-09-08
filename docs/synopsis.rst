@@ -10,17 +10,17 @@ Version changes should be documented and justified by explaining what was update
 This leads to the unspoken rule that any publication of a newer version of a dataset needs to have a valid motivation,
 which we will refer to as an issue.
 
-``esgissue`` allows the referenced data providers to easily create, document, update, close or remove a validated issue
- . esgissue implements a similar issue-management system to github's and is completely hosted within the
+``esdoc errata client`` allows the referenced data providers to easily create, document, update, close or remove a validated issue
+ . esdoc errata client implements a similar issue-management system to github's and is completely hosted within the
  esgf-errata-service.
 
  The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
  version, version removal or retraction.
 
-``esgissue`` relies on *JSON* and *TXT* file records. This enables the data provider, in charge of ESGF issues, to
+``esdoc errata client`` relies on *JSON* and *TXT* file records. This enables the data provider, in charge of ESGF issues, to
 efficiently manage one or several issues remotely and locally.
 
-.. note:: ``esgissue`` allows to:
+.. note:: ``esdoc errata client`` allows to:
    i. Create ESGF issues from a *JSON* template to the errata service database;
    ii. Update ESGF issues from a *JSON* template to the errata service database;
    iii. Close ESGF issues on the errata service database;
@@ -38,12 +38,12 @@ Features
 
 
 **Standalone**
-  Security policies of computing centres, that often host `ESGF`_ nodes, do not allow to use ``esgissue``
-  within a node that is conventionally used to generate mapfiles.
+  The issue client is perfectly capable of running as a stand-alone project.
+
 
 **Output directory**
   An output directory can be defined to store and organize your issue templates on command.
-  There's no limitation about directories used to locally store issues.
+  There's no limitation about directories used to locally store issue files.
 
 
 **Use a logfile**

@@ -2,7 +2,7 @@ esg_mapfiles
 ============
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    synopsis
    installation
