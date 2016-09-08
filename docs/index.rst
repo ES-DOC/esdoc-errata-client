@@ -1,8 +1,8 @@
-esg_mapfiles
-============
+``esdoc-errata-client`̀
+=======================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    synopsis
    installation
