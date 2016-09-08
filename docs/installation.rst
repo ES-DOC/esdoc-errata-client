@@ -70,6 +70,5 @@ environment includes:
 
 ``esgissue`` requires the following libraries not included in most Python distributions:
 
- * *esgfpid*
  * `jsonschema <https://pypi.python.org/pypi/jsonschema>`_
  * `requests <https://pypi.python.org/pypi/requests/2.11.1>`
