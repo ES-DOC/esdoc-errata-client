@@ -1,7 +1,7 @@
 # Creating environment variable to be used by the client.
 
 export ISSUE_CLIENT_HOME=$(dirname ${BASH_SOURCE[0]})
-echo $ISSUE_CLIENT_HOME
+
 
 # Extending pythonpath
 
