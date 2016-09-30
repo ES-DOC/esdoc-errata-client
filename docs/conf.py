@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESGF-ISSUE-CLIENT documentation build configuration file, created by
-# sphinx-quickstart on Fri Sep 30 10:14:17 2016.
+# sphinx-quickstart on Fri Sep 30 14:58:16 2016.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.coverage']
+extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
@@ -64,7 +64,7 @@ release = '0.1'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['.build']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -240,7 +240,3 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
-
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
