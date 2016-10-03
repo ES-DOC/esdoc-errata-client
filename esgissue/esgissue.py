@@ -33,7 +33,7 @@ def get_args():
         prog='esgissue',
         description="""
                     The publication workflow on the ESGF nodes requires to deal with errata issues.
-                    The background of the version changes has to be published alongside the data: what was updated,
+                    The cause behind the version changes has to be published alongside the data: what was updated,
                     retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
                     be motivated by an issue.|n|n
 

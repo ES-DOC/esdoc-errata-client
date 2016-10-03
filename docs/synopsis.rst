@@ -10,28 +10,30 @@ Version changes should be documented and justified by explaining what was update
 This leads to the unspoken rule that any publication of a newer version of a dataset needs to have a valid motivation,
 which we will refer to as an issue.
 
-``esdoc errata client`` allows the referenced data providers to easily create, document, update, close or remove a validated issue
- . esdoc errata client implements a similar issue-management system to github's and is completely hosted within the
- esgf-errata-service.
+``esdoc errata client`` allows the referenced data providers to easily create, document, update, close or remove a validated issue.
 
- The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
- version, version removal or retraction.
+``esdoc errata client`` implements a similar issue-management system to github, it is completely hosted within the
+esgf-errata-service.
 
-``esdoc errata client`` relies on *JSON* and *TXT* file records. This enables the data provider, in charge of ESGF issues, to
+The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
+versions, version removal or retraction.
+
+``esdoc errata client`` relies on *json* and *txt* file records. This enables the data provider, in charge of ESGF issues, to
 efficiently manage one or several issues remotely and locally.
 
 .. note:: ``esdoc errata client`` allows to:
-   i. Create ESGF issues from a *JSON* template to the errata service database;
-   ii. Update ESGF issues from a *JSON* template to the errata service database;
-   iii. Close ESGF issues on the errata service database;
-   iv. Retrieve ESGF issues from the errata service database to a local *JSON* record.
+
+   i. Create ESGF issues from a *json* template to the errata service database,
+   ii. Update ESGF issues from a *json* template to the errata service database,
+   iii. Close ESGF issues on the errata service database,
+   iv. Retrieve ESGF issues from the errata service database to a local *json* record.
 
 Features
 ********
 
 **Template as input**
-  You only need to document your issue following a user-friendly *JSON* template as well as list the affected datasets
-  in a *TXT* file.
+  You only need to document your issue following a user-friendly *json* template as well as list the affected datasets
+  in a *txt* file.
 
 **Compatiblity with ESGF node configuration file(s)**
   For the time being, the esgf-errata-client is completely independent from the ESGF stack.

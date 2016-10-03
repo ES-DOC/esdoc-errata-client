@@ -53,18 +53,33 @@ Installation from GitHub
 Dependencies
 ************
 
-``esdoc errata client`` uses the following basic Python libraries includes in Python 2.5+. Becareful your Python
-environment includes:
-* `os <https://docs.python.org/2/library/os.html>`_, `sys <https://docs.python.org/2/library/sys.html>`_,
-`re <https://docs.python.org/2/library/re.html>`_, `logging <https://docs.python.org/2/library/logging.html>`_
-* `argparse <https://docs.python.org/2/library/argparse.html>`_
-* `ConfigParser <https://docs.python.org/2/library/configparser.html>`_
-* `datetime <https://docs.python.org/2/library/datetime.html>`_
-* `uuid <https://docs.python.org/2/library/uuid.html>`_
-* `requests <http://docs.python-requests.org/en/master/>`_
-* `string <https://docs.python.org/2/library/string.html>`_
-* `json <https://docs.python.org/2/library/json.html>`_
+``esdoc errata client`` uses the following basic Python libraries includes in Python 2.5+. Please make sure your Python
+environment includes the following:
+
+- `os <https://docs.python.org/2/library/os.html>`_,
+
+- `sys <https://docs.python.org/2/library/sys.html>`_,
+
+- `re <https://docs.python.org/2/library/re.html>`_,
+
+- `logging <https://docs.python.org/2/library/logging.html>`_
+
+- `argparse <https://docs.python.org/2/library/argparse.html>`_
+
+- `ConfigParser <https://docs.python.org/2/library/configparser.html>`_
+
+- `datetime <https://docs.python.org/2/library/datetime.html>`_
+
+- `uuid <https://docs.python.org/2/library/uuid.html>`_
+
+- `requests <http://docs.python-requests.org/en/master/>`_
+
+- `string <https://docs.python.org/2/library/string.html>`_
+
+- `json <https://docs.python.org/2/library/json.html>`_
 
 ``esdoc errata client`` requires the following libraries not included in most Python distributions:
-* `jsonschema <https://pypi.python.org/pypi/jsonschema>`_
-* `requests <https://pypi.python.org/pypi/requests/2.11.1>`
+
+- `jsonschema <https://pypi.python.org/pypi/jsonschema>`_
+
+- `requests <https://pypi.python.org/pypi/requests/2.11.1>`_
