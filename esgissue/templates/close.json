@@ -25,6 +25,22 @@
             "type": "array",
             "uniqueItems": true
         },
+        "experiments": {
+            "items": {
+                "minLength": 1,
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "variables": {
+            "items": {
+                "minLength": 1,
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
         "project": {
             "minLength": 1,
             "type": "string"
@@ -75,7 +91,9 @@
         "severity",
         "project",
         "models",
-        "status"
+        "status",
+        "experiments",
+        "variables"
     ],
     "title": "ESGF issue JSON schema",
     "type": "object"

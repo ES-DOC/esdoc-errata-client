@@ -256,6 +256,22 @@ Multiple downloads with file instead of directory as argument:
 Exit status:
 
 - [0]: Successful execution of the requested task,
+- [1]: Missing or invalid title,
+- [2]: Missing or invalid description,
+- [3]: Missing or invalid datasets,
+- [4]: Missing or invalid severity,
+- [5]: Missing or invalid project,
+- [6]: Missing or invalid models,
+- [7]: Missing or invalid status,
+- [8]: Missing or invalid institute,
+- [9]: Missing or invalid materials,
+- [10]: Missing or invalid urls,
+- [11]: Missing or invalid id (uid),
+- [12]: Missing or invalid creation date,
+- [13]: Missing or invalid update date,
+- [14]: Missing or invalid close date.
+- [15]: Incoherent dataset id with project drs structure, please make sure both are coherent.
+- [16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 
 See full documentation on http://esgissue.readthedocs.org/

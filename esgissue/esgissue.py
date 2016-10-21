@@ -305,7 +305,11 @@ def run():
 
     elif args.command == RETRIEVE:
         if args.id is not None:
-            list_of_ids = args.id
+            if os.path.exists(args.id):
+                with open(args.id) as f:
+                    list_of_ids = f.readlines()
+            else:
+                list_of_ids = args.id
             # In the case the user is requesting more than one issue
             for directory in [args.issues, args.dsets]:
                 # Added the '.' test to avoid creating directories that are intended to be files.

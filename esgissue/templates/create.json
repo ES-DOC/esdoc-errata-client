@@ -36,6 +36,22 @@
     "type": "string",
     "minLength": 1
   },
+  "variables": {
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "experiments": {
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
   "models": {
     "type": "array",
     "uniqueItems": true,
@@ -87,6 +103,8 @@
   "severity",
   "project",
   "models",
-  "datasets"
+  "datasets",
+  "variables",
+  "experiments"
 ]
 }

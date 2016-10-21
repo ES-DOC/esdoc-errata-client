@@ -11,7 +11,8 @@
 # Module imports
 import sys
 import logging
-from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path
+from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
+                  extract_facets, update_json
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
@@ -43,36 +44,49 @@ class LocalIssue(object):
         :raises Error: If dataset ids are malformed
 
         """
-        logging.info('Validating of issue...')
+        logging.info('Validating issue...')
         # Load JSON schema for issue template
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
         # Validate issue attributes against JSON issue schema
+        for dataset in self.json[DATASETS]:
+            if not test_pattern(dataset):
+                logging.error('Validation Result: FAILED // Dataset ID {} have invalid format, error code {}.'.
+                              format(dataset, ERROR_DIC[DATASETS]))
+                sys.exit(ERROR_DIC[DATASETS][0])
+            facets = extract_facets(dataset, self.json[PROJECT])
+            self.json = update_json(facets, self.json)
         try:
             validate(self.json, schema)
         except ValidationError as ve:
-            logging.error('Validation error: {} for {}, while validating {}.'.format(ve.message,ve.validator,
-                                                                                     ve.relative_path))
-            logging.error('The responsible schema part is: {}'.format(ve.schema))
-            sys.exit(6)
+            # REQUIRED BECAUSE SOMETIMES THE RELATIVE PATH RETURNS EMPTY DEQUE FOR SOME REASON.
+            if len(ve.relative_path) != 0:
+                error_code = resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
+            else:
+                error_code = resolve_validation_error_code(ve.message + ve.validator)
+            logging.error('Validation error: error message: {}'.format(error_code[1]))
+            logging.error('Validation error: code {}, check documentation for error list.'.format(error_code[0]))
+            # logging.error('Validation error: {} for {}, while validating {}.'.format(ve.message, ve.validator,
+            #                                                                          ve.relative_path))
+            # logging.error('The responsible schema part is: {}'.format(ve.schema))
+            sys.exit(error_code[0])
         except ValueError as e:
             print('VALUE ERROR')
-            logging.exception(repr(e.message))
+            logging.error(repr(e.message))
         except Exception as e:
             print('GENERIC ERROR')
-            logging.exception(repr(e.message))
-            logging.exception('Validation Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.
-                              format(self.issue_path, 1))
+            logging.error(repr(e.message))
+            logging.error('Validation Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.
+                          format(self.issue_path, 1))
             sys.exit(1)
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
-        if not all(map(test_url, urls)):
-            logging.error('Validation Result: FAILED // URLs cannot be reached, error code {}'.format(2))
-            sys.exit(1)
+        for url in urls:
+            if not test_url(url):
+                logging.error('Validation Result: FAILED // this url {} cannot be reached, error code {}.'.
+                              format(url, ERROR_DIC[URLS][0]))
+                sys.exit(ERROR_DIC[URLS][0])
         # Validate the datasets list against the dataset id pattern
-        if not all(map(test_pattern, self.json[DATASETS])):
-            logging.error('Validation Result: FAILED // Dataset IDs have invalid format, error code: {}'.format(3))
-            sys.exit(1)
         logging.info('Validation Result: SUCCESSFUL')
 
     def create(self):

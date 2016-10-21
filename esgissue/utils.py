@@ -101,8 +101,8 @@ def test_url(url):
             logging.debug('The url {0} is invalid, HTTP response: {1}'.format(url, r.status_code))
         return r.status_code == requests.codes.ok
     except Exception as e:
-        logging.exception('Validation Result: FAILED // Bad HTTP request: {}'.format(repr(e)))
-        sys.exit(1)
+        logging.error('Validation Result: The url {0} is invalid // Bad HTTP request: {1}'.format(url, repr(e)))
+        sys.exit(ERROR_DIC[URLS][0])
 
 
 def test_pattern(text):
@@ -202,3 +202,63 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
         return path_to_issues, path_to_dsets
     else:
         return path_to_issues, path_to_dsets
+
+
+def extract_facets(dataset_id, project):
+    """
+    Given a specific project, this function extracts the facets as described in the ini file.
+    :param dataset_id: dataset id containing the facets
+    :param project: project identifier
+    :return: dict
+    """
+    result_dict = dict()
+    config = ConfigParser()
+    config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
+    regex_str = config.get(REGEX, project.upper()+'_REGEX')
+    pos = config._sections[project.upper()]
+    match = re.match(regex_str, dataset_id)
+    if match:
+        for key, value in pos.iteritems():
+            if key != '__name__':
+                result_dict[key] = match.group(int(value)).lower()
+    else:
+        logging.error('Currently handled dataset id {} is incoherent with {} DRS structure'.format(dataset_id, project))
+        sys.exit(15)
+    return result_dict
+
+
+def update_json(facets, original_json):
+    """
+    update self.json with the newly detected facets from dataset ids.
+    :param facets: dictionary
+    :param original_json: dictionary
+    :return: dictionary with new facets detected.
+    """
+    multiple_facets = ['experiments', 'models', 'variables']
+    for key, value in facets.iteritems():
+        if key not in original_json:
+            if key not in multiple_facets:
+                # Case of a single value field like the institute.
+                original_json[key] = value
+            else:
+                # Case of a field that supports a list.
+                original_json[key] = [value]
+        elif key in original_json and key in multiple_facets:
+            if value not in original_json[key]:
+                original_json[key].append(value)
+        elif key in original_json and key not in multiple_facets and original_json[key] != value:
+            logging.error('The field {} does not support multiple inputs in a single issue declaration.'.format(key))
+            sys.exit()
+    return original_json
+
+
+def resolve_validation_error_code(message):
+    """
+    Gives sense to validation error messages by affecting respective codes to them.
+    :param message: string of error message
+    :return: error code
+    """
+    print(message)
+    for key, value in ERROR_DIC.iteritems():
+        if key in message.lower():
+            return value
