@@ -54,6 +54,19 @@ Check the help
 
 
 
+Positional arguments:
+ command                               One of the four possible actions, create, update, close and retrieve.
+
+Optional arguments:
+ --issue                               Issue json file.
+
+ --dsets                               dataset list txt file.
+
+ --log                                 Directory for log output.
+
+ -h, --help                            Show this help message and exit.
+
+ -V                                    Program version.
 
 Create an issue
 ---------------
@@ -253,8 +266,191 @@ Multiple downloads with file instead of directory as argument:
     You have provided multiple ids but a single file as destination, aborting.
 
 
-Exit status:
+Example:
+________
 
+These are concrete examples of what an issue declaration through the esgf issue client should look like:
+
+issue.json:
+
+On declaration of the issue this is the regular form of an issue.
+
+.. code-block:: json
+
+    {
+        "project": "cmip5",
+        "title": "SampleIssueTitle",
+        "description": "This is a test description, void of meaning.",
+        "severity": "medium",
+        "materials": [
+            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+        ],
+        "url": "http://websitetest.com",
+    }
+
+datasets.txt:
+
+.. code-block:: txt
+
+    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
+    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
+
+After having successfully formatted the both files in the indicated fashion, creating an issue using the create command
+will result in the modification of the local issue file.
+
+issue.json:
+
+.. code-block:: json
+
+    {
+        "project": "cmip5",
+        "title": "SampleIssueTitle",
+        "severity": "medium",
+        "dateCreated": "2016-10-21 10:42:09",
+        "dateUpdated": "2016-10-21 10:42:09",
+        "description": "This is a test description, void of meaning.",
+        "experiments": [
+            "historical"
+        ],
+        "institute": "ipsl",
+        "materials": [
+            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+        ],
+        "models": [
+            "ipsl-cm5a-mr"
+        ],
+        "status": "new",
+        "uid": "aff92796-ce6c-42ec-bc6b-341006ff13d6",
+        "url": "http://websitetest.com",
+        "variables": [
+            "lmon"
+        ]
+    }
+
+The life cycle of an issue may incorporate a few changes within the contents of an issue.
+To do so, the user needs to use the update command of the client, with a modified issue json and/or dataset txt file.
+The json file needs to be at contain the same fields as in after the creation action. If your local file is corrupted
+consider using the retrieve command to download a fresh copy.
+
+issue.json:
+
+.. code-block:: json
+
+    {
+        "dateCreated": "2016-10-21 10:42:09",
+        "dateUpdated": "2016-10-21 10:42:09",
+        "description": "This is a test description, void of meaning, however this is an updated description.",
+        "experiments": [
+            "historical"
+        ],
+        "institute": "ipsl",
+        "materials": [
+            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+        ],
+        "models": [
+            "ipsl-cm5a-mr",
+        ],
+        "project": "cmip5",
+        "severity": "high",
+        "status": "onhold",
+        "title": "SampleIssueTitle",
+        "uid": "aff92796-ce6c-42ec-bc6b-341006ff13d6",
+        "url": "http://websitetest.com",
+        "variables": [
+            "lmon"
+        ]
+    }
+
+dataset.txt:
+
+.. code-block:: txt
+
+    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
+    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
+    cmip5.output1.IPSL.IPSL-CM5A-LR.historical.3hr.atmos.Lmon.r3i2p3#20121212
+    cmip5.output1.IPSL.IPSL-CM5A-LR.historical.6hr.atmos.Lmon.r2i5p4#20121212
+
+We altered the description of the issue, the severity, the workflow status and added 2 new affected datasets, which belong
+to another model (IPSL-CM5A-LR). This will lead to an updated issue json file as follows:
+
+issue.json:
+
+.. code-block:: json
+
+
+    {
+        "dateCreated": "2016-10-21 10:42:09",
+        "dateUpdated": "2016-10-21 12:41:47",
+        "description": "This is a test description, void of meaning, however this is an updated description.",
+        "experiments": [
+            "historical"
+        ],
+        "institute": "ipsl",
+        "materials": [
+            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+        ],
+        "models": [
+            "ipsl-cm5a-mr",
+            "ipsl-cm5a-lr"
+        ],
+        "project": "cmip5",
+        "severity": "high",
+        "status": "onhold",
+        "title": "SampleIssueTitle",
+        "uid": "aff92796-ce6c-42ec-bc6b-341006ff13d6",
+        "url": "http://websitetest.com",
+        "variables": [
+            "lmon"
+        ]
+    }
+
+The updates now are registered both in the remote errata service and in are reflected in the local issue files (added model detected in dataset ids).
+
+
+The final step remaining in the life cycle of the issue is either to close the issue and mark it as done with, or flag it as a wontfix, that will however keep the issue
+open for other users to be careful about the affected files in future use. To mark it as a wontfix, an update as shown above is sufficient.
+To close an issue, users are required to use the client's close command. Which will mark issue as closed in the remote errata service and reflect this change in the local
+files in coherence with every step in the issue life cycle.
+
+.. code-block:: json
+
+    {
+        "dateClosed": "2016-10-21 12:41:47",
+        "dateCreated": "2016-10-21 10:42:09",
+        "dateUpdated": "2016-10-21 12:41:47",
+        "description": "This is a test description, void of meaning, however this is an updated description.",
+        "experiments": [
+            "historical"
+        ],
+        "institute": "ipsl",
+        "materials": [
+            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
+            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+        ],
+        "models": [
+            "ipsl-cm5a-mr",
+            "ipsl-cm5a-lr"
+        ],
+        "project": "cmip5",
+        "severity": "high",
+        "status": "resolved",
+        "title": "SampleIssueTitle",
+        "uid": "aff92796-ce6c-42ec-bc6b-341006ff13d6",
+        "url": "http://websitetest.com",
+        "variables": [
+            "lmon"
+        ]
+    }
+
+
+The issue is now closed and is kept for archiving/consultation purposes.
+
+Exit status:
+____________
 - [0]: Successful execution of the requested task,
 - [1]: Missing or invalid title,
 - [2]: Missing or invalid description,
@@ -274,26 +470,3 @@ Exit status:
 - [16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 
-See full documentation on http://esgissue.readthedocs.org/
-
-The default values are displayed next to the corresponding flags.
-
-Positional arguments:
- command                               One of the four possible actions, create, update, close and retrieve.
-
-Optional arguments:
- --issue                               Issue json file.
-
- --dsets                               dataset list txt file.
-
- --log                                 Directory for log output.
-
- -h, --help                            Show this help message and exit.
-
- -v                                    Verbose mode.
-
- -V                                    Program version.
-
-Developed by:
-Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
-Ben Nasser, A. (IPSL - abennasser@ipsl.jussieu.fr)
