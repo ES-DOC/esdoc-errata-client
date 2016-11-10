@@ -57,5 +57,17 @@ ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2,
              'id': [11, 'ID missing or invalid'], 'uid': [11, 'UID missing or invalid'],
              'datecreated': [12, 'Creation date missing or invalid'],
              'dateupdated': [13, 'Update date missing or invalid'],
-             'dateclosed': [14, 'Closed date missing or invalid']}
+             'dateclosed': [14, 'Closed date missing or invalid'],
+             'dataset_incoherent': [15, 'Incoherent dataset id with declared project DRS structure, '
+                                        'please make sure both are coherent.'],
+             'authentication': [17, 'Authentication failed. Make sure the credentials are correct.'],
+             'authorization': [18, 'User lacks required privilege. Contact admins for further information.'],
+             'connection_error': [19, 'Connection failed, server probably down. Contact admins'],
+             'connection_timeout': [20, 'Connection timed out, try again later.'],
+             'mutliple_ids': [21, 'Multiple issue ids were provided along with a single file destination, aborting.'],
+             'validation_failed': [22, 'Json file validation failed for an unknown reason, please check said file.'],
+             'unknown_command': [23, 'Command is unknown, check the documentation or help for further information'],
+             'ws_request_failed': [24, 'WS request failed for unknown reason.'],
+             'single_entry_field': [25, 'Field only supports single input per issue declaration.']}
 
+ORGS_IDS = [23123271]

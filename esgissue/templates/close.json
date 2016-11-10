@@ -76,8 +76,6 @@
         },
         "status": {
             "enum": [
-                "new",
-                "onhold",
                 "wontfix",
                 "resolved"
             ],

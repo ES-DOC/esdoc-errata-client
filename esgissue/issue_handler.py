@@ -18,6 +18,7 @@ from jsonschema import validate, ValidationError
 import simplejson
 import datetime
 from constants import *
+from requests.exceptions import ConnectionError, ConnectTimeout
 
 
 class LocalIssue(object):
@@ -71,14 +72,12 @@ class LocalIssue(object):
             # logging.error('The responsible schema part is: {}'.format(ve.schema))
             sys.exit(error_code[0])
         except ValueError as e:
-            print('VALUE ERROR')
             logging.error(repr(e.message))
         except Exception as e:
-            print('GENERIC ERROR')
             logging.error(repr(e.message))
-            logging.error('Validation Result: FAILED // {0} has an invalid JSON schema, error code: {1}'.
-                          format(self.issue_path, 1))
-            sys.exit(1)
+            logging.error(ERROR_DIC['validation_failed'][1] + '. Error code: {}'.format(ERROR_DIC['validation_failed'][0]))
+            logging.error('File path: {}'.format(self.issue_path))
+            sys.exit(ERROR_DIC['validation_failed'])
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
@@ -89,15 +88,16 @@ class LocalIssue(object):
         # Validate the datasets list against the dataset id pattern
         logging.info('Validation Result: SUCCESSFUL')
 
-    def create(self):
+    def create(self, credentials):
         """
         Creates an issue on the GitHub repository.
+        :param credentials: username & token
         :raises Error: If the issue registration fails without any result
 
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            get_ws_call(self.action, self.json, None)
+            get_ws_call(self.action, self.json, None, credentials)
             logging.info('Updating fields of payload after remote issue creation...')
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             logging.info('Issue json schema has been updated, persisting in file...')
@@ -106,34 +106,44 @@ class LocalIssue(object):
                     del self.json[DATASETS]
                 issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue file has been created successfully!')
+        except ConnectionError:
+            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+        except ConnectTimeout:
+            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
+
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
-    def update(self):
+    def update(self, credentials):
         """
+        :param credentials: username & token
         Updates an issue on the GitHub repository.
         """
         logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
-            get_ws_call(self.action, self.json, None)
-            print(self.json)
+            get_ws_call(self.action, self.json, None, credentials)
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
             logging.info('Issue has been updated successfully!')
+        except ConnectionError:
+            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+        except ConnectTimeout:
+            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
-    def close(self):
+    def close(self, credentials):
         """
+        :param credentials: username & token
         Close the GitHub issue
         """
         logging.info('Closing issue #{}'.format(self.json[UID]))
         try:
-            get_ws_call(self.action, None, self.json[UID])
+            get_ws_call(self.action, None, self.json[UID], credentials)
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
@@ -142,7 +152,10 @@ class LocalIssue(object):
             with open(self.issue_path, 'w+') as data_file:
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
             logging.info('Issue has been closed successfully!')
-
+        except ConnectionError:
+            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+        except ConnectTimeout:
+            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
@@ -161,6 +174,10 @@ class LocalIssue(object):
                 logging.info('Issue has been downloaded.')
             else:
                 logging.info("Issue id didn't match any issues in the errata db")
+        except ConnectionError:
+            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+        except ConnectTimeout:
+            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 
@@ -178,6 +195,10 @@ class LocalIssue(object):
             results = r.json()[ISSUES]
             for issue in results:
                 self.dump_issue(issue, issues, dsets)
+        except ConnectionError:
+            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+        except ConnectTimeout:
+            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
         except Exception as e:
             logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
 

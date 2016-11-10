@@ -158,33 +158,43 @@ def get_datasets(dataset_file):
     return dsets
 
 
-def get_ws_call(action, payload, uid):
+def get_ws_call(action, payload, uid, credentials):
     """
     This function builds the url for the outgoing call to the different errata ws.
     :param payload: payload to be posted
     :param action: one of the 4 actions: create, update, close, retrieve
     :param uid: in case of a retrieve call, uid is needed
+    :param credentials: username & token
     :return: requests call
     """
     config = ConfigParser()
     config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
     if action not in ACTIONS:
-        logging.error('Unrecognized command, refer to the docs for help or use -h, error code: {}.'.format(6))
-        sys.exit(1)
+        logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
+        sys.exit(ERROR_DIC['unknown_command'][0])
 
     url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
     if action in [CREATE, UPDATE]:
-        r = requests.post(url, json.dumps(payload), headers=HEADERS)
+        r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
     elif action == CLOSE:
-        r = requests.post(url+uid)
+        r = requests.post(url+uid, auth=credentials)
     elif action == RETRIEVE:
         r = requests.get(url+uid)
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
-        logging.error('Errata WS call has failed, please refer to the error text for further information: {0}'
-                      ', error code: {1}'.format(r.text, 5))
-        sys.exit(1)
+        if r.status_code == 401:
+            logging.error(ERROR_DIC['authentication'][1] + ' Error code: {}'.format(ERROR_DIC['authentication'][0]))
+            logging.error(r.text + ' HTTP CODE ' + str(r.status_code))
+            sys.exit(ERROR_DIC['authentication'][0])
+        elif r.status_code == 403:
+            logging.error(ERROR_DIC['authorization'][1] + ' Error code: {}'.format(ERROR_DIC['authorization'][0]))
+            logging.error(r.text + ' HTTP CODE ' + str(r.status_code))
+            sys.exit(ERROR_DIC['authorization'][0])
+        else:
+            logging.error(ERROR_DIC['ws_request_failed'][1], ' Error code: {}'.format(ERROR_DIC['ws_request_failed'][0]))
+            logging.error('HTTP CODE: {}'.format(r.status_code))
+            sys.exit(ERROR_DIC['ws_request_failed'][0])
     return r
 
 
@@ -222,8 +232,9 @@ def extract_facets(dataset_id, project):
             if key != '__name__':
                 result_dict[key] = match.group(int(value)).lower()
     else:
+        logging.error(ERROR_DIC['dataset_incoherent'][1] + '. Error code: {}'.format(ERROR_DIC['dataset_incoherent'][0]))
         logging.error('Currently handled dataset id {} is incoherent with {} DRS structure'.format(dataset_id, project))
-        sys.exit(15)
+        sys.exit(ERROR_DIC['dataset_incoherent'][0])
     return result_dict
 
 
@@ -247,8 +258,9 @@ def update_json(facets, original_json):
             if value not in original_json[key]:
                 original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value:
-            logging.error('The field {} does not support multiple inputs in a single issue declaration.'.format(key))
-            sys.exit()
+            logging.error(ERROR_DIC['single_entry_field'][1], ' Error code: {}'.format(ERROR_DIC['single_entry_field'][0]))
+            logging.error('The field {} caused the problem.'.format(key))
+            sys.exit(ERROR_DIC['single_entry_field'][0])
     return original_json
 
 
@@ -262,3 +274,29 @@ def resolve_validation_error_code(message):
     for key, value in ERROR_DIC.iteritems():
         if key in message.lower():
             return value
+
+
+def authenticate():
+    """
+    Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
+    :return: Boolean
+    """
+    config = ConfigParser()
+    if os.path.isfile(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg')):
+        config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg'))
+        username = config.get('auth', 'username')
+        token = config.get('auth', 'token')
+    else:
+        username = raw_input('Username: ')
+        token = raw_input('Token: ')
+        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+        if save_cred == 'y':
+            config.add_section('auth')
+            config.set('auth', 'username', username)
+            config.set('auth', 'token', token)
+            with open(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg'), 'wb') as configfile:
+                config.write(configfile)
+            logging.info('Credentials were successfully saved.')
+    return username, token
+
+

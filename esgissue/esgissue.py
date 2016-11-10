@@ -9,7 +9,7 @@
 import sys
 import argparse
 from uuid import uuid4
-from utils import MultilineFormatter, init_logging, get_datasets, get_issue
+from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate
 from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
@@ -263,18 +263,22 @@ def process_command(command, issue_file, dataset_file, issue_path, dataset_path)
         dsets = get_datasets(dataset_file)
     else:
         dsets = None
+    # Fill in mandatory fields
+    if command in [CREATE, UPDATE, CLOSE]:
+            credentials = authenticate()
     if command == CREATE:
         payload[UID] = str(uuid4())
         payload[STATUS] = unicode(STATUS_NEW)
         payload[DATE_CREATED] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     local_issue = LocalIssue(payload, dsets, issue_path, dataset_path, command)
     local_issue.validate(command)
+    # WS Call
     if command == CREATE:
-        local_issue.create()
+        local_issue.create(credentials)
     elif command == UPDATE:
-        local_issue.update()
+        local_issue.update(credentials)
     elif command == CLOSE:
-        local_issue.close()
+        local_issue.close(credentials)
 
 
 def run():
@@ -318,8 +322,8 @@ def run():
                 # This tests whether a list of ids is provided with a directory where to dump the retrieved
                 # issues and related datasets.
                 if len(list_of_ids) > 1 and not os.path.isdir(directory):
-                    print('You have provided multiple ids but a single file as destination, aborting.')
-                    sys.exit(1)
+                    print(ERROR_DIC['mutliple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['mutliple_ids'][0]))
+                    sys.exit(ERROR_DIC['mutliple_ids'][0])
             # Looping over list of ids provided
             for n in list_of_ids:
                 local_issue = LocalIssue(None, None, None, None, args.command)
