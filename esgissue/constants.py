@@ -51,23 +51,25 @@ REGEX = 'Regex'
 # ERROR DICTIONARY
 ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2, 'Description field missing or invalid.'],
              'datasets': [3, 'Datasets are missing or invalid.'], 'severity': [4, 'Issue severity missing or invalid.'],
-             'project': [5, 'Project field missing or invalid'], 'models': [6, 'Models are missing or invalid'],
-             'status': [7, 'Status field missing or invalid'], 'institute': [8, 'Institute field missing or invalid'],
-             'materials': [9, 'Materials field missing or invalid'], 'urls': [10, 'URLs are missing or invalid'],
-             'id': [11, 'ID missing or invalid'], 'uid': [11, 'UID missing or invalid'],
-             'datecreated': [12, 'Creation date missing or invalid'],
-             'dateupdated': [13, 'Update date missing or invalid'],
-             'dateclosed': [14, 'Closed date missing or invalid'],
+             'project': [5, 'Project field missing or invalid.'], 'models': [6, 'Models are missing or invalid.'],
+             'status': [7, 'Status field missing or invalid.'], 'institute': [8, 'Institute field missing or invalid.'],
+             'materials': [9, 'Materials field missing or invalid.'], 'urls': [10, 'URLs are missing or invalid.'],
+             'id': [11, 'ID missing or invalid.'], 'uid': [11, 'UID missing or invalid.'],
+             'datecreated': [12, 'Creation date missing or invalid.'],
+             'dateupdated': [13, 'Update date missing or invalid.'],
+             'dateclosed': [14, 'Closed date missing or invalid.'],
              'dataset_incoherent': [15, 'Incoherent dataset id with declared project DRS structure, '
                                         'please make sure both are coherent.'],
              'authentication': [17, 'Authentication failed. Make sure the credentials are correct.'],
              'authorization': [18, 'User lacks required privilege. Contact admins for further information.'],
-             'connection_error': [19, 'Connection failed, server probably down. Contact admins'],
+             'connection_error': [19, 'Connection failed, server probably down. Contact admins.'],
              'connection_timeout': [20, 'Connection timed out, try again later.'],
              'multiple_ids': [21, 'Multiple issue ids were provided along with a single file destination, aborting.'],
              'validation_failed': [22, 'Json file validation failed for an unknown reason, please check said file.'],
              'unknown_command': [23, 'Command is unknown, check the documentation or help for further information'],
              'ws_request_failed': [24, 'WS request failed for unknown reason.'],
-             'single_entry_field': [25, 'Field only supports single input per issue declaration.']}
+             'single_entry_field': [25, 'Field only supports single input per issue declaration.'],
+             'unknown_error': [99, 'An unknown error has been detected. Please provide the admins with the error stack.'],
+             }
 
 ORGS_IDS = [23123271]

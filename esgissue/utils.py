@@ -101,8 +101,7 @@ def test_url(url):
             logging.debug('The url {0} is invalid, HTTP response: {1}'.format(url, r.status_code))
         return r.status_code == requests.codes.ok
     except Exception as e:
-        logging.error('Validation Result: The url {0} is invalid // Bad HTTP request: {1}'.format(url, repr(e)))
-        sys.exit(ERROR_DIC[URLS][0])
+        logging_error(ERROR_DIC[URLS], url)
 
 
 def test_pattern(text):
@@ -184,17 +183,13 @@ def get_ws_call(action, payload, uid, credentials):
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
         if r.status_code == 401:
-            logging.error(ERROR_DIC['authentication'][1] + ' Error code: {}'.format(ERROR_DIC['authentication'][0]))
-            logging.error(r.text + ' HTTP CODE ' + str(r.status_code))
-            sys.exit(ERROR_DIC['authentication'][0])
+            logging_error(ERROR_DIC['authentication'], 'HTTP CODE: '+str(r.status_code))
+
         elif r.status_code == 403:
-            logging.error(ERROR_DIC['authorization'][1] + ' Error code: {}'.format(ERROR_DIC['authorization'][0]))
-            logging.error(r.text + ' HTTP CODE ' + str(r.status_code))
-            sys.exit(ERROR_DIC['authorization'][0])
+            logging_error(ERROR_DIC['authorization'], 'HTTP CODE: '+str(r.status_code))
+
         else:
-            logging.error(ERROR_DIC['ws_request_failed'][1], ' Error code: {}'.format(ERROR_DIC['ws_request_failed'][0]))
-            logging.error('HTTP CODE: {}'.format(r.status_code))
-            sys.exit(ERROR_DIC['ws_request_failed'][0])
+            logging_error(ERROR_DIC['ws_request_failed'], 'HTTP CODE: '+str(r.status_code))
     return r
 
 
@@ -232,9 +227,8 @@ def extract_facets(dataset_id, project):
             if key != '__name__':
                 result_dict[key] = match.group(int(value)).lower()
     else:
-        logging.error(ERROR_DIC['dataset_incoherent'][1] + '. Error code: {}'.format(ERROR_DIC['dataset_incoherent'][0]))
-        logging.error('Currently handled dataset id {} is incoherent with {} DRS structure'.format(dataset_id, project))
-        sys.exit(ERROR_DIC['dataset_incoherent'][0])
+        logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
+            dataset_id, project))
     return result_dict
 
 
@@ -258,10 +252,7 @@ def update_json(facets, original_json):
             if value not in original_json[key]:
                 original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value:
-            logging.error(ERROR_DIC['single_entry_field'][1]+' Error code: {}'.format(ERROR_DIC['single_entry_field'][0]))
-            # TODO formatting key failed
-            logging.error('The field {} caused the problem.'.format(str(key)))
-            sys.exit(ERROR_DIC['single_entry_field'][0])
+            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(value, str(key)))
     return original_json
 
 
@@ -271,7 +262,6 @@ def resolve_validation_error_code(message):
     :param message: string of error message
     :return: error code
     """
-    print(message)
     for key, value in ERROR_DIC.iteritems():
         if key in message.lower():
             return value
@@ -300,4 +290,16 @@ def authenticate():
             logging.info('Credentials were successfully saved.')
     return username, token
 
+
+def logging_error(error, additional_data=None):
+    """
+
+    :param error: error dic
+    :param additional_data: additional information
+    :return: logs error
+    """
+    logging.error(error[1] + ' Error code: {}.'.format(error[0]))
+    if additional_data:
+        logging.error('Error caused by {}.'.format(additional_data))
+    sys.exit(error[0])
 

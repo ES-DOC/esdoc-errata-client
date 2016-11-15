@@ -9,7 +9,7 @@
 import sys
 import argparse
 from uuid import uuid4
-from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate
+from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, logging_error
 from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
@@ -324,8 +324,7 @@ def run():
                 # This tests whether a list of ids is provided with a directory where to dump the retrieved
                 # issues and related datasets.
                 if len(list_of_ids) > 1 and not os.path.isdir(directory):
-                    print(ERROR_DIC['multiple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['multiple_ids'][0]))
-                    sys.exit(ERROR_DIC['multiple_ids'][0])
+                    logging_error(ERROR_DIC['multiple_ids'])
             # Looping over list of ids provided
             for n in list_of_ids:
                 local_issue = LocalIssue(None, None, None, None, args.command)
@@ -336,8 +335,7 @@ def run():
                 if not os.path.exists(directory) and '.' not in directory:
                     os.makedirs(directory)
                 elif '.' in directory:
-                    print(ERROR_DIC['multiple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['multiple_ids'][0]))
-                    sys.exit(ERROR_DIC['multiple_ids'][0])
+                    logging_error(ERROR_DIC['multiple_ids'])
             local_issue = LocalIssue(None, None, None, None, args.command)
             local_issue.retrieve_all(args.issues, args.dsets)
 

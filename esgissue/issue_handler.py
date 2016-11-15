@@ -12,7 +12,7 @@
 import sys
 import logging
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
-                  extract_facets, update_json
+                  extract_facets, update_json, logging_error
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
@@ -52,9 +52,7 @@ class LocalIssue(object):
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
             if not test_pattern(dataset):
-                logging.error('Validation Result: FAILED // Dataset ID {} have invalid format, error code {}.'.
-                              format(dataset, ERROR_DIC[DATASETS]))
-                sys.exit(ERROR_DIC[DATASETS][0])
+                logging_error(ERROR_DIC[DATASETS], dataset)
             facets = extract_facets(dataset, self.json[PROJECT])
             self.json = update_json(facets, self.json)
         try:
@@ -65,26 +63,17 @@ class LocalIssue(object):
                 error_code = resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
             else:
                 error_code = resolve_validation_error_code(ve.message + ve.validator)
-            logging.error('Validation error: error message: {}'.format(error_code[1]))
-            logging.error('Validation error: code {}, check documentation for error list.'.format(error_code[0]))
-            # logging.error('Validation error: {} for {}, while validating {}.'.format(ve.message, ve.validator,
-            #                                                                          ve.relative_path))
-            # logging.error('The responsible schema part is: {}'.format(ve.schema))
-            sys.exit(error_code[0])
+            logging_error(error_code)
         except ValueError as e:
             logging.error(repr(e.message))
         except Exception as e:
             logging.error(repr(e.message))
-            logging.error(ERROR_DIC['validation_failed'][1] + '. Error code: {}'.format(ERROR_DIC['validation_failed'][0]))
-            logging.error('File path: {}'.format(self.issue_path))
-            sys.exit(ERROR_DIC['validation_failed'])
+            logging_error(ERROR_DIC['validation_failed'], self.issue_path)
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
             if not test_url(url):
-                logging.error('Validation Result: FAILED // this url {} cannot be reached, error code {}.'.
-                              format(url, ERROR_DIC[URLS][0]))
-                sys.exit(ERROR_DIC[URLS][0])
+                logging_error(ERROR_DIC[URLS], url)
         # Validate the datasets list against the dataset id pattern
         logging.info('Validation Result: SUCCESSFUL')
 
@@ -107,12 +96,11 @@ class LocalIssue(object):
                 issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
                 logging.info('Issue file has been created successfully!')
         except ConnectionError:
-            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+            logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
-
+            logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+            logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def update(self, credentials):
         """
@@ -130,11 +118,11 @@ class LocalIssue(object):
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
             logging.info('Issue has been updated successfully!')
         except ConnectionError:
-            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+            logging_error(ERROR_DIC['connection_error'], None)
         except ConnectTimeout:
-            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
+            logging.error(ERROR_DIC['connection_timeout'], None)
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+            logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def close(self, credentials):
         """
@@ -153,11 +141,11 @@ class LocalIssue(object):
                 data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
             logging.info('Issue has been closed successfully!')
         except ConnectionError:
-            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+            logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
+            logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+            logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def retrieve(self, n, issues, dsets):
         """
@@ -175,11 +163,11 @@ class LocalIssue(object):
             else:
                 logging.info("Issue id didn't match any issues in the errata db")
         except ConnectionError:
-            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+            logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
+            logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+            logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def retrieve_all(self, issues, dsets):
         """
@@ -197,11 +185,11 @@ class LocalIssue(object):
             for issue in results:
                 self.dump_issue(issue, issues, dsets)
         except ConnectionError:
-            logging.error(ERROR_DIC['connection_error'][1] + '. Error code: {}'.format(ERROR_DIC['connection_error'][0]))
+            logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging.error(ERROR_DIC['connection_timeout'][1] + '. Error code: {}'.format(ERROR_DIC['connection_timeout'][0]))
+            logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging.error('An unknown error has occurred, this is the stack {0}, error code: {1}'.format(repr(e), 99))
+            logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     @staticmethod
     def dump_issue(issue, issues, dsets):
