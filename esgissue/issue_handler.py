@@ -168,7 +168,7 @@ class LocalIssue(object):
         """
         logging.info('processing id {}'.format(n))
         try:
-            r = get_ws_call(RETRIEVE, None, n)
+            r = get_ws_call(RETRIEVE, None, n, None)
             if r.json() is not None:
                 self.dump_issue(r.json()[ISSUE], issues, dsets)
                 logging.info('Issue has been downloaded.')
@@ -190,7 +190,7 @@ class LocalIssue(object):
         """
         try:
             print('Calling WS')
-            r = get_ws_call(RETRIEVE_ALL, None, None)
+            r = get_ws_call(RETRIEVE_ALL, None, None, None)
             print('Answer received')
             results = r.json()[ISSUES]
             for issue in results:

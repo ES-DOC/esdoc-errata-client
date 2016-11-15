@@ -309,9 +309,11 @@ def run():
 
     elif args.command == RETRIEVE:
         if args.id is not None:
-            if os.path.exists(args.id):
-                with open(args.id) as f:
+            # in case of file of ids
+            if len(args.id) == 1 and type(args.id[0]) == str and os.path.exists(args.id[0]):
+                with open(args.id[0]) as f:
                     list_of_ids = f.readlines()
+            # in case of a literal list of ids
             else:
                 list_of_ids = args.id
             # In the case the user is requesting more than one issue
