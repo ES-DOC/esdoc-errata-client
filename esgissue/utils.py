@@ -258,8 +258,9 @@ def update_json(facets, original_json):
             if value not in original_json[key]:
                 original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value:
-            logging.error(ERROR_DIC['single_entry_field'][1], ' Error code: {}'.format(ERROR_DIC['single_entry_field'][0]))
-            logging.error('The field {} caused the problem.'.format(key))
+            logging.error(ERROR_DIC['single_entry_field'][1]+' Error code: {}'.format(ERROR_DIC['single_entry_field'][0]))
+            # TODO formatting key failed
+            logging.error('The field {} caused the problem.'.format(str(key)))
             sys.exit(ERROR_DIC['single_entry_field'][0])
     return original_json
 
