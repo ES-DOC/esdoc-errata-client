@@ -324,8 +324,8 @@ def run():
                 # This tests whether a list of ids is provided with a directory where to dump the retrieved
                 # issues and related datasets.
                 if len(list_of_ids) > 1 and not os.path.isdir(directory):
-                    print(ERROR_DIC['mutliple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['mutliple_ids'][0]))
-                    sys.exit(ERROR_DIC['mutliple_ids'][0])
+                    print(ERROR_DIC['multiple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['multiple_ids'][0]))
+                    sys.exit(ERROR_DIC['multiple_ids'][0])
             # Looping over list of ids provided
             for n in list_of_ids:
                 local_issue = LocalIssue(None, None, None, None, args.command)
@@ -333,9 +333,11 @@ def run():
         else:
             # in case the ids were not specified the client proceeds to download the errata issue db.
             for directory in [args.issues, args.dsets]:
-                if not os.path.isdir(directory):
-                    print('If you wish to download all issues, please provide a directory not a file.')
-                    sys.exit(1)
+                if not os.path.exists(directory) and '.' not in directory:
+                    os.makedirs(directory)
+                elif '.' in directory:
+                    print(ERROR_DIC['multiple_ids'][1] + '. Error code: {}'.format(ERROR_DIC['multiple_ids'][0]))
+                    sys.exit(ERROR_DIC['multiple_ids'][0])
             local_issue = LocalIssue(None, None, None, None, args.command)
             local_issue.retrieve_all(args.issues, args.dsets)
 

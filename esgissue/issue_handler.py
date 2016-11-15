@@ -189,9 +189,10 @@ class LocalIssue(object):
         :return:
         """
         try:
-            print('Calling WS')
+            logging.info('Starting archive process...')
             r = get_ws_call(RETRIEVE_ALL, None, None, None)
-            print('Answer received')
+            logging.info('Webservice provided content...')
+            logging.info('Persisting information...')
             results = r.json()[ISSUES]
             for issue in results:
                 self.dump_issue(issue, issues, dsets)
