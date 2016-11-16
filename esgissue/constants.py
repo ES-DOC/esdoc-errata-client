@@ -3,7 +3,7 @@ import os
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                     'close': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
+                     'close': '{0}/templates/close.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 
 # JSON FIELDS

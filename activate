@@ -10,4 +10,4 @@ export PYTHONPATH=$PYTHONPATH:$ISSUE_CLIENT_HOME
 
 # Creating commands.
 
-alias issue-manager="python ${ISSUE_CLIENT_HOME}/esgissue/esgissue.py"
+alias esgissue="python ${ISSUE_CLIENT_HOME}/esgissue/esgissue.py"
