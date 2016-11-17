@@ -28,6 +28,7 @@ setup(name='esgissue-client',
       include_package_data=True,
       install_requires=['requests>=2.9.1',
                         'jsonschema',
+                        'functools32'
                         ],
       platforms=['Unix'],
       zip_safe=False,

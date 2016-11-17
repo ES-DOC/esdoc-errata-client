@@ -166,13 +166,14 @@ def get_ws_call(action, payload, uid, credentials):
     :param credentials: username & token
     :return: requests call
     """
-    config = ConfigParser()
-    config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
+    # config = ConfigParser()
+    # config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
 
-    url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
+    url = URLS['URL_BASE'] + URLS[action.upper()]
+    # url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
     if action in [CREATE, UPDATE]:
         r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
     elif action == CLOSE:
@@ -219,8 +220,8 @@ def extract_facets(dataset_id, project):
     result_dict = dict()
     config = ConfigParser()
     config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
-    regex_str = config.get(REGEX, project.upper()+'_REGEX')
-    pos = config._sections[project.upper()]
+    regex_str = REGEX_OPTIONS[project.lower()][0]
+    pos = REGEX_OPTIONS[project.lower()][1]
     match = re.match(regex_str, dataset_id)
     if match:
         for key, value in pos.iteritems():
