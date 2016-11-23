@@ -18,6 +18,8 @@ from ConfigParser import ConfigParser
 from constants import *
 from collections import OrderedDict
 
+# Misc operations
+
 
 class MultilineFormatter(HelpFormatter):
     """
@@ -53,37 +55,6 @@ class MultilineFormatter(HelpFormatter):
             multiline_text.append(textwrap.fill(line, width))
         multiline_text[-1] += '\n'
         return multiline_text
-
-
-def init_logging(logdir, level='INFO'):
-    """
-    Initiates the logging configuration (output, message formatting).
-    In the case of a logfile, the logfile name is unique and formatted as follows:
-    ``name-YYYYMMDD-HHMMSS-JOBID.log``
-
-    :param str logdir: The relative or absolute logfile directory. If ``None`` the standard output is used.
-    :param str level: The log level.
-
-    """
-    __LOG_LEVELS__ = {'CRITICAL': logging.CRITICAL,
-                      'ERROR': logging.ERROR,
-                      'WARNING': logging.WARNING,
-                      'INFO': logging.INFO,
-                      'DEBUG': logging.DEBUG,
-                      'NOTSET': logging.NOTSET}
-    logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
-    if logdir:
-        logfile = 'esgissue-{0}-{1}.log'.format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"), os.getpid())
-        if not os.path.isdir(logdir):
-            os.makedirs(logdir)
-        logging.basicConfig(filename=os.path.join(logdir, logfile),
-                            level=__LOG_LEVELS__[level],
-                            format='%(asctime)s %(levelname)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
-    else:
-        logging.basicConfig(level=__LOG_LEVELS__[level],
-                            format='%(asctime)s %(levelname)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
 
 
 def test_url(url):
@@ -129,7 +100,7 @@ def traverse(l, tree_types=(list, tuple)):
     :param list l: The list to parse
     :param tuple tree_types: Iterable types
     :returns: A list of extracted items
-    :rtype: *list*    
+    :rtype: *list*
 
     """
     if isinstance(l, tree_types):
@@ -140,12 +111,80 @@ def traverse(l, tree_types=(list, tuple)):
         yield l
 
 
-def get_issue(path):
-    """reads json file containing issue from path to file.
-    :param path: issue json file
+def get_file_path(path_to_issues, path_to_dsets, uid):
     """
-    with open(path, 'r') as data_file:
-        return json.load(data_file)
+    Based on the user input, this function returns the destination of the issue and datasets' file.
+    :param path_to_issues: args.issues
+    :param path_to_dsets: args.dsets
+    :param uid: the issue's identifier
+    :return: path_to_issue, path_to_datasets
+    """
+    if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
+        path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
+        path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
+        return path_to_issues, path_to_dsets
+    else:
+        return path_to_issues, path_to_dsets
+
+
+# Logging
+
+
+def init_logging(logdir, level='INFO'):
+    """
+    Initiates the logging configuration (output, message formatting).
+    In the case of a logfile, the logfile name is unique and formatted as follows:
+    ``name-YYYYMMDD-HHMMSS-JOBID.log``
+
+    :param str logdir: The relative or absolute logfile directory. If ``None`` the standard output is used.
+    :param str level: The log level.
+
+    """
+    __LOG_LEVELS__ = {'CRITICAL': logging.CRITICAL,
+                      'ERROR': logging.ERROR,
+                      'WARNING': logging.WARNING,
+                      'INFO': logging.INFO,
+                      'DEBUG': logging.DEBUG,
+                      'NOTSET': logging.NOTSET}
+    logging.getLogger("requests").setLevel(logging.CRITICAL)  # Disables logging message from request library
+    if logdir:
+        logfile = 'esgissue-{0}-{1}.log'.format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"), os.getpid())
+        if not os.path.isdir(logdir):
+            os.makedirs(logdir)
+        logging.basicConfig(filename=os.path.join(logdir, logfile),
+                            level=__LOG_LEVELS__[level],
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+    else:
+        logging.basicConfig(level=__LOG_LEVELS__[level],
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+
+
+def logging_error(error, additional_data=None):
+    """
+
+    :param error: error dic
+    :param additional_data: additional information
+    :return: logs error
+    """
+    logging.error(error[1] + ' Error code: {}.'.format(error[0]))
+    if additional_data:
+        logging.error('Error caused by {}.'.format(additional_data))
+    sys.exit(error[0])
+
+
+def resolve_validation_error_code(message):
+    """
+    Gives sense to validation error messages by affecting respective codes to them.
+    :param message: string of error message
+    :return: error code
+    """
+    for key, value in ERROR_DIC.iteritems():
+        if key in message.lower():
+            return value
+
+# TXT operations
 
 
 def get_datasets(dataset_file):
@@ -157,6 +196,55 @@ def get_datasets(dataset_file):
         dsets.append(unicode(dset.strip(' \n\r\t')))
     return dsets
 
+
+# JSON operations
+
+
+def get_issue(path):
+    """reads json file containing issue from path to file.
+    :param path: issue json file
+    """
+    with open(path, 'r') as data_file:
+        return json.load(data_file)
+
+
+def update_json(facets, original_json):
+    """
+    update self.json with the newly detected facets from dataset ids.
+    :param facets: dictionary
+    :param original_json: dictionary
+    :return: dictionary with new facets detected.
+    """
+    multiple_facets = ['experiments', 'models', 'variables']
+    for key, value in facets.iteritems():
+        if key not in original_json:
+            if key not in multiple_facets:
+                # Case of a single value field like the institute.
+                original_json[key] = value
+            else:
+                # Case of a field that supports a list.
+                original_json[key] = [value]
+        elif key in original_json and key in multiple_facets:
+            if value not in original_json[key]:
+                original_json[key].append(value)
+        elif key in original_json and key not in multiple_facets and original_json[key] != value:
+            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(value, str(key)))
+    return original_json
+
+
+def order_json(json_body):
+    """
+    :param json_body: raw json in dictionary without order
+    :return: ordered json dictionary
+    """
+    index_tuple = ()
+    for key, value in INDEX_DICT.iteritems():
+        if value in json_body.keys():
+            index_tuple += ((value, json_body[value]),)
+    return OrderedDict(index_tuple)
+
+
+# Web Service related operations
 
 def get_ws_call(action, payload, uid, credentials):
     """
@@ -195,80 +283,6 @@ def get_ws_call(action, payload, uid, credentials):
     return r
 
 
-def get_file_path(path_to_issues, path_to_dsets, uid):
-    """
-    Based on the user input, this function returns the destination of the issue and datasets' file.
-    :param path_to_issues: args.issues
-    :param path_to_dsets: args.dsets
-    :param uid: the issue's identifier
-    :return: path_to_issue, path_to_datasets
-    """
-    if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
-        path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
-        path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
-        return path_to_issues, path_to_dsets
-    else:
-        return path_to_issues, path_to_dsets
-
-
-def extract_facets(dataset_id, project):
-    """
-    Given a specific project, this function extracts the facets as described in the ini file.
-    :param dataset_id: dataset id containing the facets
-    :param project: project identifier
-    :return: dict
-    """
-    result_dict = dict()
-    config = ConfigParser()
-    config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
-    regex_str = REGEX_OPTIONS[project.lower()][0]
-    pos = REGEX_OPTIONS[project.lower()][1]
-    match = re.match(regex_str, dataset_id)
-    if match:
-        for key, value in pos.iteritems():
-            if key != '__name__':
-                result_dict[key] = match.group(int(value)).lower()
-    else:
-        logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
-            dataset_id, project))
-    return result_dict
-
-
-def update_json(facets, original_json):
-    """
-    update self.json with the newly detected facets from dataset ids.
-    :param facets: dictionary
-    :param original_json: dictionary
-    :return: dictionary with new facets detected.
-    """
-    multiple_facets = ['experiments', 'models', 'variables']
-    for key, value in facets.iteritems():
-        if key not in original_json:
-            if key not in multiple_facets:
-                # Case of a single value field like the institute.
-                original_json[key] = value
-            else:
-                # Case of a field that supports a list.
-                original_json[key] = [value]
-        elif key in original_json and key in multiple_facets:
-            if value not in original_json[key]:
-                original_json[key].append(value)
-        elif key in original_json and key not in multiple_facets and original_json[key] != value:
-            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(value, str(key)))
-    return original_json
-
-
-def resolve_validation_error_code(message):
-    """
-    Gives sense to validation error messages by affecting respective codes to them.
-    :param message: string of error message
-    :return: error code
-    """
-    for key, value in ERROR_DIC.iteritems():
-        if key in message.lower():
-            return value
-
-
 def authenticate():
     """
     Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
@@ -292,29 +306,33 @@ def authenticate():
             logging.info('Credentials were successfully saved.')
     return username, token
 
-
-def logging_error(error, additional_data=None):
-    """
-
-    :param error: error dic
-    :param additional_data: additional information
-    :return: logs error
-    """
-    logging.error(error[1] + ' Error code: {}.'.format(error[0]))
-    if additional_data:
-        logging.error('Error caused by {}.'.format(additional_data))
-    sys.exit(error[0])
+# REGEX
 
 
-def order_json(json_body):
+def extract_facets(dataset_id, project):
     """
-    :param json_body: raw json in dictionary without order
-    :return: ordered json dictionary
+    Given a specific project, this function extracts the facets as described in the ini file.
+    :param dataset_id: dataset id containing the facets
+    :param project: project identifier
+    :return: dict
     """
-    index_tuple = ()
-    for key, value in INDEX_DICT.iteritems():
-        if value in json_body.keys():
-            index_tuple += ((value, json_body[value]),)
-    return OrderedDict(index_tuple)
+    result_dict = dict()
+    regex_str = REGEX_OPTIONS[project.lower()][0]
+    pos = REGEX_OPTIONS[project.lower()][1]
+    match = re.match(regex_str, dataset_id)
+    if match:
+        for key, value in pos.iteritems():
+            if key != '__name__':
+                result_dict[key] = match.group(int(value)).lower()
+    else:
+        logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
+            dataset_id, project))
+    return result_dict
+
+
+
+
+
+
 
 
