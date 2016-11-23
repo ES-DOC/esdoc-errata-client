@@ -64,6 +64,13 @@ CMIP5_POS = {'project': 1, 'institute': 3, 'models': 4, 'experiments': 5, 'varia
 
 REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS]}
 
+
+# JSON FILE ORDER
+
+INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'institute', 5: 'project', 6: 'dateCreated', 7: 'dateUpdated',
+              8: 'dateClosed', 9: 'models', 10: 'variables', 11: 'materials', 12: 'severity', 13: 'status', 14: 'url'}
+
+
 # ERROR DICTIONARY
 ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2, 'Description field missing or invalid.'],
              'datasets': [3, 'Datasets are missing or invalid.'], 'severity': [4, 'Issue severity missing or invalid.'],

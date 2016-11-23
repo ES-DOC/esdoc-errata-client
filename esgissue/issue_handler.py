@@ -12,7 +12,7 @@
 import sys
 import logging
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
-                  extract_facets, update_json, logging_error
+                  extract_facets, update_json, logging_error, order_json
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
@@ -93,7 +93,8 @@ class LocalIssue(object):
             with open(self.issue_path, 'w') as issue_file:
                 if DATASETS in self.json.keys():
                     del self.json[DATASETS]
-                issue_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
+                self.json = order_json(self.json)
+                issue_file.write(simplejson.dumps(self.json, indent=4))
                 logging.info('Issue file has been created successfully!')
         except ConnectionError:
             logging_error(ERROR_DIC['connection_error'])
@@ -115,7 +116,8 @@ class LocalIssue(object):
             del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
-                data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
+                self.json = order_json(self.json)
+                data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
         except ConnectionError:
             logging_error(ERROR_DIC['connection_error'], None)
@@ -138,7 +140,8 @@ class LocalIssue(object):
             if DATASETS in self.json.keys():
                 del self.json[DATASETS]
             with open(self.issue_path, 'w+') as data_file:
-                data_file.write(simplejson.dumps(self.json, indent=4, sort_keys=True))
+                self.json = order_json(self.json)
+                data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been closed successfully!')
         except ConnectionError:
             logging_error(ERROR_DIC['connection_error'])
@@ -205,7 +208,8 @@ class LocalIssue(object):
                 dset_file.write(dset + '\n')
             del issue[DATASETS]
         with open(path_to_issue, 'w') as data_file:
-            data_file.write(simplejson.dumps(issue, indent=4, sort_keys=True))
+            issue = order_json(issue)
+            data_file.write(simplejson.dumps(issue, indent=4))
 
 
 

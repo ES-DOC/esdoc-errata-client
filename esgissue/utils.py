@@ -16,6 +16,7 @@ import json
 import requests
 from ConfigParser import ConfigParser
 from constants import *
+from collections import OrderedDict
 
 
 class MultilineFormatter(HelpFormatter):
@@ -303,4 +304,17 @@ def logging_error(error, additional_data=None):
     if additional_data:
         logging.error('Error caused by {}.'.format(additional_data))
     sys.exit(error[0])
+
+
+def order_json(json_body):
+    """
+    :param json_body: raw json in dictionary without order
+    :return: ordered json dictionary
+    """
+    index_tuple = ()
+    for key, value in INDEX_DICT.iteritems():
+        if value in json_body.keys():
+            index_tuple += ((value, json_body[value]),)
+    return OrderedDict(index_tuple)
+
 
