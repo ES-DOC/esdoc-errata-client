@@ -264,7 +264,7 @@ def get_ws_call(action, payload, uid, credentials):
     if action in [CREATE, UPDATE]:
         r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
     elif action == CLOSE:
-        r = requests.post(url+uid, auth=credentials)
+        r = requests.post(url+uid+'&closedBy='+credentials[0], auth=credentials)
     elif action == RETRIEVE:
         r = requests.get(url+uid)
     else:

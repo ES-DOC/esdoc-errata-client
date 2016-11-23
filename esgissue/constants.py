@@ -12,6 +12,9 @@ UID = 'uid'
 DATE_CREATED = 'dateCreated'
 DATE_UPDATED = 'dateUpdated'
 DATE_CLOSED = 'dateClosed'
+CREATED_BY = 'createdBy'
+UPDATED_BY = 'updatedBy'
+CLOSED_BY = 'closedBy'
 DATASETS = 'datasets'
 URL = 'url'
 URLS = 'urls'
@@ -24,6 +27,7 @@ STATUS_ONHOLD = 'onhold'
 STATUS_WONTFIX = 'wontfix'
 STATUS_RESOLVED = 'resolved'
 PROJECT = 'project'
+
 
 # ACTIONS
 

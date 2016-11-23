@@ -86,6 +86,7 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
+            self.json[CREATED_BY] = credentials[0]
             get_ws_call(self.action, self.json, None, credentials)
             logging.info('Updating fields of payload after remote issue creation...')
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
@@ -111,6 +112,7 @@ class LocalIssue(object):
         logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
+            self.json[UPDATED_BY] = credentials[0]
             get_ws_call(self.action, self.json, None, credentials)
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             del self.json[DATASETS]
@@ -134,10 +136,10 @@ class LocalIssue(object):
 
             logging_error(ERROR_DIC['unknown_error'], repr(e))
 
-
     def close(self, credentials, status):
         """
         :param credentials: username & token
+        :param status: issue status
         Close the GitHub issue
         """
         logging.info('Closing issue #{}'.format(self.json[UID]))
@@ -170,6 +172,7 @@ class LocalIssue(object):
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            self.json[CLOSED_BY] = credentials[1]
             if DATASETS in self.json.keys():
                 del self.json[DATASETS]
             with open(self.issue_path, 'w+') as data_file:
