@@ -9,7 +9,7 @@
 # TODO: Handle Service interaction should consider dictionary to records hundreds of PIDs per issue
 
 # Module imports
-import sys
+import sys, time, linecache
 import logging
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
                   extract_facets, update_json, logging_error, order_json
@@ -124,15 +124,48 @@ class LocalIssue(object):
         except ConnectTimeout:
             logging.error(ERROR_DIC['connection_timeout'], None)
         except Exception as e:
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            lineno = tb.tb_lineno
+            filename = f.f_code.co_filename
+            linecache.checkcache(filename)
+            line = linecache.getline(filename, lineno, f.f_globals)
+            print 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj)
+
             logging_error(ERROR_DIC['unknown_error'], repr(e))
 
-    def close(self, credentials):
+
+    def close(self, credentials, status):
         """
         :param credentials: username & token
         Close the GitHub issue
         """
         logging.info('Closing issue #{}'.format(self.json[UID]))
         try:
+            if self.json[STATUS] in [STATUS_NEW, STATUS_ONHOLD]:
+                if status is not None:
+                    if status not in [STATUS_RESOLVED, STATUS_WONTFIX]:
+                        logging_error(ERROR_DIC[STATUS])
+                    else:
+                        self.json[STATUS] = status
+                        self.action = UPDATE
+                        self.update(credentials)
+                        self.action = CLOSE
+                else:
+                    time.sleep(0.5)
+                    status = raw_input('Issue status does not allow direct closing. '
+                                       'Please change it to either (w)ontfix/(r)esolved: ')
+                    if status not in ['w', 'r', 'W', 'R']:
+                        logging.error(STATUS)
+                    else:
+                        if status in ['r', 'R']:
+                            status = STATUS_RESOLVED
+                        else:
+                            status = STATUS_WONTFIX
+                        self.json[STATUS] = status
+                        self.action = UPDATE
+                        self.update(credentials)
+                        self.action = CLOSE
             get_ws_call(self.action, None, self.json[UID], credentials)
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')

@@ -20,6 +20,9 @@ ISSUES = 'issues'
 ISSUE = 'issue'
 STATUS = 'status'
 STATUS_NEW = 'new'
+STATUS_ONHOLD = 'onhold'
+STATUS_WONTFIX = 'wontfix'
+STATUS_RESOLVED = 'resolved'
 PROJECT = 'project'
 
 # ACTIONS

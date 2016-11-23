@@ -255,8 +255,6 @@ def get_ws_call(action, payload, uid, credentials):
     :param credentials: username & token
     :return: requests call
     """
-    # config = ConfigParser()
-    # config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'esgf-client.ini'))
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])

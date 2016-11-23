@@ -62,7 +62,9 @@
     "type": "string",
     "enum": [
       "wontfix",
-      "resolved"
+      "resolved",
+      "new",
+      "onhold"
     ]
   },
   "dateCreated": {

@@ -207,6 +207,13 @@ def get_args():
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=__DSETS_HELP__)
+    close.add_argument(
+        '--status',
+        nargs='?',
+        required=False,
+        type=str,
+        help='specifies status of closed issue.'
+    )
 
     #####################################
     # Subparser for "esgissue retrieve" #
@@ -257,7 +264,7 @@ def get_args():
     return main.parse_args()
 
 
-def process_command(command, issue_file, dataset_file, issue_path, dataset_path):
+def process_command(command, issue_file, dataset_file, issue_path, dataset_path, status=None):
     payload = issue_file
     if dataset_file is not None:
         dsets = get_datasets(dataset_file)
@@ -278,7 +285,7 @@ def process_command(command, issue_file, dataset_file, issue_path, dataset_path)
     elif command == UPDATE:
         local_issue.update(credentials)
     elif command == CLOSE:
-        local_issue.close(credentials)
+        local_issue.close(credentials, status)
 
 
 def run():
@@ -302,11 +309,14 @@ def run():
         init_logging(None)
 
     # Retrieve command has a slightly different behavior from the rest so it's singled out
-    if args.command != RETRIEVE:
+    if args.command not in [RETRIEVE, CLOSE]:
         issue_file = get_issue(args.issue)
         dataset_file = get_datasets(args.dsets)
         process_command(args.command, issue_file, dataset_file, args.issue, args.dsets)
-
+    elif args.command == CLOSE:
+        issue_file = get_issue(args.issue)
+        dataset_file = get_datasets(args.dsets)
+        process_command(args.command, issue_file, dataset_file, args.issue, args.dsets, args.status)
     elif args.command == RETRIEVE:
         if args.id is not None:
             # in case of file of ids
