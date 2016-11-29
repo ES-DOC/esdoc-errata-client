@@ -52,8 +52,8 @@ WEBSERVICE = 'WebService'
 HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # URL options
-URLS = {
-        'URL_BASE': 'http://localhost:5001',
+URLS_LIST = {
+        'URL_BASE': 'http://pc-296.ipsl.jussieu.fr:5001',
         'CREATE': '/1/issue/create',
         'UPDATE': '/1/issue/update',
         'CLOSE': '/1/issue/close?uid=',

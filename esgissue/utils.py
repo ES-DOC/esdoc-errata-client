@@ -259,7 +259,7 @@ def get_ws_call(action, payload, uid, credentials):
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
 
-    url = URLS['URL_BASE'] + URLS[action.upper()]
+    url = URLS_LIST['URL_BASE'] + URLS_LIST[action.upper()]
     # url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
     if action in [CREATE, UPDATE]:
         r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
@@ -287,10 +287,9 @@ def authenticate():
     :return: Boolean
     """
     config = ConfigParser()
-    if os.path.isfile(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg')):
-        config.read(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg'))
-        username = config.get('auth', 'username')
-        token = config.get('auth', 'token')
+    if os.environ.get('ERRATA_CLIENT_USERNAME') is not None:
+        username = os.environ.get('ERRATA_CLIENT_USERNAME')
+        token = os.environ.get('ERRATA_CLIENT_TOKEN')
     else:
         username = raw_input('Username: ')
         token = raw_input('Token: ')
@@ -299,9 +298,10 @@ def authenticate():
             config.add_section('auth')
             config.set('auth', 'username', username)
             config.set('auth', 'token', token)
-            with open(os.path.join(os.getenv('ISSUE_CLIENT_HOME'), 'cred.cfg'), 'wb') as configfile:
-                config.write(configfile)
+            os.environ["ERRATA_CLIENT_USERNAME"] = username
+            os.environ["ERRATA_CLIENT_TOKEN"] = token
             logging.info('Credentials were successfully saved.')
+            print(os.getenv('ERRATA_CLIENT_USERNAME'))
     return username, token
 
 # REGEX
