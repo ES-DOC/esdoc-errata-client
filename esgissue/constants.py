@@ -53,7 +53,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # URL options
 URLS_LIST = {
-        'URL_BASE': 'http://pc-296.ipsl.jussieu.fr:5001',
+        'URL_BASE': 'http://test.errata.api.es-doc.org',
         'CREATE': '/1/issue/create',
         'UPDATE': '/1/issue/update',
         'CLOSE': '/1/issue/close?uid=',
@@ -74,8 +74,8 @@ REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS]}
 
 # JSON FILE ORDER
 
-INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'institute', 5: 'project', 6: 'dateCreated', 7: 'dateUpdated',
-              8: 'dateClosed', 9: 'models', 10: 'variables', 11: 'materials', 12: 'severity', 13: 'status', 14: 'url'}
+INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url',
+              8: 'dateCreated', 9: 'dateUpdated', 10: 'dateClosed', }
 
 
 # ERROR DICTIONARY

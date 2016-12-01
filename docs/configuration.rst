@@ -33,11 +33,19 @@ A user needs, however, proper writing rights to be authorized to create, update 
 
 Authorization is controlled using github's organizations invitational based structure.
 In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
+After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.
+After accepting the invitation, the user should imperatively make sure his membership is public, otherwise, it's as if he doesn't have the right to be an
+errata publisher. To make your membership public, simply follow this link for a guide: https://help.github.com/articles/publicizing-or-hiding-organization-membership/
 
 
-The esgf-errata-client doesn't require much configuration.
-The activate file once sourced will set the environment variables and proper aliases.
-The esgf-client.ini file contains some constants required, that might be subject to change in the future.
-However constantly updating the file from the project's repository might be the best practice here.
+After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
+Two environment variables should be declared by the user to avoid having to insert username and token for each and every operation.
+The user must :
+
+.. code-block:: bash
+        >export ERRATA_CLIENT_USERNAME=*username*
+        >export ERRATA_CLIENT_TOKEN=*token*
+
+These two variables will be instead used for each operation to ease the task.
 
 

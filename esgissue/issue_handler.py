@@ -119,6 +119,7 @@ class LocalIssue(object):
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
                 self.json = order_json(self.json)
+
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
         except ConnectionError:

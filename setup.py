@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='esgissue-client',
-      version='0.1.6',
+      version='0.1.9',
       description='Local client to create, update, close and retrieve ESGF issues',
       author='Levavasseur Guillaume',
       author_email='glipsl@ipsl.jussieu.fr',
@@ -26,7 +26,7 @@ setup(name='esgissue-client',
       url='https://github.com/ES-DOC/esdoc-errata-client',
       packages=find_packages(),
       include_package_data=True,
-      install_requires=['requests>=2.9.1',
+      install_requires=['requests',
                         'jsonschema',
                         'functools32',
                         'simplejson',

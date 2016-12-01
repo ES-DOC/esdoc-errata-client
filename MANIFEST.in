@@ -1,2 +1,3 @@
 include README.rst
 include esgissue/templates/*
+include activate

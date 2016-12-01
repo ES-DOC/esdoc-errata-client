@@ -14,9 +14,9 @@ from argparse import HelpFormatter
 import datetime
 import json
 import requests
-from ConfigParser import ConfigParser
 from constants import *
 from collections import OrderedDict
+from time import sleep
 
 # Misc operations
 
@@ -225,10 +225,14 @@ def update_json(facets, original_json):
                 # Case of a field that supports a list.
                 original_json[key] = [value]
         elif key in original_json and key in multiple_facets:
-            if value not in original_json[key]:
-                original_json[key].append(value)
+            # This is the case of an attempt to change an extracted facet manually and should not be tolerated.
+            # However an error is not raised because this is not the way things should be done.
+            pass
+            # if value not in original_json[key]:
+            #     original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value:
-            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(value, str(key)))
+            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
+                                                                                               str(key)))
     return original_json
 
 
@@ -242,6 +246,11 @@ def order_json(json_body):
         if value in json_body.keys():
             index_tuple += ((value, json_body[value]),)
     return OrderedDict(index_tuple)
+
+# TODO
+
+def clean_json_response(json_body):
+    to_remove = ['institute', 'models', 'variables', 'experiments']
 
 
 # Web Service related operations
@@ -286,22 +295,23 @@ def authenticate():
     Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
     :return: Boolean
     """
-    config = ConfigParser()
+    # config = ConfigParser()
     if os.environ.get('ERRATA_CLIENT_USERNAME') is not None:
         username = os.environ.get('ERRATA_CLIENT_USERNAME')
         token = os.environ.get('ERRATA_CLIENT_TOKEN')
     else:
+        logging.info('Credentials not saved, check documentation to learn how to save time saving credentials.')
+        sleep(0.5)
         username = raw_input('Username: ')
         token = raw_input('Token: ')
-        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
-        if save_cred == 'y':
-            config.add_section('auth')
-            config.set('auth', 'username', username)
-            config.set('auth', 'token', token)
-            os.environ["ERRATA_CLIENT_USERNAME"] = username
-            os.environ["ERRATA_CLIENT_TOKEN"] = token
-            logging.info('Credentials were successfully saved.')
-            print(os.getenv('ERRATA_CLIENT_USERNAME'))
+        # save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+        # if save_cred == 'y':
+        #     config.add_section('auth')
+        #     config.set('auth', 'username', username)
+        #     config.set('auth', 'token', token)
+        #     os.environ["ERRATA_CLIENT_USERNAME"] = username
+        #     os.environ["ERRATA_CLIENT_TOKEN"] = token
+        #     logging.info('Credentials were successfully saved.')
     return username, token
 
 # REGEX
