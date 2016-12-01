@@ -169,7 +169,7 @@ class LocalIssue(object):
                         self.action = UPDATE
                         self.update(credentials)
                         self.action = CLOSE
-            get_ws_call(self.action, None, self.json[UID], credentials)
+            get_ws_call(self.action, status, self.json[UID], credentials)
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
