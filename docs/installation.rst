@@ -8,7 +8,8 @@ PIP installation from the test PyPI node
 ****************************************
 
 .. code-block:: bash
-  pip install -i https://testpypi.python.org/pypi esgissue-client
+
+  > pip install -i https://testpypi.python.org/pypi esgissue-client
 
 
 Installation from GitHub
