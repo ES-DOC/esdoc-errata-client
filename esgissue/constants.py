@@ -53,7 +53,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # URL options
 URLS_LIST = {
-        'URL_BASE': 'http://test.errata.api.es-doc.org',
+        'URL_BASE': 'http://localhost:5001',
         'CREATE': '/1/issue/create',
         'UPDATE': '/1/issue/update',
         'CLOSE': '/1/issue/close?uid=',
@@ -69,13 +69,20 @@ CMIP5_REGEX = '([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.([a-zA-Z]*)\.([a-zA-Z0-9-]*)\.([a
               '([a-zA-Z]*)\.([a-zA-Z]*)\.(r\d*i\d*p\d*)((v|#)\d*)'
 CMIP5_POS = {'project': 1, 'institute': 3, 'models': 4, 'experiments': 5, 'variables': 8}
 
-REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS]}
+# CMIP6 REGEX
+
+CMIP6_REGEX = '([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.([a-zA-Z]*)\.([a-zA-Z0-9-]*)\.([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.' \
+              '([a-zA-Z]*)\.([a-zA-Z]*)\.(r\d*i\d*p\d*)((v|#)\d*)'
+CMIP6_POS = {'project': 1, 'institute': 3, 'models': 4, 'experiments': 5, 'variables': 8}
+
+
+REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS], 'cmip6': [CMIP6_REGEX, CMIP6_POS]}
 
 
 # JSON FILE ORDER
 
-INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url',
-              8: 'dateCreated', 9: 'dateUpdated', 10: 'dateClosed', }
+INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url', 8: 'materials',
+              9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed', }
 
 
 # ERROR DICTIONARY
@@ -99,7 +106,8 @@ ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2,
              'unknown_command': [23, 'Command is unknown, check the documentation or help for further information'],
              'ws_request_failed': [24, 'WS request failed for unknown reason.'],
              'single_entry_field': [25, 'Field only supports single input per issue declaration.'],
-             'unknown_error': [99, 'An unknown error has been detected. Please provide the admins with the error stack.'],
+             'project_not_supported': [26, 'Project indicated in issue is not supported by errata service'],
+             'unknown_error': [99, 'An unknown error has been detected. Please provide the admins with the error stack.']
              }
 # Authentication and authorization
 

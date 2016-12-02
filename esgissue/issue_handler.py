@@ -30,6 +30,7 @@ class LocalIssue(object):
         if issue_json is not None:
             self.json = issue_json
             self.json[DATASETS] = dset_list
+            self.json[PROJECT] = self.json[PROJECT].lower()
         self.issue_path = issue_path
         self.dataset_path = dataset_path
 

@@ -215,22 +215,23 @@ def update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-    multiple_facets = ['experiments', 'models', 'variables']
+    multiple_facets = ['experiments', 'models', 'variables', 'materials', 'url']
     for key, value in facets.iteritems():
         if key not in original_json:
             if key not in multiple_facets:
                 # Case of a single value field like the institute.
-                original_json[key] = value
+                original_json[key] = value.lower()
             else:
                 # Case of a field that supports a list.
-                original_json[key] = [value]
+                original_json[key] = [value.lower()]
         elif key in original_json and key in multiple_facets:
             # This is the case of an attempt to change an extracted facet manually and should not be tolerated.
             # However an error is not raised because this is not the way things should be done.
             pass
             # if value not in original_json[key]:
             #     original_json[key].append(value)
-        elif key in original_json and key not in multiple_facets and original_json[key] != value:
+        elif key in original_json and key not in multiple_facets and original_json[key] != value.lower():
+            print(original_json[key].lower(), value.lower())
             logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
                                                                                                str(key)))
     return original_json
@@ -246,11 +247,6 @@ def order_json(json_body):
         if value in json_body.keys():
             index_tuple += ((value, json_body[value]),)
     return OrderedDict(index_tuple)
-
-# TODO
-
-def clean_json_response(json_body):
-    to_remove = ['institute', 'models', 'variables', 'experiments']
 
 
 # Web Service related operations
@@ -325,8 +321,11 @@ def extract_facets(dataset_id, project):
     :return: dict
     """
     result_dict = dict()
-    regex_str = REGEX_OPTIONS[project.lower()][0]
-    pos = REGEX_OPTIONS[project.lower()][1]
+    try:
+        regex_str = REGEX_OPTIONS[project.lower()][0]
+        pos = REGEX_OPTIONS[project.lower()][1]
+    except KeyError:
+        logging_error(ERROR_DIC['project_not_supported'])
     match = re.match(regex_str, dataset_id)
     if match:
         for key, value in pos.iteritems():

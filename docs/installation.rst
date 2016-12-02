@@ -11,12 +11,12 @@ Usual PIP installation
 
   pip install esdoc-errata-client
 
-PIP installation from GitHub
-****************************
+PIP installation from the test PyPI node
+****************************************
 
 .. code-block:: bash
+  pip install -i https://testpypi.python.org/pypi esgissue-client
 
-  pip install -e git@github.com:ES-DOC/esdoc-errata-client.git@master#egg=esgissue
 
 Installation from GitHub
 ************************
