@@ -43,8 +43,10 @@ Two environment variables should be declared by the user to avoid having to inse
 The user must :
 
 .. code-block:: bash
-        >export ERRATA_CLIENT_USERNAME=*username*
-        >export ERRATA_CLIENT_TOKEN=*token*
+
+   $>export ERRATA_CLIENT_USERNAME=username
+   $>export ERRATA_CLIENT_TOKEN=token
+
 
 These two variables will be instead used for each operation to ease the task.
 

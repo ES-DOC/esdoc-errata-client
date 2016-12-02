@@ -53,7 +53,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # URL options
 URLS_LIST = {
-        'URL_BASE': 'http://localhost:5001',
+        'URL_BASE': 'http://test.errata.api.es-doc.org',
         'CREATE': '/1/issue/create',
         'UPDATE': '/1/issue/update',
         'CLOSE': '/1/issue/close?uid=',
