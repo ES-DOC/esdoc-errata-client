@@ -4,13 +4,6 @@
 Installation
 ============
 
-Usual PIP installation 
-**********************
-
-.. code-block:: bash
-
-  pip install esdoc-errata-client
-
 PIP installation from the test PyPI node
 ****************************************
 
