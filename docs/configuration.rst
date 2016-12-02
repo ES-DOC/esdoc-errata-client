@@ -34,8 +34,6 @@ A user needs, however, proper writing rights to be authorized to create, update 
 Authorization is controlled using github's organizations invitational based structure.
 In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
 After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.
-After accepting the invitation, the user should imperatively make sure his membership is public, otherwise, it's as if he doesn't have the right to be an
-errata publisher. To make your membership public, simply follow this link for a guide: https://help.github.com/articles/publicizing-or-hiding-organization-membership/
 
 
 After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
