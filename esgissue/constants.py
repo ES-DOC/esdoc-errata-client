@@ -54,6 +54,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 # URL options
 URLS_LIST = {
         'URL_BASE': 'http://test.errata.api.es-doc.org',
+        # 'URL_BASE': 'http://localhost:5001',
         'CREATE': '/1/issue/create',
         'UPDATE': '/1/issue/update',
         'CLOSE': '/1/issue/close?uid=',
@@ -82,7 +83,7 @@ REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS], 'cmip6': [CMIP6_REGEX, CMIP6
 # JSON FILE ORDER
 
 INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url', 8: 'materials',
-              9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed', }
+              9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed'}
 
 
 # ERROR DICTIONARY
