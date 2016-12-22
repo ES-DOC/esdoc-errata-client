@@ -71,6 +71,12 @@
     "type": "string",
     "format": "date-time"
   },
+  "createdBy": {
+    "type": "string"
+  },
+  "updatedBy":{
+    "type": "string"
+  },
   "dateUpdated": {
     "type": "string",
     "format": "date-time"

@@ -17,8 +17,14 @@ import requests
 from constants import *
 from collections import OrderedDict
 from time import sleep
-
+import ConfigParser
+import StringIO
+import pyDes
 # Misc operations
+from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
+requests.packages.urllib3.disable_warnings(SNIMissingWarning)
 
 
 class MultilineFormatter(HelpFormatter):
@@ -260,12 +266,13 @@ def get_ws_call(action, payload, uid, credentials):
     :param credentials: username & token
     :return: requests call
     """
+    config = get_remote_config()
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
 
-    url = URLS_LIST['URL_BASE'] + URLS_LIST[action.upper()]
-    # url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action)
+    # url = URLS_LIST['URL_BASE'] + URLS_LIST[action.upper()]
+    url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action.upper())
     if action in [CREATE, UPDATE]:
         r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
     elif action == CLOSE:
@@ -286,31 +293,51 @@ def get_ws_call(action, payload, uid, credentials):
     return r
 
 
+# def authenticate():
+#     """
+#     Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
+#     :return: Boolean
+#     """
+#     # config = ConfigParser()
+#     if os.environ.get('ERRATA_CLIENT_USERNAME') is not None:
+#         username = os.environ.get('ERRATA_CLIENT_USERNAME')
+#         token = os.environ.get('ERRATA_CLIENT_TOKEN')
+#     else:
+#         logging.info('Credentials not saved, check documentation to learn how to save time saving credentials.')
+#         sleep(0.5)
+#         username = raw_input('Username: ')
+#         token = raw_input('Token: ')
+#         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+#         if save_cred == 'y':
+#             config.add_section('auth')
+#             config.set('auth', 'username', username)
+#             config.set('auth', 'token', token)
+#             os.environ["ERRATA_CLIENT_USERNAME"] = username
+#             os.environ["ERRATA_CLIENT_TOKEN"] = token
+#             logging.info('Credentials were successfully saved.')
+#     return username, token
+
+
 def authenticate():
-    """
-    Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
-    :return: Boolean
-    """
-    # config = ConfigParser()
-    if os.environ.get('ERRATA_CLIENT_USERNAME') is not None:
-        username = os.environ.get('ERRATA_CLIENT_USERNAME')
-        token = os.environ.get('ERRATA_CLIENT_TOKEN')
+    config = ConfigParser.ConfigParser()
+    if os.path.isfile('cred.cfg'):
+        key = raw_input('Passphrase: ')
+        config.read('cred.cfg')
+        username = decrypt_with_key(key, config.get('auth', 'username'))
+        token = decrypt_with_key(key, config.get('auth', 'token'))
     else:
-        logging.info('Credentials not saved, check documentation to learn how to save time saving credentials.')
-        sleep(0.5)
         username = raw_input('Username: ')
         token = raw_input('Token: ')
-        # save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
-        # if save_cred == 'y':
-        #     config.add_section('auth')
-        #     config.set('auth', 'username', username)
-        #     config.set('auth', 'token', token)
-        #     os.environ["ERRATA_CLIENT_USERNAME"] = username
-        #     os.environ["ERRATA_CLIENT_TOKEN"] = token
-        #     logging.info('Credentials were successfully saved.')
+        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+        if save_cred.lower() == 'y':
+            key = raw_input('Please provide a passphrase to encrypt your credentials, this key will be used to login: ')
+            config.add_section('auth')
+            config.set('auth', 'username', encrypt_with_key(key, username))
+            config.set('auth', 'token', encrypt_with_key(key, token))
+            with open('cred.cfg', 'wb') as configfile:
+                config.write(configfile)
+            logging.info('Credentials were successfully saved.')
     return username, token
-
-# REGEX
 
 
 def extract_facets(dataset_id, project):
@@ -320,24 +347,61 @@ def extract_facets(dataset_id, project):
     :param project: project identifier
     :return: dict
     """
+    config = get_remote_config()
     result_dict = dict()
     try:
-        regex_str = REGEX_OPTIONS[project.lower()][0]
-        pos = REGEX_OPTIONS[project.lower()][1]
+        regex_str = config.get(project.upper()+'_REGEX', PATTERN)
+        pos = config.items(project.upper()+'_POS')
     except KeyError:
         logging_error(ERROR_DIC['project_not_supported'])
     match = re.match(regex_str, dataset_id)
     if match:
-        for key, value in pos.iteritems():
-            if key != '__name__':
-                result_dict[key] = match.group(int(value)).lower()
+        for i in pos:
+            if i[0] != '__name__':
+                result_dict[i[0]] = match.group(int(i[1])).lower()
     else:
         logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
             dataset_id, project))
     return result_dict
 
 
+def get_remote_config():
+    """
+    Using github api, this returns config file contents.
+    :return: ConfigParser instance with proper configuration
+    """
+    r = requests.get(GH_FILE_API)
+    raw_file = requests.get(r.json()[DOWNLOAD_URL])
+    config = ConfigParser.ConfigParser()
+    config.readfp(StringIO.StringIO(raw_file.text))
+    return config
 
+
+def encrypt_with_key(key, token):
+    """
+    method for key-encryption, uses 24 bits keys, adds fillers in case its less.
+    :param key: user selected key
+    :param token: data to encrypt
+    :return: data encrypted safe to save.
+    """
+    while len(key) < 24:
+        key += 'X'
+    if len(key) > 24:
+        key = key[0:24]
+
+    k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+    d = k.encrypt(token)
+    print "Encrypted: %r" % d
+    return d
+
+
+def decrypt_with_key(key, data):
+    while len(key) < 24:
+        key += 'X'
+    if len(key) > 24:
+        key = key[0:24]
+    k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+    return k.decrypt(data)
 
 
 

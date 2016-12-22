@@ -47,38 +47,9 @@ DSET_2 = '.txt'
 
 # WebService
 
-WEBSERVICE = 'WebService'
+WEBSERVICE = 'WEBSERVICE'
 # URL_BASE = 'url_base'
 HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-
-# URL options
-URLS_LIST = {
-        'URL_BASE': 'http://test.errata.api.es-doc.org',
-        # 'URL_BASE': 'http://localhost:5001',
-        'CREATE': '/1/issue/create',
-        'UPDATE': '/1/issue/update',
-        'CLOSE': '/1/issue/close?uid=',
-        'RETRIEVE': '/1/issue/retrieve?uid=',
-        'RETRIEVE_ALL': '/1/issue/retrieve-all'
-        }
-# Regex
-
-REGEX = 'Regex'
-
-# CMIP5 REGEX
-CMIP5_REGEX = '([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.([a-zA-Z]*)\.([a-zA-Z0-9-]*)\.([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.' \
-              '([a-zA-Z]*)\.([a-zA-Z]*)\.(r\d*i\d*p\d*)((v|#)\d*)'
-CMIP5_POS = {'project': 1, 'institute': 3, 'models': 4, 'experiments': 5, 'variables': 8}
-
-# CMIP6 REGEX
-
-CMIP6_REGEX = '([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.([a-zA-Z]*)\.([a-zA-Z0-9-]*)\.([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)\.' \
-              '([a-zA-Z]*)\.([a-zA-Z]*)\.(r\d*i\d*p\d*)((v|#)\d*)'
-CMIP6_POS = {'project': 1, 'institute': 3, 'models': 4, 'experiments': 5, 'variables': 8}
-
-
-REGEX_OPTIONS = {'cmip5': [CMIP5_REGEX, CMIP5_POS], 'cmip6': [CMIP6_REGEX, CMIP6_POS]}
-
 
 # JSON FILE ORDER
 
@@ -110,8 +81,10 @@ ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2,
              'project_not_supported': [26, 'Project indicated in issue is not supported by errata service'],
              'unknown_error': [99, 'An unknown error has been detected. Please provide the admins with the error stack.']
              }
-# Authentication and authorization
 
-ORGS_IDS = [23123271]
+# MISC
 
-#
+GH_FILE_API = 'https://api.github.com/repos/ES-DOC/esdoc-errata-client/contents/misc.conf'
+DOWNLOAD_URL = 'download_url'
+URL_BASE = 'URL_BASE'
+PATTERN = 'PATTERN'
