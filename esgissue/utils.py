@@ -17,6 +17,7 @@ import requests
 from constants import *
 from collections import OrderedDict
 from time import sleep
+import getpass
 import ConfigParser
 import StringIO
 import pyDes
@@ -293,35 +294,10 @@ def get_ws_call(action, payload, uid, credentials):
     return r
 
 
-# def authenticate():
-#     """
-#     Method allowing interaction with github oauth2 api to authenticate users and check priviliges.
-#     :return: Boolean
-#     """
-#     # config = ConfigParser()
-#     if os.environ.get('ERRATA_CLIENT_USERNAME') is not None:
-#         username = os.environ.get('ERRATA_CLIENT_USERNAME')
-#         token = os.environ.get('ERRATA_CLIENT_TOKEN')
-#     else:
-#         logging.info('Credentials not saved, check documentation to learn how to save time saving credentials.')
-#         sleep(0.5)
-#         username = raw_input('Username: ')
-#         token = raw_input('Token: ')
-#         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
-#         if save_cred == 'y':
-#             config.add_section('auth')
-#             config.set('auth', 'username', username)
-#             config.set('auth', 'token', token)
-#             os.environ["ERRATA_CLIENT_USERNAME"] = username
-#             os.environ["ERRATA_CLIENT_TOKEN"] = token
-#             logging.info('Credentials were successfully saved.')
-#     return username, token
-
-
 def authenticate():
     config = ConfigParser.ConfigParser()
     if os.path.isfile('cred.cfg'):
-        key = raw_input('Passphrase: ')
+        key = getpass.getpass('Passphrase: ')
         config.read('cred.cfg')
         username = decrypt_with_key(key, config.get('auth', 'username'))
         token = decrypt_with_key(key, config.get('auth', 'token'))
@@ -330,7 +306,7 @@ def authenticate():
         token = raw_input('Token: ')
         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
         if save_cred.lower() == 'y':
-            key = raw_input('Please provide a passphrase to encrypt your credentials, this key will be used to login: ')
+            key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
             config.add_section('auth')
             config.set('auth', 'username', encrypt_with_key(key, username))
             config.set('auth', 'token', encrypt_with_key(key, token))

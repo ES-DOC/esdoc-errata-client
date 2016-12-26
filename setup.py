@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='esgissue-client',
-      version='0.1.11.5',
+      version='0.1.12.0',
       description='Local client to create, update, close and retrieve ESGF issues',
       author='Levavasseur Guillaume',
       author_email='glipsl@ipsl.jussieu.fr',
