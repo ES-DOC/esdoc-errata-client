@@ -36,6 +36,9 @@ UPDATE = 'update'
 CLOSE = 'close'
 RETRIEVE = 'retrieve'
 RETRIEVE_ALL = 'retrieve_all'
+CREDENTIALS = 'credentials'
+CHANGEPASS = 'changepass'
+CREDRESET = 'credreset'
 ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL]
 
 

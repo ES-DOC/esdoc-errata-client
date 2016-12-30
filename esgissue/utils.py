@@ -16,7 +16,6 @@ import json
 import requests
 from constants import *
 from collections import OrderedDict
-from time import sleep
 import getpass
 import ConfigParser
 import StringIO
@@ -297,7 +296,7 @@ def get_ws_call(action, payload, uid, credentials):
 def authenticate():
     config = ConfigParser.ConfigParser()
     if os.path.isfile('cred.cfg'):
-        key = getpass.getpass('Passphrase: ')
+        key = raw_input('Passphrase: ')
         config.read('cred.cfg')
         username = decrypt_with_key(key, config.get('auth', 'username'))
         token = decrypt_with_key(key, config.get('auth', 'token'))
@@ -367,7 +366,6 @@ def encrypt_with_key(key, token):
 
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
     d = k.encrypt(token)
-    print "Encrypted: %r" % d
     return d
 
 
@@ -378,6 +376,40 @@ def decrypt_with_key(key, data):
         key = key[0:24]
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
     return k.decrypt(data)
+
+
+def reset_passphrase(**kwargs):
+    # check if data exists
+    if os.path.isfile('cred.cfg'):
+        # if yes:
+        config = ConfigParser.ConfigParser()
+        config.read('cred.cfg')
+        username = config.get('auth', 'username')
+        token = config.get('auth', 'token')
+        if 'old_pass' in kwargs and 'new_pass' in kwargs:
+            old_pass = kwargs['old_pass']
+            new_pass = kwargs['new_pass']
+        else:
+            old_pass = raw_input('Old Passphrase: ')
+            new_pass = raw_input('New Passphrase: ')
+        username = decrypt_with_key(old_pass, username)
+        token = decrypt_with_key(old_pass, token)
+        # Writing new data
+        config.set('auth', 'username', encrypt_with_key(new_pass, username))
+        config.set('auth', 'token', encrypt_with_key(new_pass, token))
+        with open('cred.cfg', 'wb') as configfile:
+            config.write(configfile)
+    # if no print warning.
+    else:
+        logging.warn('No credentials file found.')
+
+
+def reset_credentials():
+    if os.path.isfile('cred.cfg'):
+        os.remove('cred.cfg')
+        logging.info('Credentials have been successfully reset.')
+    else:
+        logging.warn('No existing credentials found.')
 
 
 

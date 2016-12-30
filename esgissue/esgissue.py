@@ -9,7 +9,7 @@
 import sys
 import argparse
 from uuid import uuid4
-from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, logging_error
+from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, logging_error, reset_passphrase, reset_credentials
 from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
@@ -261,6 +261,51 @@ def get_args():
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
+    ########################################
+    # Subparser for "esgissue credentials" #
+    ########################################
+    changepass = subparsers.add_parser(
+            'changepass',
+            prog='esgissue changepass',
+            description=""""esgissue credentials" allows users to interact with their established credentials.
+            It mainly allows users who have locally saved credentials to modify their pass-phrase or reset it by deleting
+            them and having to redo the credentials input all over again. This can be useful in case someone forgets the passphrase
+            set before.
+
+            See "esgissue -h" for global help.""",
+            formatter_class=MultilineFormatter,
+            help="""Helps user interact with registered credentials.|n
+                    See "esgissue changepass -h" for full help.""",
+            add_help=False,
+            parents=[parent])
+    changepass._optionals.title = "Arguments"
+    changepass._positionals.title = "Positional arguments"
+    changepass.add_argument('--oldpass',
+                            nargs='?',
+                            required=False,
+                            metavar='action',
+                            type=str)
+    changepass.add_argument('--newpass',
+                            nargs='?',
+                            required=False,
+                            type=str)
+    ########################################
+    # Subparser for "esgissue cred-reset" #
+    ########################################
+    credreset = subparsers.add_parser(
+            'credreset',
+            prog='esgissue credreset',
+            description=""""esgissue credreset" allows users to interact with their established credentials.
+            It mainly allows users who have locally saved credentials to modify their pass-phrase or reset it by deleting
+            them and having to redo the credentials input all over again. This can be useful in case someone forgets the passphrase
+            set before.
+
+            See "esgissue -h" for global help.""",
+            formatter_class=MultilineFormatter,
+            help="""Helps user interact with registered credentials.|n
+                    See "esgissue credreset -h" for full help.""",
+            add_help=False,
+            parents=[parent])
     return main.parse_args()
 
 
@@ -307,9 +352,12 @@ def run():
         init_logging(args.log)
     else:
         init_logging(None)
-
+    if args.command == 'changepass':
+        reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+    elif args.command == 'credreset':
+        reset_credentials()
     # Retrieve command has a slightly different behavior from the rest so it's singled out
-    if args.command not in [RETRIEVE, CLOSE]:
+    elif args.command not in [RETRIEVE, CLOSE]:
         issue_file = get_issue(args.issue)
         dataset_file = get_datasets(args.dsets)
         process_command(args.command, issue_file, dataset_file, args.issue, args.dsets)
