@@ -350,9 +350,7 @@ def encrypt_with_key(data, passphrase=''):
         passphrase = ''
     # Generate machine specific key
     key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
-    print('HERE IS THE GENERATED KEY {}'.format(key))
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    print('GENERATED ENCRYPTED DATA SIZE: {}'.format(len(k.encrypt(data))))
     return k.encrypt(data)
 
 
@@ -366,12 +364,7 @@ def decrypt_with_key(data, passphrase=''):
     if passphrase is None:
         passphrase = ''
     key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
-    print('HERE IS THE GENERATED KEY {}'.format(key))
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    # print(len(data))
-    # while len(data) < 48:
-    #     data += ' '
-    print('DATA TO DECRYPT SIZE: {}'.format(len(data)))
     return k.decrypt(data)
 
 
@@ -380,7 +373,6 @@ def authenticate():
         key = getpass.getpass('Passphrase: ')
         with open('cred.txt', 'rb') as credfile:
             content = credfile.readlines()
-            print(len(content))
         username = decrypt_with_key(content[0].split('entry:')[1].replace('\n', ''), key)
         token = decrypt_with_key(content[1].split('entry:')[1], key)
     else:
@@ -414,8 +406,8 @@ def reset_passphrase(**kwargs):
             new_pass = kwargs['new_pass']
         else:
             logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
-            old_pass = raw_input('Old Passphrase: ')
-            new_pass = raw_input('New Passphrase: ')
+            old_pass = getpass.getpass('Old Passphrase: ')
+            new_pass = getpass.getpass('New Passphrase: ')
         username = decrypt_with_key(username, old_pass)
         token = decrypt_with_key(token, old_pass)
         # Writing new data
@@ -438,19 +430,3 @@ def reset_credentials():
         logging.info('Credentials have been successfully reset.')
     else:
         logging.warn('No existing credentials found.')
-
-
-import difflib
-with open('cred.txt', 'rb') as credfile:
-    content = credfile.readlines()
-
-username = content[0].split('entry:')[1].replace('\n', '')
-token = content[1].split('entry:')[1]
-data = '44a1819308d6a804ab614fcfc8261174176c65c7'
-# data = 'AtefBN'
-passphrase = 'yolo'
-key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
-k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-data = k.encrypt(data)
-print(data, token)
-print(token == data)
