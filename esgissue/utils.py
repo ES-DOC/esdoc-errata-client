@@ -23,6 +23,7 @@ import pyDes
 from uuid import getnode as get_mac
 import pbkdf2
 import platform
+import binascii
 
 # Misc operations
 from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
@@ -297,28 +298,6 @@ def get_ws_call(action, payload, uid, credentials):
     return r
 
 
-def authenticate():
-    config = ConfigParser.ConfigParser()
-    if os.path.isfile('cred.cfg'):
-        key = raw_input('Passphrase: ')
-        config.read('cred.cfg')
-        username = decrypt_with_key(config.get('auth', 'username'), key)
-        token = decrypt_with_key(config.get('auth', 'token'), key)
-    else:
-        username = raw_input('Username: ')
-        token = raw_input('Token: ')
-        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
-        if save_cred.lower() == 'y':
-            key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
-            config.add_section('auth')
-            config.set('auth', 'username', encrypt_with_key(username, key))
-            config.set('auth', 'token', encrypt_with_key(token, key))
-            with open('cred.cfg', 'wb') as configfile:
-                config.write(configfile)
-            logging.info('Credentials were successfully saved.')
-    return username, token
-
-
 def extract_facets(dataset_id, project):
     """
     Given a specific project, this function extracts the facets as described in the ini file.
@@ -350,10 +329,13 @@ def get_remote_config():
     :return: ConfigParser instance with proper configuration
     """
     r = requests.get(GH_FILE_API)
-    raw_file = requests.get(r.json()[DOWNLOAD_URL])
-    config = ConfigParser.ConfigParser()
-    config.readfp(StringIO.StringIO(raw_file.text))
-    return config
+    if r.status_code == 200:
+        raw_file = requests.get(r.json()[DOWNLOAD_URL])
+        config = ConfigParser.ConfigParser()
+        config.readfp(StringIO.StringIO(raw_file.text))
+        return config
+    else:
+        print('GITHUB FILE API IS DOWN.')
 
 
 def encrypt_with_key(data, passphrase=''):
@@ -363,35 +345,55 @@ def encrypt_with_key(data, passphrase=''):
     :param data: data to encrypt
     :return: data encrypted, safe to save.
     """
+    print('Encrypting {} with {}'.format(data, passphrase))
     if passphrase is None:
         passphrase = ''
-    while len(passphrase) < 24:
-        passphrase += 'X'
-    if len(passphrase) > 24:
-        passphrase = passphrase[0:24]
-
     # Generate machine specific key
     key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
+    print('HERE IS THE GENERATED KEY {}'.format(key))
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    d = k.encrypt(data)
-    return d
+    print('GENERATED ENCRYPTED DATA SIZE: {}'.format(len(k.encrypt(data))))
+    return k.encrypt(data)
 
 
-def decrypt_with_key(data, key=''):
+def decrypt_with_key(data, passphrase=''):
     """
     uses key to decrypt data.
     :param data: data to decrypt
-    :param key: key used in encryption
+    :param passphrase: key used in encryption
     :return: decrypted data
     """
-    if key is None:
-        key = ''
-    while len(key) < 24:
-        key += 'X'
-    if len(key) > 24:
-        key = key[0:24]
+    if passphrase is None:
+        passphrase = ''
+    key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
+    print('HERE IS THE GENERATED KEY {}'.format(key))
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+    # print(len(data))
+    # while len(data) < 48:
+    #     data += ' '
+    print('DATA TO DECRYPT SIZE: {}'.format(len(data)))
     return k.decrypt(data)
+
+
+def authenticate():
+    if os.path.isfile('cred.txt'):
+        key = getpass.getpass('Passphrase: ')
+        with open('cred.txt', 'rb') as credfile:
+            content = credfile.readlines()
+            print(len(content))
+        username = decrypt_with_key(content[0].split('entry:')[1].replace('\n', ''), key)
+        token = decrypt_with_key(content[1].split('entry:')[1], key)
+    else:
+        username = raw_input('Username: ')
+        token = raw_input('Token: ')
+        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+        if save_cred.lower() == 'y':
+            key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
+            with open('cred.txt', 'wb') as credfile:
+                credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
+                credfile.write('entry:'+encrypt_with_key(token, key))
+            logging.info('Credentials were successfully saved.')
+    return username, token
 
 
 def reset_passphrase(**kwargs):
@@ -401,17 +403,15 @@ def reset_passphrase(**kwargs):
     :return: nada
     """
     # check if data exists
-    if os.path.isfile('cred.cfg'):
+    if os.path.isfile('cred.txt'):
         # if yes:
-        config = ConfigParser.ConfigParser()
-        config.read('cred.cfg')
-        username = config.get('auth', 'username')
-        token = config.get('auth', 'token')
+        with open('cred.txt', 'rb') as credfile:
+            content = credfile.readlines()
+        username = content[0].split('entry:')[1].replace('\n', '')
+        token = content[1].split('entry:')[1]
         if kwargs['old_pass'] is not None and kwargs['new_pass'] is not None:
-
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
-            print(old_pass, new_pass)
         else:
             logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
             old_pass = raw_input('Old Passphrase: ')
@@ -419,10 +419,9 @@ def reset_passphrase(**kwargs):
         username = decrypt_with_key(username, old_pass)
         token = decrypt_with_key(token, old_pass)
         # Writing new data
-        config.set('auth', 'username', encrypt_with_key(username, new_pass))
-        config.set('auth', 'token', encrypt_with_key(token, new_pass))
-        with open('cred.cfg', 'wb') as configfile:
-            config.write(configfile)
+        with open('cred.txt', 'wb') as credfile:
+            credfile.write('entry:'+encrypt_with_key(username, new_pass)+'\n')
+            credfile.write('entry:'+encrypt_with_key(token, new_pass))
         logging.info('Passphrase has been successfully updated.')
     # if no print warning.
     else:
@@ -434,13 +433,24 @@ def reset_credentials():
     resets credentials.
     :return: nada
     """
-    if os.path.isfile('cred.cfg'):
-        os.remove('cred.cfg')
+    if os.path.isfile('cred.txt'):
+        os.remove('cred.txt')
         logging.info('Credentials have been successfully reset.')
     else:
         logging.warn('No existing credentials found.')
 
 
+import difflib
+with open('cred.txt', 'rb') as credfile:
+    content = credfile.readlines()
 
-
-
+username = content[0].split('entry:')[1].replace('\n', '')
+token = content[1].split('entry:')[1]
+data = '44a1819308d6a804ab614fcfc8261174176c65c7'
+# data = 'AtefBN'
+passphrase = 'yolo'
+key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
+k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+data = k.encrypt(data)
+print(data, token)
+print(token == data)
