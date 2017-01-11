@@ -66,8 +66,6 @@ environment includes the following:
 
 - `uuid <https://docs.python.org/2/library/uuid.html>`_
 
-- `requests <http://docs.python-requests.org/en/master/>`_
-
 - `string <https://docs.python.org/2/library/string.html>`_
 
 - `json <https://docs.python.org/2/library/json.html>`_

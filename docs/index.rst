@@ -1,12 +1,5 @@
-.. ESGF-ISSUE-CLIENT documentation master file, created by
-   sphinx-quickstart on Fri Sep 30 16:07:57 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to ESGF-ISSUE-CLIENT's documentation!
-=============================================
-
-Contents:
+ESGF Errata Client documentation
+================================
 
 .. toctree::
    :maxdepth: 2
@@ -18,7 +11,6 @@ Contents:
    faq
    credits
    log
-
 
 Indices and tables
 ==================

@@ -291,7 +291,7 @@ On declaration of the issue this is the regular form of an issue.
 
 datasets.txt:
 
-.. code-block:: txt
+.. code-block:: none
 
     cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
     cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
@@ -366,7 +366,7 @@ issue.json:
 
 dataset.txt:
 
-.. code-block:: txt
+.. code-block:: none
 
     cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
     cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212

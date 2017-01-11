@@ -1,3 +1,9 @@
+********
+esgissue
+********
+
+`See full documentation here <http://es-doc.github.io/esdoc-errata-client>`_
+
 Description
 -----------
 
