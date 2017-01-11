@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration &#8212; ESGF-ISSUE-CLIENT 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ESGF-ISSUE-CLIENT 0.1 documentation" href="index.html" />
+    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="usage.html" title="Usage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ESGF-ISSUE-CLIENT 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="configuration">
+<span id="id1"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>The most important step towards properly configuring and the good use of the esdoc-errata issue client is the authentication part.
+A verified github account is required, along with a generated personal access token.</p>
+<p>The personal access token can only be generated on github, if the user&#8217;s account email has been verified.
+It can be found under your profile settings page: <a class="reference external" href="https://github.com/settings/profile">https://github.com/settings/profile</a></p>
+<a class="reference internal image-reference" href="_images/token_generation.png"><img alt="Github's personal access token generation interface" class="align-center" src="_images/token_generation.png" style="width: 600.0px; height: 400.0px;" /></a>
+<p>When generating the new token make sure you specify a description that you feel appropriate to the Errata client and to select proper scopes.
+Selecting scopes is a crucial part of the token generation, the errata client doesn&#8217;t require anything beside the read org and team membership scope.
+This enables us to reduce to a minimum the potential threats, which is the whole point of delegating authentication to a third party.</p>
+<a class="reference internal image-reference" href="_images/token_scope.png"><img alt="Github's interface of token scopes" class="align-center" src="_images/token_scope.png" style="width: 560.0px; height: 630.0px;" /></a>
+<p>Once the access token has been configured, the authentication part of the errata client is ready.
+A user needs, however, proper writing rights to be authorized to create, update and close issues.</p>
+<p>Authorization is controlled using github&#8217;s organizations invitational based structure.
+In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
+After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.</p>
+<p>After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
+Saving credentials makes the use of the errata client much easier. After the first usage of the client to create, update or close an issue,
+the user has a choice to save the credentials locally. Of course, this step can be ignored but users will be asked to provide the
+credentials at each and every use of the client (except for retrieving actions).
+Credentials are safely saved at a local file in a git fashion, encrypted using salt and pepper and sha512 encryption with a pass-phrase
+that the user should provide.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;python esgissue.py create --issue samples/issue1.json --dsets samples/dsets1.txt
+$&gt;Username: AtefBN
+$&gt;Token: 44axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$&gt;Would you like to save your credentials <span class="k">for</span> later uses? <span class="o">(</span>y/n<span class="o">)</span>: y
+$&gt;Select passphrase to encrypt credentials, this will log you in from now on:
+$&gt;2017/01/03 11:57:06 AM INFO Credentials were successfully saved.
+$&gt;2017/01/03 11:57:06 AM INFO Validating issue...
+$&gt;2017/01/03 11:57:07 AM INFO Validation Result: SUCCESSFUL
+$&gt;2017/01/03 11:57:07 AM INFO Requesting issue <span class="c1">#91ad5eb8-d1d1-44ce-94ec-473473e8654a creation from errata service...</span>
+$&gt;2017/01/03 11:57:09 AM INFO Updating fields of payload after remote issue creation...
+$&gt;2017/01/03 11:57:09 AM INFO Issue json schema has been updated, persisting in file...
+$&gt;2017/01/03 11:57:09 AM INFO Issue file has been created successfully!
+</pre></div>
+</div>
+<p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on. In case the user forgets the pass-phrase,
+the saved credentials can be reset using the command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credreset
+$&gt;2017/01/03 11:54:35 AM INFO Credentials have been successfully reset.
+</pre></div>
+</div>
+<p>This will obviously result in the reset of the saved credentials, and the client will now ask for that information in the next usages.</p>
+<p>In the case that the user does recall the pass-phrase and just wishes to modify it, this is possible using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass  changepass --oldpass AtefBN --newpass ACatchyPassPhrase
+$&gt;2017/01/03 12:30:04 PM INFO Passphrase has been successfully updated.
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass
+$&gt;2017/01/03 04:45:59 PM INFO Old and new pass-phrases are required, <span class="k">if</span> you forgot yours, use: esgissue credreset
+$&gt;Old Passphrase: AtefBN
+$&gt;New Passphrase: YoloSwag
+$&gt;2017/01/03 04:46:10 PM INFO Passphrase has been successfully updated.
+</pre></div>
+</div>
+<p>This will prompt user to type in old and new passphrase.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="usage.html"
+                        title="next chapter">Usage</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/configuration.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="usage.html" title="Usage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ESGF-ISSUE-CLIENT 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>

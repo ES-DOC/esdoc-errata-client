@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &#8212; ESGF-ISSUE-CLIENT 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ESGF-ISSUE-CLIENT 0.1 documentation" href="index.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="Synopsis" href="synopsis.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="synopsis.html" title="Synopsis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ESGF-ISSUE-CLIENT 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pip-installation-from-the-test-pypi-node">
+<h2>PIP installation from the test PyPI node<a class="headerlink" href="#pip-installation-from-the-test-pypi-node" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt; pip install -i https://testpypi.python.org/pypi esgissue-client
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation-from-github">
+<h2>Installation from GitHub<a class="headerlink" href="#installation-from-github" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Create a new directory:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>mkdir esdoc-errata-client
+<span class="nb">cd</span> esdoc-errata-client
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;git init
+&gt;git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;python setup.py install
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>Set up environment variables:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;source activate
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>The <code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> command-line is ready.</li>
+</ol>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> uses the following basic Python libraries includes in Python 2.5+. Please make sure your Python
+environment includes the following:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2/library/os.html">os</a>,</li>
+<li><a class="reference external" href="https://docs.python.org/2/library/sys.html">sys</a>,</li>
+<li><a class="reference external" href="https://docs.python.org/2/library/re.html">re</a>,</li>
+<li><a class="reference external" href="https://docs.python.org/2/library/logging.html">logging</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/argparse.html">argparse</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/configparser.html">ConfigParser</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/datetime.html">datetime</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/uuid.html">uuid</a></li>
+<li><a class="reference external" href="http://docs.python-requests.org/en/master/">requests</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/string.html">string</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/json.html">json</a></li>
+</ul>
+<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> requires the following libraries not included in most Python distributions:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://pypi.python.org/pypi/jsonschema">jsonschema</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/requests/2.11.1">requests</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#pip-installation-from-the-test-pypi-node">PIP installation from the test PyPI node</a></li>
+<li><a class="reference internal" href="#installation-from-github">Installation from GitHub</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="synopsis.html"
+                        title="previous chapter">Synopsis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="next chapter">Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="synopsis.html" title="Synopsis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ESGF-ISSUE-CLIENT 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>
