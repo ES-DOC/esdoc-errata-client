@@ -160,9 +160,13 @@ doctest:
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
-gh-pages: html
+gh-pages:
 	cd $(BUILDDIR)/html;\
+    git pull origin gh-pages;\
+    cd -;\
+    $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html;\
+    cd $(BUILDDIR)/html;\
 	git add .;\
-	git commit -m "Docs rebuilt at $( date +'%Y/%m/%d - %H:%M:%S')";\
+	git commit -m "Docs rebuilt at $(date +'%Y/%m/%d - %H:%M:%S')";\
 	git push origin gh-pages
 	@echo "Build finished and committed on gh-pages."
