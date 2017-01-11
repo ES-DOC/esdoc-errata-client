@@ -1,6 +1,0 @@
-jsonschema
-requests
-functools32
-argparse
-repoze.lru
-simplejson
