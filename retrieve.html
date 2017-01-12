@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Retrieve an issue &mdash; esgissue 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Generic usage" href="usage.html"/>
+        <link rel="prev" title="Close an issue" href="close.html"/> 
+
+  
+  <script src="static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> esgissue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Retrieve an issue</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mistakes-to-avoid">Mistakes to avoid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">esgissue</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Retrieve an issue</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="sources/retrieve.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retrieve-an-issue">
+<span id="retrieve"></span><h1>Retrieve an issue<a class="headerlink" href="#retrieve-an-issue" title="Permalink to this headline">¶</a></h1>
+<p>At some point it might be a good idea to keep a local copy of the errata information hosted within the errata system.
+The <cite>retrieve`</cite> command has been designed in the aim of either downloading a specific issue files, a set of specific issues,
+or the whole lot of issues hosted within the errata system (for archiving purposes for example).
+`
+Requirements
+<strong>********</strong></p>
+<p>The command takes as arguments a list of UIDs, the JSON file directory and the dataset list file directory the user wishes to use.
+If no UIDs are submitted, all issues are expected.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In case of multiple issues download it is mandatory the path provided for issues and directories be a directory.
+In the case of a single issue download, a <code class="docutils literal"><span class="pre">json</span></code> and <code class="docutils literal"><span class="pre">txt</span></code> file would be sufficient.</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>In order to download the issue with id <code class="docutils literal"><span class="pre">66b1b471-221a-42ac-ad69-0a048e924cd4</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/downloads --dsets esgissue/samples/downloads --id 66b1b471-221a-42ac-ad69-0a048e924cd4
+2016/09/06 06:44:28 PM INFO processing id 66b1b471-221a-42ac-ad69-0a048e924cd4
+2016/09/06 06:44:28 PM INFO Issue has been downloaded.
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The naming convention used in creating the issue related files is <code class="docutils literal"><span class="pre">issue_&lt;uid&gt;.json</span></code> and <code class="docutils literal"><span class="pre">dset_&lt;uid&gt;.txt</span></code>.
+If needed we could have specified <code class="docutils literal"><span class="pre">json</span></code> and <code class="docutils literal"><span class="pre">txt</span></code> file in this example since we are downloading a single issue.</p>
+</div>
+<p>For multiple downloads:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/downloads --dsets esgissue/samples/downloads --id 66b1b471-221a-42ac-ad69-0a048e924cd4 8f8178db-d772-449d-86d2-90385479f8e6
+2016/09/06 06:49:39 PM INFO processing id 66b1b471-221a-42ac-ad69-0a048e924cd4
+2016/09/06 06:49:39 PM INFO Issue has been downloaded.
+2016/09/06 06:49:39 PM INFO processing id 8f8178db-d772-449d-86d2-90385479f8e6
+2016/09/06 06:49:39 PM INFO Issue has been downloaded.
+$&gt; ls -l esgissue/samples/downloads
+issue_66b1b471-221a-42ac-ad69-0a048e924cd4.json
+issue_8f8178db-d772-449d-86d2-90385479f8e6.json
+$&gt; ls -l esgissue/samples/downloads
+dset_66b1b471-221a-42ac-ad69-0a048e924cd4.json
+dset_8f8178db-d772-449d-86d2-90385479f8e6.json
+</pre></div>
+</div>
+</div>
+<div class="section" id="mistakes-to-avoid">
+<h2>Mistakes to avoid<a class="headerlink" href="#mistakes-to-avoid" title="Permalink to this headline">¶</a></h2>
+<p>If multiple downloads with file instead of directory as argument:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/issue.json --dsets esgissue/samples/dset.txt --id 66b1b471-221a-42ac-ad69-0a048e924cd4 8f8178db-d772-449d-86d2-90385479f8e6
+You have provided multiple ids but a single file as destination, aborting.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="usage.html" class="btn btn-neutral float-right" title="Generic usage" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="close.html" class="btn btn-neutral" title="Close an issue" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

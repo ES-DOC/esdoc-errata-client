@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Configuration" href="configuration.html"/>
+        <link rel="next" title="Authentication" href="configuration.html"/>
         <link rel="prev" title="Synopsis" href="synopsis.html"/> 
 
   
@@ -89,8 +89,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -142,7 +146,7 @@
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pip-installation-from-the-test-pypi-node">
 <h2>PIP installation from the test PyPI node<a class="headerlink" href="#pip-installation-from-the-test-pypi-node" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt; pip install -i https://testpypi.python.org/pypi esgissue-client
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install -i https://testpypi.python.org/pypi esgissue-client
 </pre></div>
 </div>
 </div>
@@ -158,29 +162,29 @@
 <ol class="arabic simple" start="2">
 <li>Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;git init
-&gt;git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
+<div class="highlight-bash"><div class="highlight"><pre><span></span>git init
+git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li>Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;python setup.py install
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python setup.py install
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
 <li>Set up environment variables:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt;source activate
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">source</span> activate
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
-<li>The <code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> command-line is ready.</li>
+<li>The <code class="docutils literal"><span class="pre">esgissue</span></code> command-line is ready.</li>
 </ol>
 </div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> uses the following basic Python libraries includes in Python 2.5+. Please make sure your Python
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> uses the following basic Python libraries includes in Python 2.5+. Please make sure your Python
 environment includes the following:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://docs.python.org/2/library/os.html">os</a>,</li>
@@ -194,7 +198,7 @@ environment includes the following:</p>
 <li><a class="reference external" href="https://docs.python.org/2/library/string.html">string</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/json.html">json</a></li>
 </ul>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> requires the following libraries not included in most Python distributions:</p>
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> requires the following libraries not included in most Python distributions:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://pypi.python.org/pypi/jsonschema">jsonschema</a></li>
 <li><a class="reference external" href="https://pypi.python.org/pypi/requests/2.11.1">requests</a></li>
@@ -209,7 +213,7 @@ environment includes the following:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Authentication" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="synopsis.html" class="btn btn-neutral" title="Synopsis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

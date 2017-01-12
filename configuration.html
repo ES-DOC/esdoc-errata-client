@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Configuration &mdash; esgissue 0.1 documentation</title>
+  <title>Authentication &mdash; esgissue 0.1 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Usage" href="usage.html"/>
+        <link rel="next" title="Create an issue" href="create.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
   
@@ -84,8 +84,16 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Authentication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#github-setup">GitHub setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#credentials-management">Credentials management</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -119,7 +127,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Configuration</li>
+    <li>Authentication</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -133,8 +141,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="configuration">
-<span id="id1"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="authentication">
+<span id="configuration"></span><h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
+<p>The most important step towards properly configuring and the good use of the ESGF errata cliant is the authentication part.</p>
+<div class="section" id="github-setup">
+<h2>GitHub setup<a class="headerlink" href="#github-setup" title="Permalink to this headline">¶</a></h2>
 <p>The most important step towards properly configuring and the good use of the esdoc-errata issue client is the authentication part.
 A verified github account is required, along with a generated personal access token.</p>
 <p>The personal access token can only be generated on github, if the user&#8217;s account email has been verified.
@@ -149,6 +160,9 @@ A user needs, however, proper writing rights to be authorized to create, update 
 <p>Authorization is controlled using github&#8217;s organizations invitational based structure.
 In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
 After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.</p>
+</div>
+<div class="section" id="credentials-management">
+<h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
 <p>After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
 Saving credentials makes the use of the errata client much easier. After the first usage of the client to create, update or close an issue,
 the user has a choice to save the credentials locally. Of course, this step can be ignored but users will be asked to provide the
@@ -191,6 +205,7 @@ $&gt;2017/01/03 04:46:10 PM INFO Passphrase has been successfully updated.
 </div>
 <p>This will prompt user to type in old and new passphrase.</p>
 </div>
+</div>
 
 
            </div>
@@ -199,7 +214,7 @@ $&gt;2017/01/03 04:46:10 PM INFO Passphrase has been successfully updated.
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="create.html" class="btn btn-neutral float-right" title="Create an issue" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

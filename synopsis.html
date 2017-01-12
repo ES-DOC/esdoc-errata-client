@@ -32,7 +32,7 @@
   
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
         <link rel="next" title="Installation" href="installation.html"/>
-        <link rel="prev" title="Welcome to ESGF-ISSUE-CLIENT’s documentation!" href="index.html"/> 
+        <link rel="prev" title="ESGF Errata Client documentation" href="index.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -87,8 +87,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -141,20 +145,21 @@
 <p>Proper handling of errata information in the ESGF publication workflow has major impact on the quality of data.
 Version changes should be documented and justified by explaining what was updated, retracted and/or removed.
 This leads to the unspoken rule that any publication of a newer version of a dataset needs to have a valid motivation,
-which we will refer to as an issue.</p>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> allows the referenced data providers to easily create, document, update, close or remove a validated issue.</p>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> implements a similar issue-management system to github, it is completely hosted within the
-esgf-errata-service.</p>
+which we will refer to as an issue.
+The cause behind the version changes has to be published alongside the data: what was updated, retracted or removed, and why.
+Consequently, the publication of a new version of a dataset has to be motivated by an issue.</p>
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> allows the referenced data providers to easily create, document, update, close or remove a validated issue.</p>
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> implements a similar issue-management system to GitHub, it is completely hosted within the ES-DOC Errata Service.</p>
 <p>The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
 versions, version removal or retraction.</p>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> relies on <em>json</em> and <em>txt</em> file records. This enables the data provider, in charge of ESGF issues, to
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> relies on <code class="docutils literal"><span class="pre">json</span></code> and <code class="docutils literal"><span class="pre">txt</span></code> file records. This enables the data provider, in charge of ESGF issues, to
 efficiently manage one or several issues remotely and locally.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p><code class="docutils literal"><span class="pre">esdoc</span> <span class="pre">errata</span> <span class="pre">client</span></code> allows to:</p>
+<p><code class="docutils literal"><span class="pre">esgissue</span></code> allows to:</p>
 <ol class="last lowerroman simple">
-<li>Create ESGF issues from a <em>json</em> template to the errata service database,</li>
-<li>Update ESGF issues from a <em>json</em> template to the errata service database,</li>
+<li>Create ESGF issues from a <code class="docutils literal"><span class="pre">json</span></code> template to the errata service database,</li>
+<li>Update ESGF issues from a <code class="docutils literal"><span class="pre">json</span></code> template to the errata service database,</li>
 <li>Close ESGF issues on the errata service database,</li>
 <li>Retrieve ESGF issues from the errata service database to a local <em>json</em> record.</li>
 </ol>
@@ -162,21 +167,20 @@ efficiently manage one or several issues remotely and locally.</p>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>Template as input</strong></dt>
-<dd>You only need to document your issue following a user-friendly <em>json</em> template as well as list the affected datasets
-in a <em>txt</em> file.</dd>
-<dt><strong>Compatiblity with ESGF node configuration file(s)</strong></dt>
-<dd>For the time being, the esgf-errata-client is completely independent from the ESGF stack.</dd>
-<dt><strong>Standalone</strong></dt>
+<dt>Template as input</dt>
+<dd>You only need to document your issue following a user-friendly <code class="docutils literal"><span class="pre">json</span></code> template as well as list the affected datasets
+in a <code class="docutils literal"><span class="pre">txt</span></code> file.</dd>
+<dt>Compatibility with ESGF node configuration file(s)</dt>
+<dd>For the time being, the ESGF errata client is completely independent from the ESGF stack.</dd>
+<dt>Standalone</dt>
 <dd>The issue client is perfectly capable of running as a stand-alone project.</dd>
-<dt><strong>Output directory</strong></dt>
+<dt>Output directory</dt>
 <dd>An output directory can be defined to store and organize your issue templates on command.
-There&#8217;s no limitation about directories used to locally store issue files.</dd>
-<dt><strong>Use a logfile</strong></dt>
+There is no limitation about directories used to locally store issue files.</dd>
+<dt>Use a logfile</dt>
 <dd>You can initiate a logger instead of the standard output. This could be useful for automatic workflows. The
 logfile name is automatically defined and unique (using the the job&#8217;s name, the date and the job&#8217;s ID). You can
-define an output directory for your logs too.
-If not defined by user, the log used is the standard output.</dd>
+define an output directory for your logs too.</dd>
 </dl>
 </div>
 </div>
@@ -191,7 +195,7 @@ If not defined by user, the log used is the standard output.</dd>
         <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to ESGF-ISSUE-CLIENT’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="ESGF Errata Client documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
