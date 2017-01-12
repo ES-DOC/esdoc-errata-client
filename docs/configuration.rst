@@ -1,8 +1,12 @@
 .. _configuration:
 
+Authentication
+==============
 
-Configuration
-=============
+The most important step towards properly configuring and the good use of the ESGF errata cliant is the authentication part.
+
+GitHub setup
+************
 
 The most important step towards properly configuring and the good use of the esdoc-errata issue client is the authentication part.
 A verified github account is required, along with a generated personal access token.
@@ -35,6 +39,8 @@ Authorization is controlled using github's organizations invitational based stru
 In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
 After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.
 
+Credentials management
+**********************
 
 After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
 Saving credentials makes the use of the errata client much easier. After the first usage of the client to create, update or close an issue,
