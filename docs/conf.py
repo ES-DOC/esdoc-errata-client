@@ -25,8 +25,11 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
-
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinxtogithub'
+]
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -40,7 +43,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'ESGF-ISSUE-CLIENT'
+project = u'esgissue'
 copyright = u'2016, Atef BEN NASSER, Guillaume LEVAVASSEUR'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -78,7 +81,7 @@ exclude_patterns = ['_build']
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
-#show_authors = False
+show_authors = True
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -91,7 +94,9 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+import sphinx_rtd_theme
+html_theme = 'sphinx_rtd_theme'
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -164,7 +169,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'ESGF-ISSUE-CLIENTdoc'
+htmlhelp_basename = 'esgissue_doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +188,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'ESGF-ISSUE-CLIENT.tex', u'ESGF-ISSUE-CLIENT Documentation',
+  ('index', 'esgissue.tex', u'esgissue Documentation',
    u'Atef BEN NASSER, Guillaume LEVAVASSEUR', 'manual'),
 ]
 
@@ -213,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'esgf-issue-client', u'ESGF-ISSUE-CLIENT Documentation',
+    ('index', 'esgissue', u'esgissue Documentation',
      [u'Atef BEN NASSER, Guillaume LEVAVASSEUR'], 1)
 ]
 
@@ -227,8 +232,12 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'ESGF-ISSUE-CLIENT', u'ESGF-ISSUE-CLIENT Documentation',
-   u'Atef BEN NASSER, Guillaume LEVAVASSEUR', 'ESGF-ISSUE-CLIENT', 'One line description of project.',
+  ('index',
+   'esgissue',
+   u'esgissue Documentation',
+   u'Atef BEN NASSER, Guillaume LEVAVASSEUR',
+   'esgissue',
+   'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -240,3 +249,6 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+autodoc_member_order = 'bysource'
+autodoc_default_flags = ['members', 'private-members']

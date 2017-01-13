@@ -1,27 +1,27 @@
-.. ESGF-ISSUE-CLIENT documentation master file, created by
-   sphinx-quickstart on Fri Sep 30 16:07:57 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+ESGF Errata Client documentation
+================================
 
-Welcome to ESGF-ISSUE-CLIENT's documentation!
-=============================================
-
-Contents:
+The ESGF errata client, called ``esgissue`` is a piece of software that enables the interaction with the errata service.
+It can be used to create, update, close and retrieve issues. The client is basically aimed to be used by publishing teams
+that are notified of the existence of an issue regarding one or many datasets/files.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    synopsis
    installation
    configuration
+   create
+   update
+   close
+   retrieve
    usage
    faq
    credits
    log
 
-
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`

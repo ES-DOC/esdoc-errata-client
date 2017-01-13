@@ -1,3 +1,5 @@
+####See full documentation [here](https://es-doc.github.io/esdoc-errata-client/).
+
 ## Description
 
 ESGF errata client is a piece of software that enables the interaction with the errata service. 

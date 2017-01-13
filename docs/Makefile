@@ -5,7 +5,14 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = _build
+BUILDDIR      = ../../docs-build
+PDFBUILDDIR   = /tmp
+PDF           = ../manual.pdf
+
+# User-friendly check for sphinx-build
+ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
+$(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
+endif
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -37,6 +44,7 @@ help:
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  gh-pages   to make standalone HTML files and commit them on gh-pages"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
@@ -151,3 +159,14 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+gh-pages:
+	cd $(BUILDDIR)/html;\
+    git pull origin gh-pages;\
+    cd -;\
+    $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html;\
+    cd $(BUILDDIR)/html;\
+	git add .;\
+	git commit -m "Docs rebuilt at $(date +'%Y/%m/%d - %H:%M:%S')";\
+	git push origin gh-pages
+	@echo "Build finished and committed on gh-pages."
