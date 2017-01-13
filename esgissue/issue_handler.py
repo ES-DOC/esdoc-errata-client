@@ -9,30 +9,35 @@
 # TODO: Handle Service interaction should consider dictionary to records hundreds of PIDs per issue
 
 # Module imports
-import sys, time, linecache
+import sys
+import time
+import linecache
 import logging
-from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
-                  extract_facets, update_json, logging_error, order_json
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
 import datetime
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
+from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
+                  extract_facets, update_json, logging_error, order_json, get_remote_config, prepare_persistence
 
 
 class LocalIssue(object):
     """
     An object representing the local issue.
     """
-    def __init__(self, issue_json, dset_list, issue_path, dataset_path, action):
+    def __init__(self, action, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
         self.action = action
-        if issue_json is not None:
-            self.json = issue_json
-            self.json[DATASETS] = dset_list
-            self.json[PROJECT] = self.json[PROJECT].lower()
+        self.project = None
+        if issue_file is not None:
+            self.json = issue_file
+            self.json[DATASETS] = dataset_file
+            self.project = self.json[PROJECT].lower()
         self.issue_path = issue_path
         self.dataset_path = dataset_path
+        if self.project is not None:
+            self.config = get_remote_config(self.json[PROJECT])
 
     def validate(self, action):
         """
@@ -54,7 +59,7 @@ class LocalIssue(object):
         for dataset in self.json[DATASETS]:
             if not test_pattern(dataset):
                 logging_error(ERROR_DIC[DATASETS], dataset)
-            facets = extract_facets(dataset, self.json[PROJECT])
+            facets = extract_facets(dataset, self.project, self.config)
             self.json = update_json(facets, self.json)
         try:
             validate(self.json, schema)
@@ -74,6 +79,7 @@ class LocalIssue(object):
         urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
             if not test_url(url):
+                print(test_url(url))
                 logging_error(ERROR_DIC[URLS], url)
         # Validate the datasets list against the dataset id pattern
         logging.info('Validation Result: SUCCESSFUL')
@@ -87,7 +93,7 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            get_ws_call(self.action, self.json, None, credentials)
+            get_ws_call(action=self.action, payload=self.json,credentials=credentials)
             logging.info('Updating fields of payload after remote issue creation...')
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             logging.info('Issue json schema has been updated, persisting in file...')
@@ -112,7 +118,7 @@ class LocalIssue(object):
         logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
-            get_ws_call(self.action, self.json, None, credentials)
+            get_ws_call(action=self.action, payload=self.json, credentials=credentials)
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             del self.json[DATASETS]
             # updating the issue body.
@@ -170,7 +176,7 @@ class LocalIssue(object):
                         self.action = CLOSE
             else:
                 status = self.json[STATUS]
-            get_ws_call(self.action, status, self.json[UID], credentials)
+            get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials)
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
@@ -187,27 +193,29 @@ class LocalIssue(object):
         except Exception as e:
             logging_error(ERROR_DIC['unknown_error'], repr(e))
 
-    def retrieve(self, n, issues, dsets):
+    def retrieve(self, list_of_ids, issues, dsets):
         """
-        :param n:
+        :param list_of_ids:
         :param issues:
         :param dsets:
         :return:
         """
-        logging.info('processing id {}'.format(n))
-        try:
-            r = get_ws_call(RETRIEVE, None, n, None)
-            if r.json() is not None:
-                self.dump_issue(r.json()[ISSUE], issues, dsets)
-                logging.info('Issue has been downloaded.')
-            else:
-                logging.info("Issue id didn't match any issues in the errata db")
-        except ConnectionError:
-            logging_error(ERROR_DIC['connection_error'])
-        except ConnectTimeout:
-            logging_error(ERROR_DIC['connection_timeout'])
-        except Exception as e:
-            logging_error(ERROR_DIC['unknown_error'], repr(e))
+        for n in list_of_ids:
+            logging.info('processing id {}'.format(n))
+            try:
+                r = get_ws_call(action=RETRIEVE, uid=n)
+                if r.json() is not None:
+                    data = prepare_persistence(r.json()[ISSUE])
+                    self.dump_issue(data, issues, dsets)
+                    logging.info('Issue has been downloaded.')
+                else:
+                    logging.info("Issue id didn't match any issues in the errata db")
+            except ConnectionError:
+                logging_error(ERROR_DIC['connection_error'])
+            except ConnectTimeout:
+                logging_error(ERROR_DIC['connection_timeout'])
+            except Exception as e:
+                logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def retrieve_all(self, issues, dsets):
         """
@@ -218,12 +226,16 @@ class LocalIssue(object):
         """
         try:
             logging.info('Starting archive process...')
-            r = get_ws_call(RETRIEVE_ALL, None, None, None)
+            r = get_ws_call(action=RETRIEVE_ALL)
             logging.info('Webservice provided content...')
             logging.info('Persisting information...')
             results = r.json()[ISSUES]
+            print('looping around issues')
             for issue in results:
-                self.dump_issue(issue, issues, dsets)
+                data = prepare_persistence(issue)
+                print('dumping issue {}'.format(data['uid']))
+                self.dump_issue(data, issues, dsets)
+                print('issue dumped')
         except ConnectionError:
             logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
@@ -233,17 +245,16 @@ class LocalIssue(object):
 
     @staticmethod
     def dump_issue(issue, issues, dsets):
-
         if DATE_CLOSED in issue.keys() and issue[DATE_CLOSED] is None:
             del issue[DATE_CLOSED]
         path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue[UID])
-        with open(path_to_dataset, 'w') as dset_file:
-            if not issue[DATASETS]:
-                logging.info('The issue {} seems to be affecting no datasets.'.format(issue[UID]))
-                dset_file.write('No datasets provided with issue.')
-            for dset in issue[DATASETS]:
-                dset_file.write(dset + '\n')
-            del issue[DATASETS]
+        if DATASETS in issue:
+            with open(path_to_dataset, 'w') as dset_file:
+                for dset in issue[DATASETS]:
+                    dset_file.write(dset + '\n')
+                del issue[DATASETS]
+        else:
+            logging.warn('Issue {} has no datasets affected.'.format(issue[UID]))
         with open(path_to_issue, 'w') as data_file:
             issue = order_json(issue)
             data_file.write(simplejson.dumps(issue, indent=4))

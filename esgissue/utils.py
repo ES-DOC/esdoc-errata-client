@@ -23,7 +23,8 @@ import pyDes
 from uuid import getnode as get_mac
 import pbkdf2
 import platform
-import binascii
+from time import time
+from fnmatch import fnmatch
 
 # Misc operations
 from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
@@ -67,6 +68,8 @@ class MultilineFormatter(HelpFormatter):
         multiline_text[-1] += '\n'
         return multiline_text
 
+# Validation
+
 
 def test_url(url):
     """
@@ -82,8 +85,11 @@ def test_url(url):
         r = requests.head(url)
         if r.status_code != requests.codes.ok:
             logging.debug('The url {0} is invalid, HTTP response: {1}'.format(url, r.status_code))
+        elif r.status_code == 301:
+            logging.warn('Provided URL {} has redirects, please replace it with proper URL.'.format(url))
         return r.status_code == requests.codes.ok
     except Exception as e:
+        logging_error('Return code {}'.format(r.status_code), url)
         logging_error(ERROR_DIC[URLS], url)
 
 
@@ -141,7 +147,7 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
 # Logging
 
 
-def init_logging(logdir, level='INFO'):
+def init_logging(logdir=None, level='INFO'):
     """
     Initiates the logging configuration (output, message formatting).
     In the case of a logfile, the logfile name is unique and formatted as follows:
@@ -195,6 +201,67 @@ def resolve_validation_error_code(message):
         if key in message.lower():
             return value
 
+# Preparing operations
+
+
+def prepare_retrieval(id_list, issues, dsets):
+    # id_list can basically be a string, a list of strings or a file path.
+    # Case the user specified that he wants a specific issue with a specific uid.
+    if id_list is not None:
+        # in case of txt file of ids
+        if len(id_list) == 1 and type(id_list[0]) == str and fnmatch(id_list[0], '*.txt'):
+            with open(id_list[0]) as f:
+                list_of_ids = f.readlines()
+        # in case of a literal list of ids
+        elif len(id_list) == 1 and type(id_list[0]) == str and not fnmatch(id_list, '*.txt'):
+            list_of_ids = [id_list]
+        else:
+            list_of_ids = id_list
+        # In the case the user is requesting more than one issue
+        for directory in [issues, dsets]:
+            # Added '.' test to avoid creating directories that are intended to be files.
+            if not os.path.isdir(directory) and not fnmatch(directory, '*.*'):
+                os.makedirs(directory)
+            # This tests whether a list of ids is provided with a directory where to dump the retrieved
+            # issues and related datasets.
+            if len(list_of_ids) > 1 and not os.path.isdir(directory):
+                logging_error(ERROR_DIC['multiple_ids'])
+        # Looping over list of ids provided
+        return list_of_ids, issues, dsets
+
+    # No uid specified, flushing the database.
+    else:
+        # in case the ids were not specified the client proceeds to download the errata issue db.
+        for directory in [issues, dsets]:
+            if not os.path.exists(directory) and not fnmatch(directory, '*.*'):
+                os.makedirs(directory)
+            elif fnmatch(directory, '*.*'):
+                logging_error(ERROR_DIC['multiple_ids'])
+        return None, issues, dsets
+
+
+def prepare_persistence(data):
+    """
+    prepares downloaded data for persistence
+    :param data: json file
+    :return: json file
+    """
+    to_del = []
+    for key, value in data.iteritems():
+        if value is None or value == '' or value == [] or value == [u'']:
+            to_del.append(key)
+        if type(value) == list:
+            for item in value:
+                if item == '' or item == u"":
+                    value.remove(item)
+            if not value:
+                to_del.append(key)
+
+    for key in to_del:
+        if key in data:
+            del data[key]
+    return data
+
 # TXT operations
 
 
@@ -226,9 +293,10 @@ def update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-    multiple_facets = ['experiments', 'models', 'variables', 'materials', 'url']
+    multiple_facets = ['experiment', 'model', 'cmor_table']
+    allowed_facets = ['experiment', 'model', 'cmor_table', 'institute']
     for key, value in facets.iteritems():
-        if key not in original_json:
+        if key not in original_json and key in allowed_facets:
             if key not in multiple_facets:
                 # Case of a single value field like the institute.
                 original_json[key] = value.lower()
@@ -262,7 +330,7 @@ def order_json(json_body):
 
 # Web Service related operations
 
-def get_ws_call(action, payload, uid, credentials):
+def get_ws_call(action, payload=None, uid=None, credentials=None):
     """
     This function builds the url for the outgoing call to the different errata ws.
     :param payload: payload to be posted
@@ -271,13 +339,10 @@ def get_ws_call(action, payload, uid, credentials):
     :param credentials: username & token
     :return: requests call
     """
-    config = get_remote_config()
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
-
-    # url = URLS_LIST['URL_BASE'] + URLS_LIST[action.upper()]
-    url = config.get(WEBSERVICE, URL_BASE)+config.get(WEBSERVICE, action.upper())
+    url = URL_BASE + URL_MAP[action.upper()]
     if action in [CREATE, UPDATE]:
         r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
     elif action == CLOSE:
@@ -298,44 +363,77 @@ def get_ws_call(action, payload, uid, credentials):
     return r
 
 
-def extract_facets(dataset_id, project):
+def extract_facets(dataset_id, project, config):
     """
     Given a specific project, this function extracts the facets as described in the ini file.
     :param dataset_id: dataset id containing the facets
     :param project: project identifier
     :return: dict
     """
-    config = get_remote_config()
-    result_dict = dict()
     try:
-        regex_str = config.get(project.upper()+'_REGEX', PATTERN)
-        pos = config.items(project.upper()+'_POS')
+        sections = config._sections['project:{}'.format(project)]
+        regex_str = sections[DATASET_ID]
+        regex_str = translate_dataset_regex(regex_str, sections)
+        match = re.match(regex_str, dataset_id)
+        if match:
+            return match.groupdict()
+        else:
+            logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
+                dataset_id, project))
     except KeyError:
         logging_error(ERROR_DIC['project_not_supported'])
-    match = re.match(regex_str, dataset_id)
-    if match:
-        for i in pos:
-            if i[0] != '__name__':
-                result_dict[i[0]] = match.group(int(i[1])).lower()
-    else:
-        logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
-            dataset_id, project))
-    return result_dict
 
 
-def get_remote_config():
+def translate_dataset_regex(pattern, sections):
+    """
+    translates the regex expression retrieved from esg.ini
+    :param pattern: str
+    :param sections: dictionary of configuration
+    :return: pattern
+    """
+    facets = set(re.findall(re.compile(r'%\(([^()]*)\)s'), pattern))
+    for facet in facets:
+        # If a facet has a specific pattern to follow.
+        if '{}_pattern'.format(facet) in sections.keys():
+            pattern = re.sub(re.compile(r'%\(({0})\)s'.format(facet)), sections['{}_pattern'.format(facet)], pattern)
+        # version:
+        elif facet == 'version':
+            pattern = re.sub(re.compile(r'%\((version)\)s'), r'(?P<\1>v[\d]+|latest)', pattern)
+        # Rest of facets:
+        else:
+            pattern = re.sub(re.compile(r'%\(([^()]*)\)s'), r'(?P<\1>[\w-]+)', pattern)
+    return pattern
+
+
+def get_remote_config(project):
     """
     Using github api, this returns config file contents.
+    :param project: str
     :return: ConfigParser instance with proper configuration
     """
-    r = requests.get(GH_FILE_API)
-    if r.status_code == 200:
-        raw_file = requests.get(r.json()[DOWNLOAD_URL])
-        config = ConfigParser.ConfigParser()
-        config.readfp(StringIO.StringIO(raw_file.text))
+    project_ini_file = '{}.ini'.format(project)
+    config = ConfigParser.ConfigParser()
+    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < 15:
+        # Reading local file.
+        logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
+        config.read(project_ini_file)
         return config
     else:
-        print('GITHUB FILE API IS DOWN.')
+        r = requests.get(GH_FILE_API.format(project))
+        if r.status_code == 200:
+            logging.info('NO LOCAL PROJECT CONFIG FILE FOUND OR DEPRECATED FILE FOUND, RETRIEVING FROM REPO...')
+            # Retrieving distant configuration file
+            raw_file = requests.get(r.json()[DOWNLOAD_URL])
+            config.readfp(StringIO.StringIO(raw_file.text))
+            logging.info('FILE RETRIEVED, PERSISTING LOCALLY...')
+            # Keeping local copy
+            with open(project_ini_file, 'w') as project_file:
+                config.write(project_file)
+            logging.info('FILE PERSISTED.')
+            return config
+        else:
+            # TODO properly catch this exception and act upon it
+            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.text))
 
 
 def encrypt_with_key(data, passphrase=''):
@@ -345,7 +443,6 @@ def encrypt_with_key(data, passphrase=''):
     :param data: data to encrypt
     :return: data encrypted, safe to save.
     """
-    print('Encrypting {} with {}'.format(data, passphrase))
     if passphrase is None:
         passphrase = ''
     # Generate machine specific key
