@@ -213,8 +213,8 @@ def prepare_retrieval(id_list, issues, dsets):
             with open(id_list[0]) as f:
                 list_of_ids = f.readlines()
         # in case of a literal list of ids
-        elif len(id_list) == 1 and type(id_list[0]) == str and not fnmatch(id_list, '*.txt'):
-            list_of_ids = [id_list]
+        elif len(id_list) == 1 and type(id_list[0]) == str and not fnmatch(id_list[0], '*.txt'):
+            list_of_ids = id_list
         else:
             list_of_ids = id_list
         # In the case the user is requesting more than one issue
@@ -433,7 +433,7 @@ def get_remote_config(project):
             return config
         else:
             # TODO properly catch this exception and act upon it
-            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.text))
+            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
 
 def encrypt_with_key(data, passphrase=''):
@@ -527,3 +527,17 @@ def reset_credentials():
         logging.info('Credentials have been successfully reset.')
     else:
         logging.warn('No existing credentials found.')
+
+
+def set_credentials():
+    """
+    set credentials
+    :return: nada
+    """
+    username = raw_input('Username: ')
+    tkn = raw_input('Token: ')
+    passphrase = getpass.getpass('Passphrase: ')
+    with open('cred.txt', 'wb') as credfile:
+        credfile.write('entry:'+encrypt_with_key(username, passphrase)+'\n')
+        credfile.write('entry:'+encrypt_with_key(tkn, passphrase))
+    logging.info('Your credentials were successfully set.')

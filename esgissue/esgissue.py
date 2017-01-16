@@ -12,7 +12,7 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, reset_passphrase,\
-                  reset_credentials, prepare_retrieval
+                  reset_credentials, set_credentials, prepare_retrieval
 
 # Program version
 __version__ = 'v{0} {1}'.format('0.1', datetime(year=2016, month=04, day=11).strftime("%Y-%d-%m"))
@@ -307,6 +307,23 @@ def get_args():
                     See "esgissue credreset -h" for full help.""",
             add_help=False,
             parents=[parent])
+
+    ########################################
+    # Subparser for "esgissue cred-set" #
+    ########################################
+    credreset = subparsers.add_parser(
+            'credset',
+            prog='esgissue credset',
+            description=""""esgissue credset" allows users to establish new credentials. Just like cred-reset except this tool allows users
+            to delete any previously stored information and establish new ones.
+
+            See "esgissue -h" for global help.""",
+            formatter_class=MultilineFormatter,
+            help="""Helps user interact with registered credentials.|n
+                    See "esgissue credset -h" for full help.""",
+            add_help=False,
+            parents=[parent])
+
     return main.parse_args()
 
 
@@ -364,6 +381,8 @@ def run():
         reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
     elif args.command == CREDRESET:
         reset_credentials()
+    elif args.command == 'credset':
+        set_credentials()
     # Retrieve command has a slightly different behavior from the rest so it's singled out
     elif args.command not in [RETRIEVE, CLOSE]:
         issue_file = get_issue(args.issue)

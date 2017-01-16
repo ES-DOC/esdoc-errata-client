@@ -38,7 +38,7 @@
     "type": "string",
     "minLength": 1
   },
-  "models": {
+  "model": {
     "type": "array",
     "uniqueItems": true,
     "items": {
@@ -87,7 +87,7 @@
       "type": "array",
       "uniqueItems": true
   },
-  "variables": {
+  "cmor_table": {
     "type": "array",
     "uniqueItems": true,
     "items": {
@@ -95,7 +95,7 @@
       "minLength": 1
     }
   },
-  "experiments": {
+  "experiment": {
     "type": "array",
     "uniqueItems": true,
     "items": {
@@ -111,11 +111,11 @@
   "description",
   "severity",
   "project",
-  "models",
+  "model",
   "status",
   "dateUpdated",
   "datasets",
-  "experiments",
-  "variables"
+  "experiment",
+  "cmor_table"
 ]
 }
