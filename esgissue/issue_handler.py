@@ -57,8 +57,6 @@ class LocalIssue(object):
             schema = load(f)
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
-            if not test_pattern(dataset):
-                logging_error(ERROR_DIC[DATASETS], dataset)
             facets = extract_facets(dataset, self.project, self.config)
             self.json = update_json(facets, self.json)
         try:
@@ -95,7 +93,7 @@ class LocalIssue(object):
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
             get_ws_call(action=self.action, payload=self.json,credentials=credentials)
             logging.info('Updating fields of payload after remote issue creation...')
-            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            self.json[DATE_UPDATED] = self.json[DATE_CREATED]
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
                 if DATASETS in self.json.keys():

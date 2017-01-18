@@ -1,5 +1,6 @@
 import os
 
+VERSION_NUMBER = '0.1.3.43'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -39,6 +40,7 @@ RETRIEVE_ALL = 'retrieve_all'
 CREDENTIALS = 'credentials'
 CHANGEPASS = 'changepass'
 CREDRESET = 'credreset'
+CREDSET = 'credset'
 ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL]
 
 
@@ -106,5 +108,110 @@ URL_MAP = {'CREATE': '/1/issue/create',
            'RETRIEVE_ALL': '/1/issue/retrieve-all'
            }
 
+# Argparse:
 
+ESGISSUE_GENERAL = """
+                    The publication workflow on the ESGF nodes requires to deal with errata issues.
+                    The cause behind the version changes has to be published alongside the data: what was updated,
+                    retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
+                    be motivated by an issue.|n|n
 
+                    "esgissue" allows the referenced data providers to easily create, document, update, close or remove
+                    a validated issue.
+
+                    The issue registration always appears prior to the publication process and should be mandatory
+                    for additional version, version removal or retraction.|n|n
+
+                    "esgissue" works with both JSON and TXT files. This allows the data provider in charge of ESGF
+                    issues to manage one or several JSON templates gathering the issues locally.|n|n
+
+                    See full documentation on https://es-doc.github.io/esdoc-errata-client/"""
+EPILOG = """Developed by:|n
+         Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)|n
+         Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr"""
+
+OPTIONAL = 'Optional arguments'
+POSITIONAL = 'Positional arguments'
+HELP = 'Show this help message and exit'
+VERSION_HELP = 'Software version'
+ISSUE_ACTIONS = 'Issue actions'
+LOG_HELP = 'Logfile directory. If not, standard output is used'
+ISSUE_HELP = "Required path of the issue JSON template."
+DSETS_HELP = "Required path of the affected dataset IDs list."
+CREATE_DESC = """esgissue create" registers one or several issues on a defined errata repository. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
+
+                    This action returns to the corresponding local JSON template:|n
+                    - the ESGF issue ID (as UUID),|n
+                    - the creation date,|n
+                    - the last updated date (same as the creation date).|n|n
+
+                    The issue registration sets:|n
+                    - the issue status to "new",|n
+
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO REGISTER AN ISSUE.|n|n
+
+                    See "esgissue -h" for global help."""
+CREATE_HELP = """Creates ESGF issues from a JSON template to the errata database.|n
+                See "esgissue create -h" for full help."""
+UPDATE_DESC = """"esgissue update" updates one or several issues on a defined errata repository. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
+
+                    This action returns the time and date of the update to the corresponding local JSON template.|n|n
+
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO UPDATE AN ISSUE.|n|n
+
+                    See "esgissue -h" for global help."""
+UPDATE_HELP = """Updates ESGF issues from a JSON template to the errata database.|n
+                See "esgissue update -h" for full help."""
+CLOSE_DESC = """"esgissue close" closes one or several issues on a defined errata database. The data
+                    provider submits one or several JSON files gathering all issues information with a list of all
+                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
+
+                    This action returns the date of closure to the corresponding local JSON template (which is the same
+                    as the date of the last update).|n|n
+
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO CLOSE AN ISSUE.|n|n
+
+                    See "esgissue -h" for global help."""
+CLOSE_HELP = """Closes ESGF issues on the errata repository.|n
+                See "esgissue close -h" for full help."""
+RETRIEVE_DESC = """"esgissue retrieve" retrieves one or several issues from a defined errata repository. The data
+                    provider submits one or several issue number he wants to retrieve and optional paths to write
+                    them.|n|n
+
+                    This action rebuilds:|n
+                    - the corresponding issue template as a JSON file,|n
+                    - the attached affected datasets list as a TEXT file.|n|n
+
+                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO RETRIEVE AN ISSUE.|n|n
+
+                    See "esgissue -h" for global help."""
+RETRIEVE_HELP = """Retrieves ESGF issues from the errata repository to a JSON template.|n
+                See "esgissue retrieve -h" for full help."""
+CREDRESET_DESC = """"esgissue credreset" allows users to interact with their established credentials.
+            It mainly allows users who have locally saved credentials to modify their pass-phrase or reset it by deleting
+            them and having to redo the credentials input all over again. This can be useful in case someone forgets the passphrase
+            set before.
+
+            See "esgissue -h" for global help."""
+CREDRESET_HELP = """Helps user interact with registered credentials.|n
+                    See "esgissue credreset -h" for full help."""
+
+CREDSET_DESC = """"esgissue credset" allows users to establish new credentials. Just like cred-reset except this tool allows users
+            to delete any previously stored information and establish new ones.
+
+            See "esgissue -h" for global help."""
+CREDSET_HELP = """Helps user register credentials.|n
+                    See "esgissue credset -h" for full help."""
+
+CHANGEPASS_DESC = """"esgissue credentials" allows users to interact with their established credentials.
+            It mainly allows users who have locally saved credentials to modify their pass-phrase or reset it by deleting
+            them and having to redo the credentials input all over again. This can be useful in case someone forgets the passphrase
+            set before.
+
+            See "esgissue -h" for global help."""
+CHANGEPASS_HELP = """Helps user change passphrase for registered credentials.|n
+                    See "esgissue changepass -h" for full help."""

@@ -310,7 +310,6 @@ def update_json(facets, original_json):
             # if value not in original_json[key]:
             #     original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value.lower():
-            print(original_json[key].lower(), value.lower())
             logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
                                                                                                str(key)))
     return original_json
@@ -465,9 +464,12 @@ def decrypt_with_key(data, passphrase=''):
     return k.decrypt(data)
 
 
-def authenticate():
+def authenticate(**kwargs):
     if os.path.isfile('cred.txt'):
-        key = getpass.getpass('Passphrase: ')
+        if 'passphrase' in kwargs:
+            key = kwargs['passphrase']
+        else:
+            key = getpass.getpass('Passphrase: ')
         with open('cred.txt', 'rb') as credfile:
             content = credfile.readlines()
         username = decrypt_with_key(content[0].split('entry:')[1].replace('\n', ''), key)
@@ -494,11 +496,12 @@ def reset_passphrase(**kwargs):
     # check if data exists
     if os.path.isfile('cred.txt'):
         # if yes:
-        with open('cred.txt', 'rb') as credfile:
-            content = credfile.readlines()
+        with open('cred.txt', 'rb') as cred_file:
+            content = cred_file.readlines()
         username = content[0].split('entry:')[1].replace('\n', '')
         token = content[1].split('entry:')[1]
-        if kwargs['old_pass'] is not None and kwargs['new_pass'] is not None:
+        if 'old_pass' in kwargs and 'new_pass' in kwargs:
+            print('Found credentials in params.')
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
         else:
@@ -508,9 +511,9 @@ def reset_passphrase(**kwargs):
         username = decrypt_with_key(username, old_pass)
         token = decrypt_with_key(token, old_pass)
         # Writing new data
-        with open('cred.txt', 'wb') as credfile:
-            credfile.write('entry:'+encrypt_with_key(username, new_pass)+'\n')
-            credfile.write('entry:'+encrypt_with_key(token, new_pass))
+        with open('cred.txt', 'wb') as cred_file:
+            cred_file.write('entry:'+encrypt_with_key(username, new_pass)+'\n')
+            cred_file.write('entry:'+encrypt_with_key(token, new_pass))
         logging.info('Passphrase has been successfully updated.')
     # if no print warning.
     else:
@@ -529,15 +532,21 @@ def reset_credentials():
         logging.warn('No existing credentials found.')
 
 
-def set_credentials():
+def set_credentials(**kwargs):
     """
     set credentials
     :return: nada
     """
-    username = raw_input('Username: ')
-    tkn = raw_input('Token: ')
-    passphrase = getpass.getpass('Passphrase: ')
-    with open('cred.txt', 'wb') as credfile:
-        credfile.write('entry:'+encrypt_with_key(username, passphrase)+'\n')
-        credfile.write('entry:'+encrypt_with_key(tkn, passphrase))
+    if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
+        print('Found credentials in params.')
+        username = kwargs['username']
+        tkn = kwargs['token']
+        passphrase = kwargs['passphrase']
+    else:
+        username = raw_input('Username: ')
+        tkn = raw_input('Token: ')
+        passphrase = getpass.getpass('Passphrase: ')
+    with open('cred.txt', 'wb') as cred_file:
+        cred_file.write('entry:'+encrypt_with_key(username, passphrase)+'\n')
+        cred_file.write('entry:'+encrypt_with_key(tkn, passphrase))
     logging.info('Your credentials were successfully set.')
