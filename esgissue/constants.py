@@ -99,8 +99,8 @@ DATASET_ID = 'dataset_id'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 # WEBSERVICE
 
-# URL_BASE = 'http://test.errata.api.es-doc.org'
-URL_BASE = 'http://localhost:5001'
+URL_BASE = 'https://test-errata-api.es-doc.org'
+# URL_BASE = 'http://localhost:5001'
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',
