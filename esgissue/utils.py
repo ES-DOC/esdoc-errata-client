@@ -136,11 +136,14 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
+
     if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
         path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
         path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
         return path_to_issues, path_to_dsets
     else:
+        path_to_issues = get_file_location('/downloads/issues')
+        path_to_dsets = get_file_location('/downloads/dsets')
         return path_to_issues, path_to_dsets
 
 
@@ -343,7 +346,10 @@ def get_ws_call(action, payload=None, uid=None, credentials=None):
         sys.exit(ERROR_DIC['unknown_command'][0])
     url = URL_BASE + URL_MAP[action.upper()]
     if action in [CREATE, UPDATE]:
-        r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
+        try:
+            r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
+        except Exception as e:
+            print(e.message)
     elif action == CLOSE:
         r = requests.post(url + uid + '&status=' + payload, auth=credentials)
     elif action == RETRIEVE:
@@ -465,12 +471,13 @@ def decrypt_with_key(data, passphrase=''):
 
 
 def authenticate(**kwargs):
-    if os.path.isfile('cred.txt'):
+    path_to_creds = get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
         if 'passphrase' in kwargs:
             key = kwargs['passphrase']
         else:
             key = getpass.getpass('Passphrase: ')
-        with open('cred.txt', 'rb') as credfile:
+        with open(path_to_creds, 'rb') as credfile:
             content = credfile.readlines()
         username = decrypt_with_key(content[0].split('entry:')[1].replace('\n', ''), key)
         token = decrypt_with_key(content[1].split('entry:')[1], key)
@@ -480,7 +487,7 @@ def authenticate(**kwargs):
         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
         if save_cred.lower() == 'y':
             key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
-            with open('cred.txt', 'wb') as credfile:
+            with open(path_to_creds, 'wb') as credfile:
                 credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
                 credfile.write('entry:'+encrypt_with_key(token, key))
             logging.info('Credentials were successfully saved.')
@@ -494,13 +501,15 @@ def reset_passphrase(**kwargs):
     :return: nada
     """
     # check if data exists
-    if os.path.isfile('cred.txt'):
+    path_to_creds = get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
         # if yes:
-        with open('cred.txt', 'rb') as cred_file:
+        with open(path_to_creds, 'rb') as cred_file:
             content = cred_file.readlines()
         username = content[0].split('entry:')[1].replace('\n', '')
         token = content[1].split('entry:')[1]
         if 'old_pass' in kwargs and 'new_pass' in kwargs:
+            print(kwargs['old_pass'], kwargs['new_pass'])
             print('Found credentials in params.')
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
@@ -511,7 +520,7 @@ def reset_passphrase(**kwargs):
         username = decrypt_with_key(username, old_pass)
         token = decrypt_with_key(token, old_pass)
         # Writing new data
-        with open('cred.txt', 'wb') as cred_file:
+        with open(path_to_creds, 'wb') as cred_file:
             cred_file.write('entry:'+encrypt_with_key(username, new_pass)+'\n')
             cred_file.write('entry:'+encrypt_with_key(token, new_pass))
         logging.info('Passphrase has been successfully updated.')
@@ -525,7 +534,8 @@ def reset_credentials():
     resets credentials.
     :return: nada
     """
-    if os.path.isfile('cred.txt'):
+    path_to_creds = get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
         os.remove('cred.txt')
         logging.info('Credentials have been successfully reset.')
     else:
@@ -546,7 +556,17 @@ def set_credentials(**kwargs):
         username = raw_input('Username: ')
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
-    with open('cred.txt', 'wb') as cred_file:
+    path_to_creds = get_file_location('cred.txt')
+    with open(path_to_creds, 'wb') as cred_file:
         cred_file.write('entry:'+encrypt_with_key(username, passphrase)+'\n')
         cred_file.write('entry:'+encrypt_with_key(tkn, passphrase))
     logging.info('Your credentials were successfully set.')
+
+
+def get_file_location(file_name):
+    if os.environ['ESDOC_HOME'] is not None:
+        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/'+file_name)
+    else:
+        logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
+        file_location = 'cred.txt'
+    return file_location

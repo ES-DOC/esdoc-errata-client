@@ -33,17 +33,23 @@ Check the help
 
     Issue actions:
 
-        create    Creates ESGF issues from a json template to the errata database.
-                  See "issue-manager create -h" for full help.
+        create     Creates ESGF issues from a json template to the errata database.
+                   See "issue-manager create -h" for full help.
 
-        update    Updates ESGF issues from a json template to the errata database.
-                  See "issue-manager update -h" for full help.
+        update     Updates ESGF issues from a json template to the errata database.
+                   See "issue-manager update -h" for full help.
 
-        close     Closes ESGF issues on the errata repository.
-                  See "issue-manager close -h" for full help.
+        close      Closes ESGF issues on the errata repository.
+                   See "issue-manager close -h" for full help.
 
-        retrieve  Retrieves ESGF issues from the errata repository to a json template.
-                  See "issue-manager retrieve -h" for full help.
+        retrieve   Retrieves ESGF issues from the errata repository to a json template.
+                   See "issue-manager retrieve -h" for full help.
+
+        credset    Sets user's credentials.
+
+        credreset  Resets user's credentials.
+
+        changepass Changes the old passphrase into a new one of user's choice.
 
     Developed by:
     Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
@@ -85,5 +91,15 @@ Exit status
 - [14]: Missing or invalid close date.
 - [15]: Incoherent dataset id with project drs structure, please make sure both are coherent.
 - [16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)
+- [17]: Authentication failed. Make sure the credentials are correct.
+- [18]: User lacks required privilege. Contact admins for further information.
+- [19]: Connection failed, server probably down. Contact admins.
+- [20]: Connection timed out, try again later.
+- [21]: Multiple issue ids were provided along with a single file destination, aborting.
+- [22]: Json file validation failed for an unknown reason, please check said file.
+- [23]: Command is unknown, check the documentation or help for further information
+- [24]: WS request failed for unknown reason.
+- [25]: Field only supports single input per issue declaration.
+- [26]: Project indicated in issue is not supported by errata service.
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 
