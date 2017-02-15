@@ -32,7 +32,9 @@ setup(name='esgissue-client',
                         'simplejson',
                         'jsonschema',
                         'argparse',
-                        'repoze.lru'
+                        'repoze.lru',
+                        'pyDes',
+                        'pbkdf2'
                         ],
       platforms=['Unix'],
       zip_safe=False,

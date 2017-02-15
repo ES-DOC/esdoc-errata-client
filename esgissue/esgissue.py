@@ -236,7 +236,7 @@ def get_args():
     ########################################
     # Subparser for "esgissue credset" #
     ########################################
-    credreset = subparsers.add_parser(
+    credset = subparsers.add_parser(
             'credset',
             prog='esgissue credset',
             description=CREDSET_DESC,
@@ -303,7 +303,10 @@ def run():
         init_logging()
     print(args.command)
     if args.command == CHANGEPASS:
-        reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+        if args.oldpass is not None and args.newpass is not None:
+            reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+        else:
+            reset_passphrase()
     elif args.command == CREDRESET:
         reset_credentials()
     elif args.command == CREDSET:

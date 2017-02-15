@@ -1,6 +1,6 @@
 import os
 
-VERSION_NUMBER = '0.1.3.43'
+VERSION_NUMBER = '0.1.3.46'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -89,8 +89,6 @@ ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2,
 
 # MISC
 
-# GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini
-# ?client_id=39311c0d7318eaf280a1&client_secret=0f4fd2813965afa1039c4ff8c2d73963f13cca34'
 GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini'
 DOWNLOAD_URL = 'download_url'
 URL_BASE = 'URL_BASE'
@@ -99,8 +97,8 @@ DATASET_ID = 'dataset_id'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 # WEBSERVICE
 
-URL_BASE = 'https://test-errata-api.es-doc.org'
-# URL_BASE = 'http://localhost:5001'
+# URL_BASE = 'https://test-errata-api.es-doc.org'
+URL_BASE = 'http://localhost:5001'
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',

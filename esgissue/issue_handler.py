@@ -91,7 +91,7 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            get_ws_call(action=self.action, payload=self.json,credentials=credentials)
+            get_ws_call(action=self.action, payload=self.json, credentials=credentials)
             logging.info('Updating fields of payload after remote issue creation...')
             self.json[DATE_UPDATED] = self.json[DATE_CREATED]
             logging.info('Issue json schema has been updated, persisting in file...')

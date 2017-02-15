@@ -4,3 +4,5 @@ functools32
 argparse
 repoze.lru
 simplejson
+pyDes
+pbkdf2
