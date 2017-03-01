@@ -1,6 +1,6 @@
 import os
 
-VERSION_NUMBER = '0.1.3.46'
+VERSION_NUMBER = '0.1.3.49'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -95,10 +95,11 @@ URL_BASE = 'URL_BASE'
 PATTERN = 'PATTERN'
 DATASET_ID = 'dataset_id'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
-# WEBSERVICE
 
-# URL_BASE = 'https://test-errata-api.es-doc.org'
-URL_BASE = 'http://localhost:5001'
+# WEBSERVICE
+URL_BASE = 'https://test-errata-api.es-doc.org'
+
+# URL_BASE = 'http://localhost:5001'
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',
@@ -106,6 +107,7 @@ URL_MAP = {'CREATE': '/1/issue/create',
            'RETRIEVE_ALL': '/1/issue/retrieve-all'
            }
 
+ESDOC_VAR = 'ESDOC_HOME'
 # Argparse:
 
 ESGISSUE_GENERAL = """

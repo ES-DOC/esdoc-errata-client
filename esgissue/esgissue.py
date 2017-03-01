@@ -301,7 +301,6 @@ def run():
         init_logging(args.log)
     else:
         init_logging()
-    print(args.command)
     if args.command == CHANGEPASS:
         if args.oldpass is not None and args.newpass is not None:
             reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)

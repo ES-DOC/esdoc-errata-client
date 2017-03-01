@@ -26,11 +26,9 @@ import platform
 from time import time
 from fnmatch import fnmatch
 
-# Misc operations
-from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
-requests.packages.urllib3.disable_warnings(SNIMissingWarning)
+# SNI required fix for py2.7
+from requests.packages.urllib3.contrib import pyopenssl
+pyopenssl.inject_into_urllib3()
 
 
 class MultilineFormatter(HelpFormatter):
@@ -437,7 +435,6 @@ def get_remote_config(project):
             logging.info('FILE PERSISTED.')
             return config
         else:
-            # TODO properly catch this exception and act upon it
             raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
 
@@ -564,7 +561,7 @@ def set_credentials(**kwargs):
 
 
 def get_file_location(file_name):
-    if os.environ['ESDOC_HOME'] is not None:
+    if ESDOC_VAR in os.environ.keys():
         file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/'+file_name)
     else:
         logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
