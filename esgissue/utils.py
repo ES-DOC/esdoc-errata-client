@@ -186,10 +186,11 @@ def logging_error(error, additional_data=None):
     :param additional_data: additional information
     :return: logs error
     """
-    logging.error(error[1] + ' Error code: {}.'.format(error[0]))
-    if additional_data:
-        logging.error('Error caused by {}.'.format(additional_data))
-    sys.exit(error[0])
+    if error is not None:
+        logging.error(error[1] + ' Error code: {}.'.format(error[0]))
+        if additional_data:
+            logging.error('Error caused by {}.'.format(additional_data))
+        sys.exit(error[0])
 
 
 def resolve_validation_error_code(message):
@@ -294,8 +295,8 @@ def update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-    multiple_facets = ['experiment', 'model', 'cmor_table']
-    allowed_facets = ['experiment', 'model', 'cmor_table', 'institute']
+    multiple_facets = ['activity_id', 'experiment_id', 'source_id', 'variable']
+    allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id']
     for key, value in facets.iteritems():
         if key not in original_json and key in allowed_facets:
             if key not in multiple_facets:
@@ -416,7 +417,7 @@ def get_remote_config(project):
     """
     project_ini_file = '{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
-    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < 15:
+    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
         # Reading local file.
         logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
         config.read(project_ini_file)

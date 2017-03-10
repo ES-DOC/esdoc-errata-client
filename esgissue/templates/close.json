@@ -1,8 +1,17 @@
 {
-"$schema": "http://json-schema.org/schema#",
-"title": "ESGF issue JSON schema",
-"type": "object",
 "properties": {
+
+  "dateCreated": {
+            "type": "string",
+            "format": "date-time"
+  },
+  "dateUpdated": {
+            "type": "string",
+            "format": "date-time"
+  },
+
+
+
   "uid": {
     "type": "string",
     "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
@@ -24,31 +33,28 @@
       "critical"
     ]
   },
-  "project": {
+  "datasets":{
+    "items": {
+      "minLength": 1,
+      "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+  },
+  "status": {
     "type": "string",
-    "minLength": 1,
     "enum": [
-      "CMIP5",
-      "CMIP6",
-      "cmip6",
-      "cmip5"
+      "new",
+      "onhold",
+      "wontfix",
+      "resolved"
     ]
   },
-  "institute": {
-    "type": "string",
-    "minLength": 1
-  },
-  "model": {
-    "type": "array",
-    "uniqueItems": true,
-    "items": {
-      "type": "string",
-      "minLength": 1
-    }
-  },
+
+
   "url": {
-    "type": "string",
-    "minLength": 0
+    "type": "string"
   },
   "materials": {
     "type": "array",
@@ -58,64 +64,95 @@
       "pattern": "\\.(jpg|gif|png|tiff)$"
     }
   },
-  "status": {
+
+
+
+
+
+  "mip_era": {
     "type": "string",
+    "minLength": 1,
     "enum": [
-      "wontfix",
-      "resolved",
-      "new",
-      "onhold"
-    ]
+              "CMIP1", "CMIP2", "CMIP3", "CMIP5", "CMIP6"
+            ]
+
   },
-  "dateCreated": {
+  "activity_id": {
     "type": "string",
-    "format": "date-time"
+    "minLength": 1,
+    "enum":
+            [
+              "AerChemMIP", "C4MIP", "CFMIP", "CMIP", "DAMIP", "DCPP", "FAFMIP", "GMMIP", "GeoMIP", "HighResMIP", "ISMIP6", "LS3MIP", "LUMIP", "OMIP", "PMIP", "RFMIP", "ScenarioMIP", "VolMIP"
+            ]
   },
-  "dateUpdated": {
+
+  "institution_id": {
     "type": "string",
-    "format": "date-time"
+    "minLength": 1,
+    "enum":
+          [
+            "CSIR-CSIRO", "CCCma", "MESSy-Consortium", "MIROC", "MOHC", "IPSL", "EC-Earth-Consortium", "CMCC", "CSIRO-BOM", "COLA-CFS", "MPI-M", "AWI", "NCAR", "NIMS-KMA", "THU", "CCCR-IITM", "BNU", "NOAA-NCEP", "CNRM-CERFACS", "MRI", "NASA-GISS", "PCMDI", "NERC", "NOAA-GFDL", "LASG-IAP", "INM", "NCC", "NUIST", "FIO-RONM"
+          ]
   },
-  "dateClosed": {
-    "type": "string",
-    "format": "date-time"
-  },
-  "datasets":{ "items": {
-      "minLength": 1,
-      "type": "string"
-      },
-      "minItems": 1,
-      "type": "array",
-      "uniqueItems": true
-  },
-  "cmor_table": {
+  "variable_id": {
     "type": "array",
     "uniqueItems": true,
     "items": {
       "type": "string",
       "minLength": 1
-    }
+             },
+    "enum":
+          [
+            "hcho", "gppLut", "ua200", "sistrxubot", "phyfeos", "tnhus", "co3nat", "soga", "sblIs", "intpoc", "epn100", "fVegSoilSenescence", "phynos", "cldnci", "siforcetiltx", "siforcetilty", "sidconcdyn", "sltovovrt", "limnmisc", "intpppico", "chldiazos", "wetlandCH4prod", "fGrazing", "expcalc", "cfc11global", "od550soa", "rsutcsbnd", "nep", "psitem", "tntc", "tnta", "tntd", "siflfwbot", "tntr", "areacelli", "evspsblveg", "areacella", "fNnetmin", "areacellg", "od550so4", "drynoy", "fNLitterSoil", "pathetao", "cSoilPools", "fVegLitter", "bry", "msftmzmpa", "chldiatos", "O18sw", "n2o", "vsfpr", "oxloss", "lwp", "tnpeo", "sndmassmelt", "c14Litter", "calc", "fVegFire", "drynh3", "drynh4", "prrsn", "hurs", "spco2nat", "cVegLut", "tslsiLut", "md", "xvelbase", "mc", "zg1000", "spectlower", "mmroa", "uas", "treeFracSecDec", "hfss", "vegFrac", "cLeaf", "msftyzsmpa", "vtendnogw27", "diftrelo2d", "lai", "dissoc", "tgs", "tntsw", "hursmax", "clwmodis", "cheaqpso4", "od550aerh2o", "mrroIs", "ho2", "evspsblpot", "dissicos", "rlucs4co2", "cldnvi", "cLitterAbove", "diftrxybo", "co3satarag", "phypicoos", "clc", "cly", "clt", "clw", "cls", "siflcondtop", "utendogw", "nLitterSurf", "cLitterShrub", "swtoaasdust", "rsdcsbnd", "co3natos", "clwvi", "toffset", "reffgrpls", "fLitterSoil", "wtem", "od550bb", "od550bc", "vt100", "O17p", "O17s", "intpn2", "dsw", "dsn", "zg27", "ra", "rh", "acabfIs", "albisccp", "siflswdbot", "raShrub", "fFireNat", "c13Soil", "diftrbbo2d", "reffcclwtop", "snmIs", "lwsffluxaero", "hfsnthermds", "dryso4", "dryso2", "hflso", "wap27", "dissi14cabioos", "tos", "tob", "c14Land", "od550dust", "H2p", "H2s", "nh4", "somint", "mrlsl", "mrfso", "expp", "rhLut", "expn", "expc", "snicem", "cLitterCwd", "rlusLut", "fN2O", "bigthetaoga", "hfgeoubed", "va850", "tnhusd", "tnhusa", "tnhusc", "limncalc", "zmla", "emiso2", "emiso4", "bsi", "fescav", "iareafl", "conccmcn", "dpco2nat", "mmraerh2o", "osaltdiff", "clcalipso", "od870aer", "zhalf", "sifllatstop", "depdust", "tendlibmassbf", "cVegTree", "reffsclwtop", "intpbfe", "reffclwc", "ocontempdiff", "sigma_bnds", "reffclws", "tntrscs", "sitempsnic", "ztp", "treeFrac", "dissicnatos", "lwtoacs", "omldamax", "nppStem", "icfriver", "sidmassdyn", "vegHeightTree", "cLitterGrass", "rhLitter", "rsutnacs", "nRoot", "od550aerstrat", "nh50", "aoanh", "frfe", "clmcalipso", "rsdcc", "co3", "co2", "mrsol", "baresoilFrac", "hcont300", "sndmassdyn", "siareas", "nLeaf", "siarean", "mrsow", "fVegLitterMortality", "mrsos", "rlusIs", "cLitterSubSurf", "fNVegLitter", "wa", "wo", "clwc", "sisnthick", "wtd", "bddtdife", "clws", "fracOutLut", "fDeforestToProduct", "cod", "limnsw", "mlotstmin", "maxpblz", "limirrdiat", "areacello", "nMineral", "limirrdiaz", "oxprod", "raLut", "htovgyre", "rsuscsbnd", "cVeg", "frn", "prraIs", "gppShrub", "basin", "zmiscos", "sndmasssnf", "simpmass", "mrlqso", "tntpbl", "mcd", "hus7h", "mcu", "cldncl", "albdiffbnd", "wfo", "cSoilShrub", "chlcalcos", "zmtnt", "rzwc", "rsucs4co2", "difvho", "iareagr", "intdic", "sidragbot", "loadno3", "rsdscsdiff", "gppGrass", "cSoilAbove1m", "phalf", "msftyzmpa", "od550csaer", "mrsofc", "topg", "zlev_bnds", "cSoilFast", "fProductDecomp", "xvelsurf", "jpdftaureicemodis", "swsffluxaero", "clhcalipso", "od443dust", "nudgincsm", "parasolRefl", "lialbIs", "zostoga", "ponos", "treeFracBdlDcd", "snmassacrossline", "fNgas", "eparag100", "nsigma", "sidragtop", "dissic", "opottemppsmadvect", "arag", "co2Clim", "zooc", "limnpico", "intppdiaz", "intppdiat", "mmrso4", "tnhusmp", "yvelbase", "hfbasin", "rsdcs4co2", "rlds", "friver", "lateralCtransfer", "umo", "vortmean", "sifb", "epfy", "epfz", "wfonocorr", "lwtoacsaer", "mmrsoa", "zg500", "sltbasin", "albdirbnd", "sidmasstrany", "sidmasstranx", "osaltpmdiff", "siage", "emibvoc", "snicemIs", "sob", "intpbp", "sos", "intpbn", "zmesoos", "bddtdisi", "hfdsn", "diftrbbo", "wap", "fVegSoilMortality", "cnpz", "so2", "cLitterBelow", "ua27", "nLitterSubSurf", "cVegGrass", "hussLut", "dcalc", "rsdsIs", "difvmbo", "siflcondbot", "no", "intparag", "tntrl27", "fNup", "thetaot2000", "detoc", "swsrfcsdust", "thetaoga", "zmeso", "fgco2abio", "diftrblo", "ua100m", "fsn", "treeFracSecEver", "vegHeightCrop", "sivol", "zg10", "mrtws", "thetaot300", "intuaw", "dissicabioos", "mrroLi", "opottemptend", "vsfcorr", "cnc", "dmsos", "mrsoLut", "tnt", "strbasemag", "cfadDbze94", "difmxybo2d", "rsdscs", "rsdscc", "sidmassgrowthbot", "tntlw", "sossq", "ta27", "fgdms", "siextentn", "opottemprmadvect", "limfediaz", "bddtalk", "lwsnl", "vtendogw", "limfediat", "utendvtem", "msftyyz", "rsut4co2", "siitdsnthick", "n2oglobalClim", "hfrainds", "gppTree", "diftrblo2d", "vertices_longitude", "simass", "rhozero", "mmrnh4", "dispkexyfo2d", "sistresave", "nSoil", "rsu4co2", "longitude", "sftgrf", "tasmin", "prlsprof", "zlev", "fco2nat", "ppmisc", "pmlev", "prbigthetao", "albsrfc", "snd", "sicompstren", "snc", "snm", "snw", "slthick", "od550oa", "hfmlt", "diftrelo", "sw", "si", "so", "siflsaltbot", "wetss", "opottemppadvect", "talk", "dpo2", "physios", "no2", "no3", "sconcdust", "po4os", "zoocos", "rv850", "fNdepred", "burntArea", "noy", "grplmxrat27", "tendlicalvf", "dpco2", "tntmp27", "siflsensupbot", "rsdoabsorb", "clwvic", "co3satcalc", "fNOx", "ec", "et", "es", "tasLut", "wap500", "sisnconc", "hcl", "mmraerso4", "od440aer", "rld", "rhSoil", "lossch4", "rlu", "rls", "rldsIs", "cLitterSurf", "vsfevap", "sispeed", "slbnosn", "wfcorr", "hfgeou", "cProductLut", "intpp", "fProductDecompLut", "wap2", "talknat", "yvelsurf", "cltc", "wetbc", "residualFrac", "O17wv", "cSoilLut", "rMaint", "laiLut", "a", "hfx", "mrsosLut", "sihc", "pfull", "tntmp", "hur", "hus", "epsi100", "nStem", "aragos", "nMineralNO3", "simassacrossline", "eminox", "tntogw", "prc", "ap_bnds", "chlos", "prw", "spco2abio", "fNVegSoil", "fBNFsymb", "zos", "cltmodis", "masso", "rsusLut", "sfo3", "jpdftaureliqmodis", "expcfe", "hus27", "fric", "tomint", "chlcalc", "sfo3max", "sigma", "drivw", "cpocean", "netAtmosLandC14Flux", "hfevapds", "siitdthick", "wbptemp7h", "sndmasswindrif", "hflsIs", "hfrunoffds2d", "intppmisc", "utendnogw27", "rsucc", "fBNFasymb", "zo2min", "rsucs", "fg14co2abio", "hfsifrazil", "uv", "ccldncl", "rsusIs", "evspsbl", "a_bnds", "vegHeightGrass", "zossq", "raOther", "zg7h", "sfno2", "chepsoa", "dissi14cabio", "hfdsnb", "sftof", "sivols", "dpocdtdiaz", "sivoln", "cli", "sncIs", "vsfriver", "zoomisc", "tauvpbl", "utendwtem", "pop", "pon", "fddtdisi", "flashrate", "rlus", "fFireAll", "pbfe", "wetlandCH4cons", "fNdepox", "fracLut", "po4", "osaltpadvect", "loadoa", "dissi14c", "tntr27", "intvaw", "chegpso4", "zfull", "loadpoa", "rsuscs", "rsuscc", "emico", "pabigthetao", "pan", "aeroptbnd", "o2sat", "tasIs", "meanage", "cct", "lwsrfcsdust", "ccn", "sfpm25", "ccb", "c3h6", "sitemptop", "mlotstsq", "aerasymbnd", "rlutcs4co2", "depth_c", "limfecalc", "c3h8", "chlpicoos", "sidmasssi", "fbddtdisi", "parag", "diftrxybo2d", "od550so4so", "pso", "psl", "volcello", "difmxybo", "t20d", "fldcapacity", "sirdgthick", "c2h2", "H2wv", "xgwdparam", "co2mass", "tntscpbl", "abs550aer", "zvelbase", "clmisr", "netAtmosLandCO2Flux", "o3", "o2", "airmass", "talknatos", "siflsenstop", "hfcorr", "dispkevfo", "phyfe", "tauupbl", "snrefr", "oh", "dissicabio", "spectupper", "sifllwutop", "snicefreezIs", "loaddust", "difmxylo2d", "msftmzsmpa", "vegHeightShrub", "dissi13c", "limndiat", "limndiaz", "nVeg", "ares", "qgwr", "ta500", "agessc", "rsuccbnd", "phycos", "tosga", "nppGrass", "k_c", "spco2", "phycalcos", "od550no3", "hfbasinpmdiff", "sidmassmelttop", "dpco2abio", "cWood", "rld4co2", "cVegShrub", "rsutcs4co2", "cTotFireLut", "concdust", "mmrpm10", "phyp", "tasminCrop", "concnmcn", "phyc", "phyn", "prrc", "sidmassmeltbot", "prsnsn", "bddtdip", "dtes", "bddtdin", "bddtdic", "hursmin", "sisaltmass", "sci", "agesno", "mrsfl", "ksat", "ptp", "hfbasinpsmadv", "tr", "ts", "wmo", "siforcecorioly", "siforcecoriolx", "tauvo", "cdnc", "nudgincswe", "ta", "tsnIs", "prcsh", "wetdust", "smc", "emibc", "t2", "pbo", "zsatcalc", "chlmiscos", "yvelmean", "nbp", "wetnoy", "zmicro", "hus850", "dryo3", "litempbotfl", "ua850", "siareaacrossline", "loadbc", "sftflf", "cMisc", "detocos", "loadnh4", "c13Litter", "sconcss", "cfc113global", "dryoa", "siforceintstry", "siforceintstrx", "sirdgconc", "co2massClim", "clcalipso2", "hfds", "href", "tauucorr", "tws", "grassFrac", "sbl", "diftrxylo2d", "sfdsi", "ficeberg", "sweLut", "bldep", "difvso", "treeFracBdlEvg", "fg13co2", "tauv", "tauu", "rlu4co2", "dems", "nLitter", "albc", "emiss", "prlsns", "prsn", "albs", "o3Clim", "sidmasslat", "cldicemxrat27", "sifllwdtop", "dtauc", "sistremax", "orogIs", "dtaus", "chepasoa", "hfy", "libmassbfgr", "co2totalmass", "simpconc", "hfbasinpadv", "tdps", "nppOther", "rootd", "ficeberg2d", "zmlwaero", "fbddtdic", "fHarvest", "pcp", "fbddtdin", "fbddtdip", "talkos", "fgo2", "necbLut", "intpcalcite", "ocontemppmdiff", "tntrs27", "ttop", "emianox", "sistrydtop", "zmisc", "nppTree", "difvtrbo", "toz", "emioa", "dissi13cos", "ua7h", "raLeaf", "cSoil", "ppcalc", "prsnIs", "difmxylo", "hfsifrazil2d", "c13Land", "co3abio", "dmlt", "mlotstmax", "wetoa", "vsfsit", "va27", "dfr", "osaltrmadvect", "phabio", "dfe", "gpp", "tatp", "evspsblsoi", "siitdconc", "emiaco", "b", "sconcso4", "c14Veg", "limfepico", "litempbotgr", "phycalc", "intppnitrate", "ta850", "remoc", "rsutccbnd", "thkcello", "treeFracPrimEver", "c13Veg", "co3os", "tossq", "limirrcalc", "minpblz", "lim", "libmassbffl", "lialb", "od550aer", "b_bnds", "sftlf", "cltisccp", "deptho", "cLitter", "sisnhc", "hcfc22global", "prveg", "tpf", "prcprof", "sfcWindmax", "h2o", "mrlso", "lossn2o", "zvelsurf", "pbsi", "o2satos", "fDeforestToAtmos", "bfe", "c3PftFrac", "jno2", "fVegLitterSenescence", "msftmyz", "grassFracC4", "conccn", "ta700", "co3sataragos", "sfcWind", "baccos", "burntFractionAll", "ua10", "fLuc", "rtmt", "sipr", "co3abioos", "fbddtalk", "pnitrate", "dtesn", "cCwd", "rhTree", "sithick", "isop", "ocfriver", "tntscp", "fNProduct", "sisali", "pdi", "fddtdife", "cfc12global", "siconc", "n2oClim", "sistrxdtop", "phnatos", "chlmisc", "siextents", "pr", "ps", "pp", "opottemppmdiff", "cSoilGrass", "od550aerso", "opottempdiff", "hno3", "fddtalk", "ph", "o2os", "climodis", "lossco", "ch4global", "p0", "treeFracNdlEvg", "intpbsi", "fLulccProductLut", "epp100", "irrLut", "pctisccp", "sidmassevapsubl", "snwc", "co2s", "dissicnat", "acabf", "lwtoaasdust", "rsutcsca", "rlut4co2", "dgw", "rlutcsca", "tnkebto", "sidmassgrowthwat", "drydust", "emivoc", "rsdsccbnd", "pppico", "c2h6", "photo1d", "dslw", "n2oglobal", "aod550volso4", "sndmasssi", "rivo", "sitempbot", "nLitterCwd", "mrros", "msftmrhompa", "cfadLidarsr532", "vtem", "lwsrfasdust", "mrrob", "o3prod", "fLitterFire", "osaltpsmadvect", "flandice", "bacc", "clivic", "raGrass", "nMineralNH4", "cLitterTree", "zmicroos", "phnat", "fNLandToOcean", "mrso", "ptop", "difvmfdo", "vtendnogw", "phydiazos", "reffclwtop", "ztop", "phymisc", "hfsso", "mmrbc", "chldiat", "chldiaz", "cltcalipso", "fsitherm", "pastureFrac", "rac14", "rac13", "hfssLut", "pcalc", "u2", "O18p", "epfe100", "O18s", "sltnortha", "epcalc100", "lithk", "clisccp", "emiisop", "loadss", "lwtoafluxaerocs", "fracInLut", "uqint", "ut", "hflsLut", "uo", "tauuo", "tasmax", "diftrebo", "tnpeot", "tsIs", "ua", "fgco2nat", "chlpico", "fHarvestToProduct", "zg100", "tnkebto2d", "rootdsl", "emidms", "nOther", "epc100", "fco2fos", "hfibthermds", "siflswutop", "cLand", "depth", "rsutca", "rsutcc", "intdoc", "fLulccAtmLut", "rsutcs", "wsgmax100m", "edt", "fBNF", "rainmxrat27", "dpocdtpico", "cfc11", "cfc12", "O18wv", "siflfwdrain", "albsn", "nppShrub", "diftrebo2d", "cSoilBelow1m", "nppLeaf", "sishevel", "rlucs", "sidivvel", "limirrpico", "sootsn", "rsdccbnd", "sltovgyre", "evs", "evu", "zsatarag", "zg", "icemIs", "fHarvestToAtmos", "orog", "diabdrag", "nwdFracLut", "raStem", "ch4globalClim", "sidconcth", "grassFracC3", "bigthetao", "phypos", "msftmrho", "tntrlcs", "tasmaxCrop", "hursminCrop", "cSoilLevels", "z1", "z2", "fCLandToOcean", "phypico", "sndmasssubl", "fNAnthDisturb", "phydiatos", "mmrpm1", "volo", "rivi", "litemptop", "hfibthermds2d", "froc", "chl", "icem", "fg14co2", "uwap", "exparag", "co3satcalcos", "treeFracPrimDec", "phos", "licalvf", "emilnox", "prlq", "mrro", "fco2antt", "ch4", "fgcfc11", "fgcfc12", "tau", "ygwdparam", "tas", "ocontemptend", "cldwatmxrat27", "phydiaz", "va7h", "phydiat", "tendacabf", "prhmax", "snowmxrat27", "siu", "sic", "emidust", "sitimefrac", "ppdiaz", "intppcalc", "ppdiat", "npp", "siv", "cllcalipso", "vmo", "msftyrhompa", "wetso2", "wetso4", "tsn", "tso", "tsl", "dissocos", "vwap", "tnhuspbl", "latitude", "dmso", "solbnd", "rhc13", "cSoilSlow", "utendnogw", "thetaot700", "fNfert", "rsdscsbnd", "mmrpm2p5", "tran", "ocontemppsmadvect", "hfls", "siitdsnconc", "sios", "fsfe", "prsnc", "rsdsdiff", "o2min", "fFire", "o3loss", "ch4Clim", "hfssIs", "rsdo", "expfe", "rsdt", "siflswdtop", "rsds", "prCrop", "lts", "clcalipsoliq", "swsrfasdust", "difvmo", "rlutca", "cropFrac", "shrubFrac", "rlutcs", "twap", "difvtrto", "pflw", "utendepfd", "rsd", "reffrains", "rsusccbnd", "vas", "rsu", "reffrainc", "opottempmint", "rss", "rsutna", "diftrxylo", "cLitterLut", "va200", "tnpeotb", "dispkexyfo", "clis", "drybc", "sf6", "rsucsbnd", "fVegSoil", "clic", "osalttend", "fbddtdife", "gppc14", "gppc13", "calcos", "thetaot", "ocontempmint", "tSoilPools", "pastureFracC3", "pastureFracC4", "clivi", "dpocdtcalc", "lifmassbf", "vqint", "reffclis", "od550ss", "aerssabnd", "reffclic", "treeFracNdlDcd", "no3os", "wetnh4", "sza", "wetnh3", "rldscs", "rsdcs", "wap7h", "emiaoa", "fediss", "zhalfo", "fddtdic", "fddtdin", "fddtdip", "graz", "nppRoot", "tnhusscp", "co23D", "landCoverFrac", "jo2", "jo3", "wap4", "nppWood", "rsd4co2", "swtoacsdust", "msftyrho", "hfbasinpmadv", "mrroLut", "grpllsprof", "waterDpth", "fNdep", "c14Soil", "mlotst", "fNgasFire", "eta", "tntnogw", "rsus", "rsut", "rldcs", "ci", "co", "cl", "cProduct", "cw", "rhGrass", "expsi", "ta7h", "tsnl", "nLand", "fLulccResidueLut", "sedustCI", "wetlandCH4", "potet", "reffsnows", "rlut", "obvfsq", "reffsnowc", "thetao", "tsns", "hfsbl", "ap", "wilt", "mmrss", "sftgif", "clcalipsoice", "va", "demc", "tauvcorr", "vo", "mrsll", "vt", "pfull27", "fNloss", "vmrox", "dfeos", "dryss", "wetlandFrac", "v2", "msftbarot", "nppLut", "raRoot", "rGrowth", "o3ste", "zfullo", "bsios", "fAnthDisturb", "c4PftFrac", "ec550aer", "sisnmass", "phabioos", "prthetao", "tcs", "mfo", "loadsoa", "cOther", "tslsi", "mmrno3", "cSoilTree", "snmsl", "od865dust", "cRoot", "xvelmean", "ch3coch3", "loadso4", "zoomeso", "od550lt1aer", "sosga", "rhc14", "popos", "hfsnthermds2d", "rsntds", "sltnorth", "swtoafluxaerocs", "snicefreez", "fgco2", "limfemisc", "huss", "sistryubot", "vsf", "fNleach", "fahLut", "raTree", "simprefrozen", "mmrdust", "esn", "sidmassth", "cropFracC3", "cropFracC4", "hus4", "hfrunoffds", "litemptopIs", "vegHeight", "dcw", "cStem", "darag", "nh4os", "tntrs", "mrfsofr", "zmswaero", "vertices_latitude", "vegHeightPasture", "tntrl", "prra", "fNgasNonFire", "sialb", "intvadse", "bs550aer", "cSoilMedium", "physi", "bfeos", "ocontemprmadvect", "netAtmosLandC13Flux", "masscello", "rldcs4co2", "phymiscos", "sfriver", "difvmto", "fDeforest", "dmc", "dms", "htovovrt", "intuadse", "scldncl", "ocontemppadvect", "rlntds", "tropoz", "fgsf6", "pod0", "zoomicro", "columnmassflux", "va100m", "hfrs", "rhShrub", "limirrmisc", "nProduct", "eow", "eminh3", "tnhusscpbl"
+          ]
   },
-  "experiment": {
+  "experiment_id": {
     "type": "array",
     "uniqueItems": true,
     "items": {
       "type": "string",
       "minLength": 1
-    }
+    },
+    "enum":
+          [
+            "ssp245-GHG", "dcppA-historical-niff", "piClim-NH3", "piClim-OC", "aqua-p4K", "ssp434", "dcppC-ipv-pos", "dcppC-ipv-NexTrop-pos", "piClim-2xDMS", "amip-hist", "spinup-1950", "piSST-4xCO2-solar", "faf-all", "ism-1pctCO2to4x-self", "G6SST1", "ism-piControl-self", "rad-irf", "dcppC-pac-control", "piClim-histall", "G1", "volc-long-hlN", "esm-hist-ext", "piClim-VOC", "faf-heat", "dcppC-amv-pos", "amip-lfmip-pdLC", "land-crop-grass", "piClim-anthro", "faf-passiveheat", "piClim-histghg", "hist-1950", "dcppC-atl-spg", "piClim-CH4", "hist-resAMO", "hist-all-aer2", "piSST-4xCO2", "lfmip-pdLC", "ism-bsmb-std", "G6solar", "highresSST-4co2", "1pctCO2Ndep-bgc", "control-1950", "ssp370-lowNTCF", "piSST-4xCO2-rad", "amip-lfmip-rmLC", "ssp126", "volc-cluster-21C", "ism-asmb-std", "highresSST-future", "esm-ssp585-ssp126Lu", "dcppA-hindcast", "G6SST2-sulfur", "piClim-aer", "piClim-ghg", "omip1-spunup", "histSST-1950HC", "control-slab", "ssp370SST-lowAer", "ism-ssp585-std", "piClim-2xVOC", "ism-lig127k-std", "ism-amip-std", "piClim-histnat", "volc-long-eq", "lfmip-rmLC", "abrupt-solp4p", "amip-p4K-lwoff", "abrupt-0p5xCO2", "abrupt-2xCO2", "dcppC-hindcast-noElChichon", "dcppC-amv-ExTrop-neg", "hist-piAer", "amip-TIP-nosh", "piClim-N2O", "hist-resIPO", "land-hist-altStartYear", "hist-GHG", "volc-pinatubo-slab", "ssp370SST-lowCH4", "amip-lwoff", "ssp245-nat", "amip-m4K", "1pctCO2", "dcppC-amv-Trop-neg", "piClim-spAer-aer", "piClim-SO2", "ssp370SST-lowBC", "hist-piNTCF", "past1000", "land-crop-noIrrig", "ssp585", "hist-stratO3", "lig127k", "land-noShiftCultivate", "ism-pdControl-std", "abrupt-4xCO2", "lfmip-pdLC-wfdei", "sspxy", "faf-stress", "1pctCO2to4x-withism", "piClim-HC", "ssp370SST-ssp126Lu", "historical", "midHolocene", "amip-TIP", "land-cCO2", "highresSST-LAI", "faf-water", "ism-historical-self", "volc-pinatubo-full", "land-hist-altLu1", "dcppA-assim", "G7cirrus", "land-hist-altLu2", "ssp245", "dcppA-hindcast-niff", "piControl", "esm-piControl", "piClim-control", "land-cClim", "hist-aer", "ssp370-ssp126Lu", "dcppC-hindcast-noAgung", "amip-hld", "piSST-pxK", "dcppC-ipv-neg", "amip-4xCO2", "land-noPasture", "amip-p4K", "hist-bgc", "amip-future4K", "1pctCO2-bgc", "futureSST-4xCO2-solar", "aqua-4xCO2", "land-hist-princeton", "volc-cluster-mill", "piClim-NOx", "piClim-2xss", "histSST-piO3", "hist-sol", "ssp126-ssp370Lu", "amip-lfmip-pObs", "piControl-spinup", "ssp245-aer", "piClim-spAer-histall", "abrupt-solm4p", "dcppC-atl-pacemaker", "highresSST-smoothed", "dcppB-forecast", "hist-spAer-aer", "hist-CO2", "piClim-spAer-anthro", "dcppC-ipv-NexTrop-neg", "ssp370SST", "a4SSTice-4xCO2", "ssp460", "histSST", "lfmip-pdL-princeton", "land-crop-noIrrigFert", "piClim-lu", "volc-long-hlS", "piClim-2xfire", "ssp245-stratO3", "ssp370", "histSST-piAer", "land-hist", "lgm", "hist-spAer-all", "esm-ssp585", "esm-hist", "midPliocene-eoi400", "ism-1pctCO2to4x-std", "ssp370SST-lowNTCF", "lfmip-rmLC-wfdei", "historical-withism", "deforest-globe", "dcppC-forecast-addPinatubo", "dcppC-amv-ExTrop-pos", "1pctCO2Ndep", "histSST-piN2O", "piControl-withism", "aqua-control-lwoff", "highres-future", "hist-volc", "hist-all-nat2", "hist-noLu", "lfmip-rmLC-princeton", "G7SST2-cirrus", "ism-ssp585-self", "ism-ctrl-std", "aqua-control", "volc-cluster-ctrl", "land-future", "volc-pinatubo-strat", "G6sulfur", "G6SST2-solar", "ssp534-over-bgc", "dcppC-forecast-addElChichon", "dcppC-amv-neg", "dcppC-pac-pacemaker", "ssp585-withism", "highresSST-p4K", "dcppC-hindcast-noPinatubo", "piClim-BC", "piClim-NTCF", "lfmip-initLC", "a4SST", "ism-historical-std", "dcppC-atl-control", "highresSST-present", "historical-ext", "piSST", "omip1", "omip2", "ssp585-bgc", "amip-a4SST-4xCO2", "hist-nat", "1pctCO2-rad", "land-noWoodHarv", "volc-pinatubo-surf", "ssp370SST-lowO3", "a4SSTice", "land-hist-cruNcep", "amip-piForcing", "esm-piControl-spinup", "lfmip-rmLC-cruNcep", "piClim-2xdust", "dcppC-forecast-addAgung", "dcppC-amv-Trop-pos", "ssp534-over", "land-noFire", "omip2-spunup", "piClim-2xNOx", "piClim-spAer-histaer", "lfmip-pdLC-cruNcep", "piClim-O3", "histSST-piNTCF", "land-crop-noFert", "histSST-piCH4", "aqua-p4K-lwoff", "land-noLu", "land-hist-wfdei", "G7SST1-cirrus", "piClim-histaer03", "piClim-4xCO2", "hist-1950HC", "1pctCO2-4xext", "piClim-aerO3", "amip"
+          ]
+  },
+  "source_id": {
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "type": "string",
+      "minLength": 1
+    },
+    "enum":
+          ["HadGEM3-GC31-HM", "HadGEM3-GC31-HH", "GISS-E2-1G", "CNRM-CM6-1-HR", "UKESM1-0-LL", "GISS-E2-1H", "HadGEM3-GC31-LL", "EC-Earth3-Veg", "ACCESS-1-0", "NorESM2-HH", "MRI-ESM2-0", "MPIESM-1-2-HR", "NICAM16-7S", "CIESM", "NorESM2-LM", "NICAM16-9D-L78", "EC-Earth3-AerChem", "EC-Earth3-HR", "EC-Earth3-GrIS", "NICAM16-9S", "EC-Earth3-LR", "MPIESM-1-2-LR", "AWI-CM-1-0", "CNRM-ESM2-1", "CNRM-CM6-1", "EMAC-2-53-Vol", "BNU-ESM-1-1", "PCMDI-test-1-0", "HadGEM3-GC31-MM", "NorESM2-LMEC", "NorESM2-MH", "NorESM2-MM", "EC-Earth3-Veg-LR", "VRESM-1-0", "EC-Earth3", "EC-Earth3-CC", "CNRM-ESM2-1-HR", "UKESM1-0-MMh", "MIROC6", "NICAM16-8S", "IITM-ESM", "MPIESM-2-LR", "EMAC-2-53-AerChem", "MIROC-ES2H", "NorESM2-LME", "MIROC-ES2L"]
   }
+
 },
+
 "additionalProperties": false,
 "required": [
   "uid",
+  "dateCreated",
+  "dateUpdated",
   "title",
   "description",
   "severity",
-  "project",
-  "model",
   "status",
-  "dateUpdated",
   "datasets",
-  "experiment",
-  "cmor_table"
-]
+  "url",
+  "materials",
+
+  "mip_era",
+  "activity_id",
+  "institution_id",
+  "source_id",
+  "experiment_id",
+  "variable_id"
+],
+
+"$schema": "http://json-schema.org/schema#",
+"title": "ESGF issue JSON schema",
+"type": "object"
 }

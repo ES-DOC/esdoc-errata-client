@@ -265,6 +265,11 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
         payload[UID] = str(uuid4())
         payload[STATUS] = unicode(STATUS_NEW)
         payload[DATE_CREATED] = datetime.utcnow().strftime(TIME_FORMAT)
+        payload[DATE_UPDATED] = payload[DATE_CREATED]
+        if URL not in payload.keys():
+            payload[URL] = ''
+        if MATERIALS not in payload.keys():
+            payload[MATERIALS] = ''
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dsets, issue_path=issue_path,
                              dataset_path=dataset_path)
     if command not in [RETRIEVE, RETRIEVE_ALL]:

@@ -89,17 +89,18 @@ ERROR_DIC = {'title': [1, 'Title field missing or invalid.'], 'description': [2,
 
 # MISC
 
-GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini'
+GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini?ref=devel'
 DOWNLOAD_URL = 'download_url'
 URL_BASE = 'URL_BASE'
 PATTERN = 'PATTERN'
 DATASET_ID = 'dataset_id'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+FILE_EXPIRATION_TIME = 15
 
 # WEBSERVICE
-URL_BASE = 'https://test-errata-api.es-doc.org'
+# URL_BASE = 'https://test-errata-api.es-doc.org'
 
-# URL_BASE = 'http://localhost:5001'
+URL_BASE = 'http://localhost:5001'
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',

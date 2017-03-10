@@ -64,11 +64,21 @@
 },
 "additionalProperties": true,
 "required": [
+  "dateCreated",
+  "dateUpdated",
   "uid",
   "title",
   "description",
   "severity",
-  "project",
-  "status"
-]
+  "status",
+  "datasets",
+  "url",
+  "materials",
+
+  "mip_era",
+  "activity_id",
+  "institution_id",
+  "source_id",
+  "experiment_id",
+  "variable_id"]
 }

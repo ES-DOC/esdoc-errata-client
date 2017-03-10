@@ -76,9 +76,9 @@ class LocalIssue(object):
         # Test landing page and materials URLs
         urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
-            if not test_url(url):
-                print(test_url(url))
-                logging_error(ERROR_DIC[URLS], url)
+            if url != '':
+                if not test_url(url):
+                    logging_error(ERROR_DIC[URLS], url)
         # Validate the datasets list against the dataset id pattern
         logging.info('Validation Result: SUCCESSFUL')
 
@@ -93,7 +93,6 @@ class LocalIssue(object):
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
             get_ws_call(action=self.action, payload=self.json, credentials=credentials)
             logging.info('Updating fields of payload after remote issue creation...')
-            self.json[DATE_UPDATED] = self.json[DATE_CREATED]
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
                 if DATASETS in self.json.keys():
