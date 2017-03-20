@@ -134,14 +134,13 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-
     if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
         path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
         path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
         return path_to_issues, path_to_dsets
     else:
-        path_to_issues = get_file_location('/downloads/issues')
-        path_to_dsets = get_file_location('/downloads/dsets')
+        path_to_issues = get_file_location(path_to_issues, download_dir='downloads')
+        path_to_dsets = get_file_location(path_to_dsets, download_dir='downloads')
         return path_to_issues, path_to_dsets
 
 
@@ -295,8 +294,8 @@ def update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-    multiple_facets = ['activity_id', 'experiment_id', 'source_id', 'variable']
-    allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id']
+    multiple_facets = ['experiment_id', 'source_id', 'variable_id']
+    allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id', 'experiment_id']
     for key, value in facets.iteritems():
         if key not in original_json and key in allowed_facets:
             if key not in multiple_facets:
@@ -308,9 +307,9 @@ def update_json(facets, original_json):
         elif key in original_json and key in multiple_facets:
             # This is the case of an attempt to change an extracted facet manually and should not be tolerated.
             # However an error is not raised because this is not the way things should be done.
-            pass
-            # if value not in original_json[key]:
-            #     original_json[key].append(value)
+            # pass
+            if value not in original_json[key]:
+                original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value.lower():
             logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
                                                                                                str(key)))
@@ -380,12 +379,26 @@ def extract_facets(dataset_id, project, config):
         regex_str = translate_dataset_regex(regex_str, sections)
         match = re.match(regex_str, dataset_id)
         if match:
-            return match.groupdict()
+            logging.info('extracting facets...')
+            return match_facets_to_cmip6(match.groupdict())
         else:
             logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
                 dataset_id, project))
     except KeyError:
         logging_error(ERROR_DIC['project_not_supported'])
+
+
+def match_facets_to_cmip6(input_dict):
+    matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
+                     'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
+                     'ensemble': 'member_id', 'product': 'product',
+                     'ensemble_member': 'variant_label', 'version': 'version', 'frequency': 'frequency',
+                     'modeling_realm': 'realm', 'cmor_table': 'table_id', 'grid_label': 'grid_label'}
+    output_dict = dict()
+    for key, value in input_dict.iteritems():
+        output_dict[matching_dict[key]] = input_dict[key]
+    print output_dict
+    return output_dict
 
 
 def translate_dataset_regex(pattern, sections):
@@ -561,10 +574,17 @@ def set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def get_file_location(file_name):
+def get_file_location(file_name, download_dir=None):
     if ESDOC_VAR in os.environ.keys():
-        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/'+file_name)
+        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/')
+        if download_dir is not None:
+            file_location += download_dir
+        print(file_location)
+        if not os.path.isdir(file_location):
+            os.makedirs(file_location)
+        return os.path.join(file_location, file_name)
+
     else:
         logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
-        file_location = 'cred.txt'
-    return file_location
+        fpath = 'cred.txt'
+    return fpath

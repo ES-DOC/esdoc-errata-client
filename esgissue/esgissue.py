@@ -269,7 +269,7 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
         if URL not in payload.keys():
             payload[URL] = ''
         if MATERIALS not in payload.keys():
-            payload[MATERIALS] = ''
+            payload[MATERIALS] = []
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dsets, issue_path=issue_path,
                              dataset_path=dataset_path)
     if command not in [RETRIEVE, RETRIEVE_ALL]:
@@ -328,6 +328,7 @@ def run():
                         issue_path=args.issue, dataset_path=args.dsets, status=args.status)
     elif args.command == RETRIEVE:
         list_of_id, issues, dsets = prepare_retrieval(args.id, args.issues, args.dsets)
+        print(issues, dsets)
         if list_of_id is not None:
             process_command(command=RETRIEVE, issue_path=issues, dataset_path=dsets, list_of_ids=list_of_id)
         else:

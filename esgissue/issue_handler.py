@@ -51,18 +51,23 @@ class LocalIssue(object):
         :raises Error: If dataset ids are malformed
 
         """
-        logging.info('Validating issue...')
         # Load JSON schema for issue template
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
             facets = extract_facets(dataset, self.project, self.config)
+            logging.info('facets extracted.')
             self.json = update_json(facets, self.json)
         try:
+            logging.info('Validating issue...')
+            print(self.json)
             validate(self.json, schema)
+            logging.info('Issue is valid.')
         except ValidationError as ve:
             # REQUIRED BECAUSE SOMETIMES THE RELATIVE PATH RETURNS EMPTY DEQUE FOR SOME REASON.
+            print(ve.message)
+            print(ve.validator)
             if len(ve.relative_path) != 0:
                 error_code = resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
             else:
@@ -201,7 +206,9 @@ class LocalIssue(object):
             logging.info('processing id {}'.format(n))
             try:
                 r = get_ws_call(action=RETRIEVE, uid=n)
+                print('ws call made')
                 if r.json() is not None:
+                    print('issue not none persisting')
                     data = prepare_persistence(r.json()[ISSUE])
                     self.dump_issue(data, issues, dsets)
                     logging.info('Issue has been downloaded.')
@@ -245,6 +252,7 @@ class LocalIssue(object):
         if DATE_CLOSED in issue.keys() and issue[DATE_CLOSED] is None:
             del issue[DATE_CLOSED]
         path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue[UID])
+        print(path_to_dataset, path_to_issue)
         if DATASETS in issue:
             with open(path_to_dataset, 'w') as dset_file:
                 for dset in issue[DATASETS]:
