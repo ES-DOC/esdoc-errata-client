@@ -137,11 +137,32 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
     if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
         path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
         path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
-        return path_to_issues, path_to_dsets
     else:
-        path_to_issues = get_file_location(path_to_issues, download_dir='downloads')
-        path_to_dsets = get_file_location(path_to_dsets, download_dir='downloads')
-        return path_to_issues, path_to_dsets
+        path_to_issues = os.path.join(get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1+uid+ISSUE_2)
+        path_to_dsets = os.path.join(get_file_location(path_to_dsets, download_dir='downloads'), DSET_1+uid+DSET_2)
+    return path_to_issues, path_to_dsets
+
+
+def get_file_location(file_name, download_dir=None):
+    """
+    Tests whether ESDOC_HOME variable is declared in user environment, uses it as directory base if it's the case.
+    :param file_name:
+    :param download_dir:
+    :return:
+    """
+    if ESDOC_VAR in os.environ.keys():
+        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/')
+        if download_dir is not None:
+            file_location += download_dir
+        file_location = os.path.join(file_location, file_name)
+        if not os.path.isdir(file_location) and not os.path.isfile(file_location):
+            os.makedirs(file_location)
+        return file_location
+
+    else:
+        logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
+        fpath = 'cred.txt'
+    return fpath
 
 
 # Logging
@@ -205,40 +226,57 @@ def resolve_validation_error_code(message):
 # Preparing operations
 
 
-def prepare_retrieval(id_list, issues, dsets):
-    # id_list can basically be a string, a list of strings or a file path.
-    # Case the user specified that he wants a specific issue with a specific uid.
-    if id_list is not None:
-        # in case of txt file of ids
-        if len(id_list) == 1 and type(id_list[0]) == str and fnmatch(id_list[0], '*.txt'):
-            with open(id_list[0]) as f:
-                list_of_ids = f.readlines()
-        # in case of a literal list of ids
-        elif len(id_list) == 1 and type(id_list[0]) == str and not fnmatch(id_list[0], '*.txt'):
-            list_of_ids = id_list
-        else:
-            list_of_ids = id_list
-        # In the case the user is requesting more than one issue
-        for directory in [issues, dsets]:
-            # Added '.' test to avoid creating directories that are intended to be files.
-            if not os.path.isdir(directory) and not fnmatch(directory, '*.*'):
-                os.makedirs(directory)
-            # This tests whether a list of ids is provided with a directory where to dump the retrieved
-            # issues and related datasets.
-            if len(list_of_ids) > 1 and not os.path.isdir(directory):
-                logging_error(ERROR_DIC['multiple_ids'])
-        # Looping over list of ids provided
-        return list_of_ids, issues, dsets
-
-    # No uid specified, flushing the database.
+def resolve_status(status):
+    """
+    resolves user input for status when closing.
+    :param status: user input
+    :return: status
+    """
+    if status not in ['r', 'R', 'w', 'W', STATUS_WONTFIX, STATUS_RESOLVED]:
+        logging_error(ERROR_DIC[STATUS])
     else:
-        # in case the ids were not specified the client proceeds to download the errata issue db.
+        if status in ['r', 'R', STATUS_RESOLVED]:
+            return STATUS_RESOLVED
+        else:
+            return STATUS_WONTFIX
+
+
+def prepare_retrieve_ids(id_list):
+    """
+    Parses retrieval arguments, resolves directories
+    :param id_list: list of ids
+    :return: List of ids
+    """
+    logging.info('Processing requested issue id list...')
+    # Case the user specified that he wants a specific issue with a specific uid.
+    if id_list is None:
+        list_of_ids = []
+    elif len(id_list) > 0:
+        list_of_ids = id_list
+    return list_of_ids
+
+
+def prepare_retrieve_dirs(issues, dsets, list_of_ids):
+    """
+    :param issues: user input for issues files.
+    :param dsets: user input for dsets files.
+    :param list_of_ids: list of requested issues.
+    :return:
+    """
+    logging.info('Processing requested download directories...')
+    if len(list_of_ids) == 1:
         for directory in [issues, dsets]:
-            if not os.path.exists(directory) and not fnmatch(directory, '*.*'):
-                os.makedirs(directory)
-            elif fnmatch(directory, '*.*'):
+            if not fnmatch(directory, '*.*'):
+                if not os.path.isdir(directory):
+                    os.makedirs(directory)
+    else:
+        for directory in [issues, dsets]:
+            if fnmatch(directory, '*.*'):
                 logging_error(ERROR_DIC['multiple_ids'])
-        return None, issues, dsets
+            else:
+                if not os.path.isdir(directory):
+                    os.makedirs(directory)
+    return issues, dsets
 
 
 def prepare_persistence(data):
@@ -397,7 +435,6 @@ def match_facets_to_cmip6(input_dict):
     output_dict = dict()
     for key, value in input_dict.iteritems():
         output_dict[matching_dict[key]] = input_dict[key]
-    print output_dict
     return output_dict
 
 
@@ -520,8 +557,7 @@ def reset_passphrase(**kwargs):
         username = content[0].split('entry:')[1].replace('\n', '')
         token = content[1].split('entry:')[1]
         if 'old_pass' in kwargs and 'new_pass' in kwargs:
-            print(kwargs['old_pass'], kwargs['new_pass'])
-            print('Found credentials in params.')
+            logging.info('Using new credentials from user input...')
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
         else:
@@ -559,7 +595,7 @@ def set_credentials(**kwargs):
     :return: nada
     """
     if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
-        print('Found credentials in params.')
+        logging.info('Using credentials found in user input...')
         username = kwargs['username']
         tkn = kwargs['token']
         passphrase = kwargs['passphrase']
@@ -573,18 +609,3 @@ def set_credentials(**kwargs):
         cred_file.write('entry:'+encrypt_with_key(tkn, passphrase))
     logging.info('Your credentials were successfully set.')
 
-
-def get_file_location(file_name, download_dir=None):
-    if ESDOC_VAR in os.environ.keys():
-        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/')
-        if download_dir is not None:
-            file_location += download_dir
-        print(file_location)
-        if not os.path.isdir(file_location):
-            os.makedirs(file_location)
-        return os.path.join(file_location, file_name)
-
-    else:
-        logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
-        fpath = 'cred.txt'
-    return fpath

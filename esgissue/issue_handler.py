@@ -20,7 +20,8 @@ import datetime
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
 from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
-                  extract_facets, update_json, logging_error, order_json, get_remote_config, prepare_persistence
+                  extract_facets, update_json, logging_error, order_json, get_remote_config, prepare_persistence, \
+                  resolve_status
 
 
 class LocalIssue(object):
@@ -33,7 +34,10 @@ class LocalIssue(object):
         if issue_file is not None:
             self.json = issue_file
             self.json[DATASETS] = dataset_file
-            self.project = self.json[PROJECT].lower()
+            if PROJECT in self.json.keys():
+                self.project = self.json[PROJECT].lower()
+            else:
+                logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path
         self.dataset_path = dataset_path
         if self.project is not None:
@@ -61,7 +65,6 @@ class LocalIssue(object):
             self.json = update_json(facets, self.json)
         try:
             logging.info('Validating issue...')
-            print(self.json)
             validate(self.json, schema)
             logging.info('Issue is valid.')
         except ValidationError as ve:
@@ -154,6 +157,7 @@ class LocalIssue(object):
         try:
             if self.json[STATUS] in [STATUS_NEW, STATUS_ONHOLD]:
                 if status is not None:
+                    status = resolve_status(status)
                     if status not in [STATUS_RESOLVED, STATUS_WONTFIX]:
                         logging_error(ERROR_DIC[STATUS])
                     else:
@@ -203,17 +207,17 @@ class LocalIssue(object):
         :return:
         """
         for n in list_of_ids:
-            logging.info('processing id {}'.format(n))
+            logging.info('Processing id {}'.format(n))
             try:
+                logging.info('Contacting ESDoc-Errata server for issue #{} information'.format(n))
                 r = get_ws_call(action=RETRIEVE, uid=n)
-                print('ws call made')
                 if r.json() is not None:
-                    print('issue not none persisting')
+                    logging.info('Retrieved issue #{} information from ESDoc-Errata server, persisting...'.format(n))
                     data = prepare_persistence(r.json()[ISSUE])
                     self.dump_issue(data, issues, dsets)
-                    logging.info('Issue has been downloaded.')
+                    logging.info('Issue #{} has been downloaded.'.format(n))
                 else:
-                    logging.info("Issue id didn't match any issues in the errata db")
+                    logging.info("Issue #{} didn't match any issues in the errata db".format(n))
             except ConnectionError:
                 logging_error(ERROR_DIC['connection_error'])
             except ConnectTimeout:
@@ -223,23 +227,19 @@ class LocalIssue(object):
 
     def retrieve_all(self, issues, dsets):
         """
-
+        Different api endpoint than simple retrieve.
         :param issues:
         :param dsets:
         :return:
         """
         try:
-            logging.info('Starting archive process...')
+            logging.info('Starting issue archiving process...')
             r = get_ws_call(action=RETRIEVE_ALL)
-            logging.info('Webservice provided content...')
-            logging.info('Persisting information...')
+            logging.info('Successfully retrieved {} issues from ESDoc-Errata server...'.format(r.json()[COUNT]))
             results = r.json()[ISSUES]
-            print('looping around issues')
             for issue in results:
                 data = prepare_persistence(issue)
-                print('dumping issue {}'.format(data['uid']))
                 self.dump_issue(data, issues, dsets)
-                print('issue dumped')
         except ConnectionError:
             logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
@@ -248,21 +248,35 @@ class LocalIssue(object):
             logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     @staticmethod
-    def dump_issue(issue, issues, dsets):
-        if DATE_CLOSED in issue.keys() and issue[DATE_CLOSED] is None:
-            del issue[DATE_CLOSED]
-        path_to_issue, path_to_dataset = get_file_path(issues, dsets, issue[UID])
-        print(path_to_dataset, path_to_issue)
-        if DATASETS in issue:
+    def dump_issue(data, issues, dsets):
+        """
+        Resolves the user input directories and dumps the issue information in the indicated location
+        :param data: issue information json file
+        :param issues: issue directory
+        :param dsets: dset directory
+        :return:
+        """
+        if DATE_CLOSED in data.keys() and data[DATE_CLOSED] is None:
+            del data[DATE_CLOSED]
+        # Getting the directory where the issue file is going to be persisted.
+        path_to_issue, path_to_dataset = get_file_path(issues, dsets, data[UID])
+        logging.info('Issue #{} data to issue file {}'.format(data[UID], path_to_issue))
+        logging.info('Issue #{} datasets to dataset file {}'.format(data[UID], path_to_dataset))
+        # Persisting Datasets
+        if DATASETS in data:
             with open(path_to_dataset, 'w') as dset_file:
-                for dset in issue[DATASETS]:
+                for dset in data[DATASETS]:
                     dset_file.write(dset + '\n')
-                del issue[DATASETS]
+                del data[DATASETS]
+        if 'mipEra' in data:
+            data['mip_era'] = data['mipEra']
         else:
-            logging.warn('Issue {} has no datasets affected.'.format(issue[UID]))
+            logging.warn('Issue #{} has no datasets affected.'.format(data[UID]))
+        # Persisting issues.
         with open(path_to_issue, 'w') as data_file:
-            issue = order_json(issue)
-            data_file.write(simplejson.dumps(issue, indent=4))
+            data = order_json(data)
+            data_file.write(simplejson.dumps(data, indent=4))
+        logging.info("Finished processing issue #{}".format(data[UID]))
 
 
 

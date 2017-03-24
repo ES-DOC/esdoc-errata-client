@@ -28,7 +28,7 @@ STATUS_ONHOLD = 'onhold'
 STATUS_WONTFIX = 'wontfix'
 STATUS_RESOLVED = 'resolved'
 PROJECT = 'mip_era'
-
+COUNT = 'count'
 
 # ACTIONS
 

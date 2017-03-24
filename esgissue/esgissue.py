@@ -12,7 +12,7 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, reset_passphrase,\
-                  reset_credentials, set_credentials, prepare_retrieval
+                  reset_credentials, set_credentials, prepare_retrieve_ids, prepare_retrieve_dirs
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -182,21 +182,21 @@ def get_args():
         '--id',
         metavar='ID',
         type=str,
-        nargs='+',
+        nargs='*',
         default=None,
         help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all errata issues.')
     retrieve.add_argument(
         '--issues',
         nargs='?',
         metavar='$PWD/issues',
-        default='{0}/issues'.format(os.getcwd()),
+        default='issue_dw',
         type=str,
         help="""Output directory for the retrieved JSON templates.""")
     retrieve.add_argument(
         '--dsets',
         nargs='?',
         metavar='$PWD/dsets',
-        default='{0}/dsets'.format(os.getcwd()),
+        default='dset_dw',
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
@@ -261,15 +261,17 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
             credentials = authenticate(passphrase=kwargs['passphrase'])
         else:
             credentials = authenticate()
+        # Initializing non-mandatory fields to pass validation process.
+        if URL not in payload.keys():
+            payload[URL] = ''
+        if MATERIALS not in payload.keys():
+            payload[MATERIALS] = []
     if command == CREATE:
         payload[UID] = str(uuid4())
         payload[STATUS] = unicode(STATUS_NEW)
         payload[DATE_CREATED] = datetime.utcnow().strftime(TIME_FORMAT)
         payload[DATE_UPDATED] = payload[DATE_CREATED]
-        if URL not in payload.keys():
-            payload[URL] = ''
-        if MATERIALS not in payload.keys():
-            payload[MATERIALS] = []
+
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dsets, issue_path=issue_path,
                              dataset_path=dataset_path)
     if command not in [RETRIEVE, RETRIEVE_ALL]:
@@ -327,12 +329,12 @@ def run():
         process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
                         issue_path=args.issue, dataset_path=args.dsets, status=args.status)
     elif args.command == RETRIEVE:
-        list_of_id, issues, dsets = prepare_retrieval(args.id, args.issues, args.dsets)
-        print(issues, dsets)
-        if list_of_id is not None:
-            process_command(command=RETRIEVE, issue_path=issues, dataset_path=dsets, list_of_ids=list_of_id)
+        list_of_id = prepare_retrieve_ids(args.id)
+        # issues, dsets = prepare_retrieve_dirs(args.issues, args.dsets, list_of_id)
+        if len(list_of_id) >= 1:
+            process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets, list_of_ids=list_of_id)
         else:
-            process_command(command=RETRIEVE_ALL, issue_path=issues, dataset_path=dsets)
+            process_command(command=RETRIEVE_ALL, issue_path=args.issues, dataset_path=args.dsets)
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":
