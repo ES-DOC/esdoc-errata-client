@@ -61,7 +61,7 @@ class LocalIssue(object):
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
             facets = extract_facets(dataset, self.project, self.config)
-            logging.info('facets extracted.')
+            logging.info('Facets extracted.')
             self.json = update_json(facets, self.json)
         try:
             logging.info('Validating issue...')

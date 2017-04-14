@@ -106,9 +106,9 @@ TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 FILE_EXPIRATION_TIME = 15
 
 # WEBSERVICE
-# URL_BASE = 'https://test-errata-api.es-doc.org'
+URL_BASE = 'https://test-errata-api.es-doc.org'
 
-URL_BASE = 'http://localhost:5001'
+# URL_BASE = 'http://localhost:5001'
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',

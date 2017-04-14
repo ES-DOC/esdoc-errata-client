@@ -12,10 +12,9 @@ Requirements
 
 The command takes as arguments a list of UIDs, the JSON file directory and the dataset list file directory the user wishes to use.
 If no UIDs are submitted, all issues are expected.
-
-.. warning::
-    In case of multiple issues download it is mandatory the path provided for issues and directories be a directory.
-    In the case of a single issue download, a ``json`` and ``txt`` file would be sufficient.
+If no directory is provided, a default directory will be used.
+If ESDOC_HOME environment variable is declared in user's environment a specific download directory will then be used otherwise,
+the client uses its own installation directory.
 
 Example
 *******
@@ -48,13 +47,3 @@ For multiple downloads:
     $> ls -l esgissue/samples/downloads
     dset_66b1b471-221a-42ac-ad69-0a048e924cd4.json
     dset_8f8178db-d772-449d-86d2-90385479f8e6.json
-
-Mistakes to avoid
-*****************
-
-If multiple downloads with file instead of directory as argument:
-
-.. code-block:: bash
-
-    $> esgissue retrieve --issue esgissue/samples/issue.json --dsets esgissue/samples/dset.txt --id 66b1b471-221a-42ac-ad69-0a048e924cd4 8f8178db-d772-449d-86d2-90385479f8e6
-    You have provided multiple ids but a single file as destination, aborting.

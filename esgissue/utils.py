@@ -417,7 +417,7 @@ def extract_facets(dataset_id, project, config):
         regex_str = translate_dataset_regex(regex_str, sections)
         match = re.match(regex_str, dataset_id)
         if match:
-            logging.info('extracting facets...')
+            logging.info('Extracting facets...')
             return match_facets_to_cmip6(match.groupdict())
         else:
             logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
