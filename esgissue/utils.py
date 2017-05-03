@@ -155,7 +155,7 @@ def get_file_location(file_name, download_dir=None):
         if download_dir is not None:
             file_location += download_dir
         file_location = os.path.join(file_location, file_name)
-        if not os.path.isdir(file_location) and not os.path.isfile(file_location):
+        if not os.path.isdir(os.path.dirname(file_location)):
             os.makedirs(file_location)
         return file_location
 
@@ -535,10 +535,11 @@ def authenticate(**kwargs):
         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
         if save_cred.lower() == 'y':
             key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
-            with open(path_to_creds, 'wb') as credfile:
-                credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
-                credfile.write('entry:'+encrypt_with_key(token, key))
-            logging.info('Credentials were successfully saved.')
+            if os.path.isfile(path_to_creds):
+                with open(path_to_creds, 'wb') as credfile:
+                    credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
+                    credfile.write('entry:'+encrypt_with_key(token, key))
+                logging.info('Credentials were successfully saved.')
     return username, token
 
 
@@ -583,7 +584,7 @@ def reset_credentials():
     """
     path_to_creds = get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
-        os.remove('cred.txt')
+        os.remove(path_to_creds)
         logging.info('Credentials have been successfully reset.')
     else:
         logging.warn('No existing credentials found.')
