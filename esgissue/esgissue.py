@@ -299,42 +299,45 @@ def run():
      * Run the issue action.
 
     """
-    # Get command-line arguments
-    args = get_args()
-    # init logging
-    if args.v and args.log is not None:
-        init_logging(args.log, level='DEBUG')
-    elif args.log is not None:
-        init_logging(args.log)
-    else:
-        init_logging()
-    if args.command == CHANGEPASS:
-        if args.oldpass is not None and args.newpass is not None:
-            reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+    try:
+        # Get command-line arguments
+        args = get_args()
+        # init logging
+        if args.v and args.log is not None:
+            init_logging(args.log, level='DEBUG')
+        elif args.log is not None:
+            init_logging(args.log)
         else:
-            reset_passphrase()
-    elif args.command == CREDRESET:
-        reset_credentials()
-    elif args.command == CREDSET:
-        set_credentials()
-    # Retrieve command has a slightly different behavior from the rest so it's singled out
-    elif args.command not in [RETRIEVE, CLOSE]:
-        issue_file = get_issue(args.issue)
-        dataset_file = get_datasets(args.dsets)
-        process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
-                        issue_path=args.issue, dataset_path=args.dsets)
-    elif args.command == CLOSE:
-        issue_file = get_issue(args.issue)
-        dataset_file = get_datasets(args.dsets)
-        process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
-                        issue_path=args.issue, dataset_path=args.dsets, status=args.status)
-    elif args.command == RETRIEVE:
-        list_of_id = prepare_retrieve_ids(args.id)
-        # issues, dsets = prepare_retrieve_dirs(args.issues, args.dsets, list_of_id)
-        if len(list_of_id) >= 1:
-            process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets, list_of_ids=list_of_id)
-        else:
-            process_command(command=RETRIEVE_ALL, issue_path=args.issues, dataset_path=args.dsets)
+            init_logging()
+        if args.command == CHANGEPASS:
+            if args.oldpass is not None and args.newpass is not None:
+                reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+            else:
+                reset_passphrase()
+        elif args.command == CREDRESET:
+            reset_credentials()
+        elif args.command == CREDSET:
+            set_credentials()
+        # Retrieve command has a slightly different behavior from the rest so it's singled out
+        elif args.command not in [RETRIEVE, CLOSE]:
+            issue_file = get_issue(args.issue)
+            dataset_file = get_datasets(args.dsets)
+            process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
+                            issue_path=args.issue, dataset_path=args.dsets)
+        elif args.command == CLOSE:
+            issue_file = get_issue(args.issue)
+            dataset_file = get_datasets(args.dsets)
+            process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
+                            issue_path=args.issue, dataset_path=args.dsets, status=args.status)
+        elif args.command == RETRIEVE:
+            list_of_id = prepare_retrieve_ids(args.id)
+            # issues, dsets = prepare_retrieve_dirs(args.issues, args.dsets, list_of_id)
+            if len(list_of_id) >= 1:
+                process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets, list_of_ids=list_of_id)
+            else:
+                process_command(command=RETRIEVE_ALL, issue_path=args.issues, dataset_path=args.dsets)
+    except KeyboardInterrupt:
+        print('User interruption, now exiting...')
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":

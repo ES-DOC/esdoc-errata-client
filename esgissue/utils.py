@@ -415,7 +415,7 @@ def extract_facets(dataset_id, project, config):
         sections = config._sections['project:{}'.format(project)]
         regex_str = sections[DATASET_ID]
         regex_str = translate_dataset_regex(regex_str, sections)
-        match = re.match(regex_str, dataset_id)
+        match = re.match(regex_str, dataset_id.lower())
         if match:
             logging.info('Extracting facets...')
             return match_facets_to_cmip6(match.groupdict())
@@ -535,11 +535,11 @@ def authenticate(**kwargs):
         save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
         if save_cred.lower() == 'y':
             key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
-            if os.path.isfile(path_to_creds):
-                with open(path_to_creds, 'wb') as credfile:
-                    credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
-                    credfile.write('entry:'+encrypt_with_key(token, key))
-                logging.info('Credentials were successfully saved.')
+            with open(path_to_creds, 'wb+') as credfile:
+                credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
+                credfile.write('entry:'+encrypt_with_key(token, key))
+            logging.info('Credentials were successfully saved.')
+            print(os.path.isfile(path_to_creds))
     return username, token
 
 
