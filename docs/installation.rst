@@ -9,7 +9,7 @@ PIP installation from the test PyPI node
 
 .. code-block:: bash
 
-  pip install -i https://testpypi.python.org/pypi esgissue-client
+  pip install esgissue-client
 
 
 Installation from GitHub
@@ -35,13 +35,8 @@ Installation from GitHub
 
   python setup.py install
 
-4. Set up environment variables:
 
-.. code-block:: bash
-
-  source activate
-
-5. The ``esgissue`` command-line is ready.
+4. The ``esgissue`` command-line is ready.
 
 
 Dependencies

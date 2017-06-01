@@ -12,9 +12,9 @@ which we will refer to as an issue.
 The cause behind the version changes has to be published alongside the data: what was updated, retracted or removed, and why.
 Consequently, the publication of a new version of a dataset has to be motivated by an issue.
 
-``esgissue`` allows the referenced data providers to easily create, document, update, close or remove a validated issue.
+``esgissue`` allows the referenced data providers to easily create, update, close or retrieve (download) a validated issue.
 
-``esgissue`` implements a similar issue-management system to GitHub, it is completely hosted within the ES-DOC Errata Service.
+``esgissue`` implements a similar issue-management system to GitHub. The data is however completely hosted within the ES-DOC Errata Service.
 
 The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
 versions, version removal or retraction.

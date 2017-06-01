@@ -3,15 +3,18 @@
 Update an issue
 ===============
 
-Once an issue is created, it will be subject to some changes, whether it regards the content of the issue (description
-for instance), its status or the list of affected datasets. The update of an issue is a key part of the issue life-cycle.
+Once an issue is created, it inevitably will be subject to some changes, whether it regards the content of the issue (description
+for instance), its status or the list of affected datasets.
 
 Requirements
 ************
 
-Updating an issue on the ES-DOC Errata server requires to modify the corresponding issue template or list of affected datasets.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC Errata server using the :ref:`retrieve` subcommand.
-The new issue JSON file is still constrained and validated against a new JSON schema. In fact, to guarantee the issue quality some attributes cannot be changed.
+Updating an issue on the ES-DOC Errata server requires modifying the corresponding issue template or list of affected
+datasets on local files.
+In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC
+Errata server using the :ref:`retrieve` subcommand.
+The new issue JSON file is still constrained and validated against a new JSON schema.
+In fact, to guarantee the issue quality some attributes are immutable.
 
 +-------------------+-----------------------------------------------+
 | Field             | Requirement                                   |
@@ -43,7 +46,8 @@ The new issue JSON file is still constrained and validated against a new JSON sc
 
    Safeguards requirements are:
     - Empty attributes are disallowed.
-    - As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
+    - As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded.
+    Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
     - All optional URLs must be valid (i.e., accessible).
     - A status “new” will be affected by the server on the creation.
     - The creation date should not be modified in order to preserve an authentic set of records.
