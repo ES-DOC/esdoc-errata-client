@@ -1,42 +1,43 @@
 .. _configuration:
 
 ESDoc-ERRATA API
-==============
+================
 
-The esdoc-errata-client uses various endpoints that can also be used by third party software to use the features that
+The ``esdoc-errata-client`` uses various endpoints that can also be used by third party software to use the features that
 the ESDoc-ERRATA project has to offer.
 
 Issue Creation
 **************
 
+Endpoint used for issue creation. Requires proper authentication and authorization.
 
-Path: 1/issue/create:
-Method: post
-tags: "Issue Management:"
+Path: ``1/issue/create``
+Method: ``post``
+tags: "Issue Management"
 summary: "Create a new issue"
-description: ""
 operationId: "createIssue"
 consumes:
 
-- "application/json"
+- ``application/json``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "body":
+parameters: in ``body``:
 
-- name: "body"
+- name: ``body``
 
 - description: "Issue json schema"
 
-- required: true
+- required: ``true``
 
 responses:
 
 401: "Unauthenticated"
 403: "Unauthorized"
 405: "Bad Method"
+
 security:
 
 - github personal access token: - "org:read"
@@ -45,23 +46,26 @@ security:
 Issue Update
 ************
 
-Path: 1/issue/update:
-Method: post
+Endpoint used for issue update. Requires proper authentication and authorization.
+Local files need to be updated, if tampered with beforehand, they can be downloaded using the retrieve endpoint.
+
+
+Path: ``1/issue/update``
+Method: ``post``
 tags: "Issue Management:"
 summary: "Update an issue"
-description: ""
 operationId: "updateIssue"
 consumes:
 
-- "application/json"
+- ``application/json``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "body":
+parameters: in ``body``:
 
-- name: "body"
+- name: ``body``
 
 - description: "Issue json schema"
 
@@ -80,23 +84,25 @@ security:
 Issue Close
 ***********
 
-Path: 1/issue/close:
-Method: post
+Endpoint used to close an issue marking its lifecycle's end. Requires proper authentication and authorization.
+
+
+Path: ``1/issue/close``
+Method: ``post``
 tags: "Issue Management:"
 summary: "closes an issue"
-description: ""
 operationId: "closeIssue"
 consumes:
 
-- "application/json"
+- ``application/json``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "body":
+parameters: in ``body``:
 
-- name: "body"
+- name: ``body``
 
 - description: "Issue json schema"
 
@@ -114,23 +120,26 @@ security:
 Issue Retrieve
 **************
 
-Path: 1/issue/retrieve:
-Method: get
+This endpoint serves as download endpoint for issue local files (e.g. the issue.json and datasets.txt)
+This endpoint requires no authentication nor authentication.
+
+
+Path: ``1/issue/retrieve``
+Method: ``get``
 tags: "Issue Management:"
 summary: "downloads issue files"
-description: ""
 operationId: "retrieveIssue"
 consumes:
 
-- param: uid
+- param: ``uid``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "url":
+parameters: in ``url``:
 
-- name: "uid"
+- name: ``uid``
 
 - description: "list of uids to download"
 
@@ -144,23 +153,26 @@ responses:
 Pid search
 **********
 
-Path: 1/issue/pid:
-Method: get
+This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
+This is the advanced search endpoint, it seeks information about all versions of every dataset.
+This endpoint requires no authentication nor authentication.
+
+Path: ``1/issue/pid``
+Method: ``get``
 tags: "Issue Management:"
 summary: "checks dataset (and entire version history) for issues "
-description: ""
 operationId: "pidSearch"
 consumes:
 
-- param: pids
+- param: ``pids``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "url":
+parameters: in ``url``:
 
-- name: "pids"
+- name: ``pids``
 
 - description: "list of uids to download"
 
@@ -174,23 +186,26 @@ responses:
 Simple-Pid search
 *****************
 
-Path: 1/issue/simple_pid:
-Method: get
+This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
+This is the simple response version of the pid endpoint, only the queried versions will be inspected.
+This endpoint requires no authentication nor authentication.
+
+Path: ``1/issue/simple_pid``
+Method: ``get``
 tags: "Issue Management:"
 summary: "checks dataset for issues"
-description: ""
-operationId: "simplepidSearch"
+operationId: "simplePidSearch"
 consumes:
 
-- param: pids
+- param: ``pids``
 
 produces:
 
-- "application/json"
+- ``application/json``
 
-parameters: in "url":
+parameters: in ``url``:
 
-- name: "pids"
+- name: ``pids``
 
 - description: "list of uids to download"
 
