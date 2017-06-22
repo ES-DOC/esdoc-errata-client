@@ -69,7 +69,7 @@ class MultilineFormatter(HelpFormatter):
 # Validation
 
 
-def test_url(url):
+def _test_url(url):
     """
     Tests an url response.
 
@@ -87,11 +87,11 @@ def test_url(url):
             logging.warn('Provided URL {} has redirects, please replace it with proper URL.'.format(url))
         return r.status_code == requests.codes.ok
     except Exception as e:
-        logging_error('Return code {}'.format(r.status_code), url)
-        logging_error(ERROR_DIC[URLS], url)
+        _logging_error('Return code {}'.format(r.status_code), url)
+        _logging_error(ERROR_DIC[URLS], url)
 
 
-def test_pattern(text):
+def _test_pattern(text):
     """
     Tests a regex pattern on a string.
 
@@ -108,7 +108,7 @@ def test_pattern(text):
         return True
 
 
-def traverse(l, tree_types=(list, tuple)):
+def _traverse(l, tree_types=(list, tuple)):
     """
     Iterates through a list of lists and extracts items
 
@@ -120,13 +120,13 @@ def traverse(l, tree_types=(list, tuple)):
     """
     if isinstance(l, tree_types):
         for item in l:
-            for child in traverse(item, tree_types):
+            for child in _traverse(item, tree_types):
                 yield child
     else:
         yield l
 
 
-def get_file_path(path_to_issues, path_to_dsets, uid):
+def _get_file_path(path_to_issues, path_to_dsets, uid):
     """
     Based on the user input, this function returns the destination of the issue and datasets' file.
     :param path_to_issues: args.issues
@@ -138,12 +138,12 @@ def get_file_path(path_to_issues, path_to_dsets, uid):
         path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
         path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
     else:
-        path_to_issues = os.path.join(get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1+uid+ISSUE_2)
-        path_to_dsets = os.path.join(get_file_location(path_to_dsets, download_dir='downloads'), DSET_1+uid+DSET_2)
+        path_to_issues = os.path.join(_get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1 + uid + ISSUE_2)
+        path_to_dsets = os.path.join(_get_file_location(path_to_dsets, download_dir='downloads'), DSET_1 + uid + DSET_2)
     return path_to_issues, path_to_dsets
 
 
-def get_file_location(file_name, download_dir=None):
+def _get_file_location(file_name, download_dir=None):
     """
     Tests whether ESDOC_HOME variable is declared in user environment, uses it as directory base if it's the case.
     :param file_name:
@@ -168,7 +168,7 @@ def get_file_location(file_name, download_dir=None):
 # Logging
 
 
-def init_logging(logdir=None, level='INFO'):
+def _init_logging(logdir=None, level='INFO'):
     """
     Initiates the logging configuration (output, message formatting).
     In the case of a logfile, the logfile name is unique and formatted as follows:
@@ -199,7 +199,7 @@ def init_logging(logdir=None, level='INFO'):
                             datefmt='%Y/%m/%d %I:%M:%S %p')
 
 
-def logging_error(error, additional_data=None):
+def _logging_error(error, additional_data=None):
     """
 
     :param error: error dic
@@ -213,7 +213,7 @@ def logging_error(error, additional_data=None):
         sys.exit(error[0])
 
 
-def resolve_validation_error_code(message):
+def _resolve_validation_error_code(message):
     """
     Gives sense to validation error messages by affecting respective codes to them.
     :param message: string of error message
@@ -226,14 +226,14 @@ def resolve_validation_error_code(message):
 # Preparing operations
 
 
-def resolve_status(status):
+def _resolve_status(status):
     """
     resolves user input for status when closing.
     :param status: user input
     :return: status
     """
     if status not in ['r', 'R', 'w', 'W', STATUS_WONTFIX, STATUS_RESOLVED]:
-        logging_error(ERROR_DIC[STATUS])
+        _logging_error(ERROR_DIC[STATUS])
     else:
         if status in ['r', 'R', STATUS_RESOLVED]:
             return STATUS_RESOLVED
@@ -241,7 +241,7 @@ def resolve_status(status):
             return STATUS_WONTFIX
 
 
-def prepare_retrieve_ids(id_list):
+def _prepare_retrieve_ids(id_list):
     """
     Parses retrieval arguments, resolves directories
     :param id_list: list of ids
@@ -256,7 +256,7 @@ def prepare_retrieve_ids(id_list):
     return list_of_ids
 
 
-def prepare_retrieve_dirs(issues, dsets, list_of_ids):
+def _prepare_retrieve_dirs(issues, dsets, list_of_ids):
     """
     :param issues: user input for issues files.
     :param dsets: user input for dsets files.
@@ -272,14 +272,14 @@ def prepare_retrieve_dirs(issues, dsets, list_of_ids):
     else:
         for directory in [issues, dsets]:
             if fnmatch(directory, '*.*'):
-                logging_error(ERROR_DIC['multiple_ids'])
+                _logging_error(ERROR_DIC['multiple_ids'])
             else:
                 if not os.path.isdir(directory):
                     os.makedirs(directory)
     return issues, dsets
 
 
-def prepare_persistence(data):
+def _prepare_persistence(data):
     """
     prepares downloaded data for persistence
     :param data: json file
@@ -304,7 +304,7 @@ def prepare_persistence(data):
 # TXT operations
 
 
-def get_datasets(dataset_file):
+def _get_datasets(dataset_file):
     """Returns test affected  datasets by a given issue from the respective txt file.
     :param dataset_file: txt file
     """
@@ -317,7 +317,7 @@ def get_datasets(dataset_file):
 # JSON operations
 
 
-def get_issue(path):
+def _get_issue(path):
     """reads json file containing issue from path to file.
     :param path: issue json file
     """
@@ -325,7 +325,7 @@ def get_issue(path):
         return json.load(data_file)
 
 
-def update_json(facets, original_json):
+def _update_json(facets, original_json):
     """
     update self.json with the newly detected facets from dataset ids.
     :param facets: dictionary
@@ -349,12 +349,12 @@ def update_json(facets, original_json):
             if value not in original_json[key]:
                 original_json[key].append(value)
         elif key in original_json and key not in multiple_facets and original_json[key] != value.lower():
-            logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
-                                                                                               str(key)))
+            _logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
+                                                                                                str(key)))
     return original_json
 
 
-def order_json(json_body):
+def _order_json(json_body):
     """
     :param json_body: raw json in dictionary without order
     :return: ordered json dictionary
@@ -368,7 +368,7 @@ def order_json(json_body):
 
 # Web Service related operations
 
-def get_ws_call(action, payload=None, uid=None, credentials=None):
+def _get_ws_call(action, payload=None, uid=None, credentials=None):
     """
     This function builds the url for the outgoing call to the different errata ws.
     :param payload: payload to be posted
@@ -390,21 +390,25 @@ def get_ws_call(action, payload=None, uid=None, credentials=None):
         r = requests.post(url + uid + '&status=' + payload, auth=credentials)
     elif action == RETRIEVE:
         r = requests.get(url+uid)
+    elif action == CREDTEST:
+        r = requests.get(url, auth=credentials, data=payload)
+        print(url)
+        print(r.text)
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
         if r.status_code == 401:
-            logging_error(ERROR_DIC['authentication'], 'HTTP CODE: '+str(r.status_code))
+            _logging_error(ERROR_DIC['authentication'], 'HTTP CODE: ' + str(r.status_code))
 
         elif r.status_code == 403:
-            logging_error(ERROR_DIC['authorization'], 'HTTP CODE: '+str(r.status_code))
+            _logging_error(ERROR_DIC['authorization'], 'HTTP CODE: ' + str(r.status_code))
 
         else:
-            logging_error(ERROR_DIC['ws_request_failed'], 'HTTP CODE: '+str(r.status_code))
+            _logging_error(ERROR_DIC['ws_request_failed'], 'HTTP CODE: ' + str(r.status_code))
     return r
 
 
-def extract_facets(dataset_id, project, config):
+def _extract_facets(dataset_id, project, config):
     """
     Given a specific project, this function extracts the facets as described in the ini file.
     :param dataset_id: dataset id containing the facets
@@ -414,19 +418,19 @@ def extract_facets(dataset_id, project, config):
     try:
         sections = config._sections['project:{}'.format(project)]
         regex_str = sections[DATASET_ID]
-        regex_str = translate_dataset_regex(regex_str, sections)
+        regex_str = _translate_dataset_regex(regex_str, sections)
         match = re.match(regex_str, dataset_id.lower())
         if match:
             logging.info('Extracting facets...')
-            return match_facets_to_cmip6(match.groupdict())
+            return _match_facets_to_cmip6(match.groupdict())
         else:
-            logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
+            _logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
                 dataset_id, project))
     except KeyError:
-        logging_error(ERROR_DIC['project_not_supported'])
+        _logging_error(ERROR_DIC['project_not_supported'])
 
 
-def match_facets_to_cmip6(input_dict):
+def _match_facets_to_cmip6(input_dict):
     matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
                      'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
                      'ensemble': 'member_id', 'product': 'product',
@@ -438,7 +442,7 @@ def match_facets_to_cmip6(input_dict):
     return output_dict
 
 
-def translate_dataset_regex(pattern, sections):
+def _translate_dataset_regex(pattern, sections):
     """
     translates the regex expression retrieved from esg.ini
     :param pattern: str
@@ -459,7 +463,7 @@ def translate_dataset_regex(pattern, sections):
     return pattern
 
 
-def get_remote_config(project):
+def _get_remote_config(project):
     """
     Using github api, this returns config file contents.
     :param project: str
@@ -489,7 +493,7 @@ def get_remote_config(project):
             raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
 
-def encrypt_with_key(data, passphrase=''):
+def _encrypt_with_key(data, passphrase=''):
     """
     method for key-encryption, uses 24 bits keys, adds fillers in case its less.
     :param passphrase: user selected key
@@ -504,7 +508,7 @@ def encrypt_with_key(data, passphrase=''):
     return k.encrypt(data)
 
 
-def decrypt_with_key(data, passphrase=''):
+def _decrypt_with_key(data, passphrase=''):
     """
     uses key to decrypt data.
     :param data: data to decrypt
@@ -518,71 +522,89 @@ def decrypt_with_key(data, passphrase=''):
     return k.decrypt(data)
 
 
-def authenticate(**kwargs):
-    path_to_creds = get_file_location('cred.txt')
-    if os.path.isfile(path_to_creds):
-        if 'passphrase' in kwargs:
-            key = kwargs['passphrase']
-        else:
-            key = getpass.getpass('Passphrase: ')
-        with open(path_to_creds, 'rb') as credfile:
-            content = credfile.readlines()
-        username = decrypt_with_key(content[0].split('entry:')[1].replace('\n', ''), key)
-        token = decrypt_with_key(content[1].split('entry:')[1], key)
+def _authenticate(**kwargs):
+    username = 'errata-client-user'
+    if os.environ.get(GITHUB_TOKEN) is not None:
+        token = os.environ.get(GITHUB_TOKEN)
     else:
-        username = raw_input('Username: ')
-        token = raw_input('Token: ')
-        save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
-        if save_cred.lower() == 'y':
-            key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
-            with open(path_to_creds, 'wb+') as credfile:
-                credfile.write('entry:'+encrypt_with_key(username, key)+'\n')
-                credfile.write('entry:'+encrypt_with_key(token, key))
-            logging.info('Credentials were successfully saved.')
-            print(os.path.isfile(path_to_creds))
-    return username, token
+        path_to_creds = _get_file_location('cred.txt')
+        if os.path.isfile(path_to_creds):
+            with open(path_to_creds, 'r') as credfile:
+                content = credfile.readlines()
+                is_encrypted = content[1].split('entry:')[1]
+                enc_token = content[0].split('entry:')[1].replace('\n', '')
+            if is_encrypted:
+                if 'passphrase' in kwargs:
+                    key = kwargs['passphrase']
+                else:
+                    key = getpass.getpass('Passphrase: ')
+                token = _decrypt_with_key(enc_token, key)
+            else:
+                token = enc_token
+        else:
+            token = raw_input('Token: ')
+            save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+            if save_cred.lower() == 'y':
+                key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
+                with open(path_to_creds, 'wb+') as credfile:
+                    if key != '':
+                        credfile.write('entry:'+_encrypt_with_key(token, key)+'\n')
+                        credfile.write('entry:'+'1')
+                    else:
+                        credfile.write('entry:'+token+'\n')
+                        credfile.write('entry:'+'0')
+                logging.info('Credentials were successfully saved.')
+                print(os.path.isfile(path_to_creds))
+    return token, username
 
 
-def reset_passphrase(**kwargs):
+def _reset_passphrase(**kwargs):
     """
     Resets user's pass-phrase used in credentials' encryption
     :param kwargs: oldpass and newpass
     :return: nada
     """
     # check if data exists
-    path_to_creds = get_file_location('cred.txt')
+    path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         # if yes:
         with open(path_to_creds, 'rb') as cred_file:
             content = cred_file.readlines()
-        username = content[0].split('entry:')[1].replace('\n', '')
-        token = content[1].split('entry:')[1]
+        token = content[0].split('entry:')[1].replace('\n', '')
+        is_encrypted = content[1].split('entry:')[1]
         if 'old_pass' in kwargs and 'new_pass' in kwargs:
             logging.info('Using new credentials from user input...')
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
         else:
             logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
-            old_pass = getpass.getpass('Old Passphrase: ')
+            if is_encrypted == '0':
+                pass
+            else:
+                old_pass = getpass.getpass('Old Passphrase: ')
             new_pass = getpass.getpass('New Passphrase: ')
-        username = decrypt_with_key(username, old_pass)
-        token = decrypt_with_key(token, old_pass)
+        if old_pass is not None:
+            token = _decrypt_with_key(token, old_pass)
         # Writing new data
         with open(path_to_creds, 'wb') as cred_file:
-            cred_file.write('entry:'+encrypt_with_key(username, new_pass)+'\n')
-            cred_file.write('entry:'+encrypt_with_key(token, new_pass))
+            if new_pass != '':
+                cred_file.write('entry:'+_encrypt_with_key(token, new_pass)+'\n')
+                cred_file.write('entry:'+'1')
+            else:
+                cred_file.write('entry:'+token+'\n')
+                cred_file.write('entry:'+'0')
         logging.info('Passphrase has been successfully updated.')
     # if no print warning.
     else:
         logging.warn('No credentials file found.')
 
 
-def reset_credentials():
+def _reset_credentials():
     """
     resets credentials.
     :return: nada
     """
-    path_to_creds = get_file_location('cred.txt')
+    path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         os.remove(path_to_creds)
         logging.info('Credentials have been successfully reset.')
@@ -590,23 +612,36 @@ def reset_credentials():
         logging.warn('No existing credentials found.')
 
 
-def set_credentials(**kwargs):
+def _set_credentials(**kwargs):
     """
     set credentials
     :return: nada
     """
     if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
         logging.info('Using credentials found in user input...')
-        username = kwargs['username']
         tkn = kwargs['token']
         passphrase = kwargs['passphrase']
     else:
-        username = raw_input('Username: ')
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
-    path_to_creds = get_file_location('cred.txt')
+    path_to_creds = _get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
+        logging.info('Older credentials file was found, resetting...')
+        _reset_credentials()
     with open(path_to_creds, 'wb') as cred_file:
-        cred_file.write('entry:'+encrypt_with_key(username, passphrase)+'\n')
-        cred_file.write('entry:'+encrypt_with_key(tkn, passphrase))
+        if passphrase != '':
+            cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
+            cred_file.write('entry:'+'1')
+        else:
+            cred_file.write('entry:'+tkn+'\n')
+            cred_file.write('entry:'+'0')
     logging.info('Your credentials were successfully set.')
 
+
+def _cred_test(credentials, team):
+    """
+
+    :param credentials:
+    :return:
+    """
+    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team})
