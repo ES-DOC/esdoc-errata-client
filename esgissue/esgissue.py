@@ -11,8 +11,8 @@ from uuid import uuid4
 from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
-from utils import MultilineFormatter, init_logging, get_datasets, get_issue, authenticate, reset_passphrase,\
-                  reset_credentials, set_credentials, prepare_retrieve_ids, prepare_retrieve_dirs
+from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
+                  _reset_credentials, _set_credentials, _prepare_retrieve_ids, _prepare_retrieve_dirs
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -21,7 +21,7 @@ __version__ = VERSION_NUMBER
 __UNSENT_MESSAGES_DIR__ = "{0}/unsent_rabbit_messages".format(os.path.dirname(os.path.abspath(__file__)))
 
 
-def get_args():
+def _get_args():
     """
     Returns parsed command-line arguments. See ``esgissue -h`` for full description.
 
@@ -252,15 +252,15 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
                     list_of_ids=None, **kwargs):
     payload = issue_file
     if dataset_file is not None:
-        dsets = get_datasets(dataset_file)
+        dsets = _get_datasets(dataset_file)
     else:
         dsets = None
     # Fill in mandatory fields
     if command in [CREATE, UPDATE, CLOSE]:
         if 'passphrase' in kwargs:
-            credentials = authenticate(passphrase=kwargs['passphrase'])
+            credentials = _authenticate(passphrase=kwargs['passphrase'])
         else:
-            credentials = authenticate()
+            credentials = _authenticate()
         # Initializing non-mandatory fields to pass validation process.
         if URL not in payload.keys():
             payload[URL] = ''
@@ -301,36 +301,34 @@ def run():
     """
     try:
         # Get command-line arguments
-        args = get_args()
+        args = _get_args()
         # init logging
         if args.v and args.log is not None:
-            init_logging(args.log, level='DEBUG')
+            _init_logging(args.log, level='DEBUG')
         elif args.log is not None:
-            init_logging(args.log)
+            _init_logging(args.log)
         else:
-            init_logging()
+            _init_logging()
         if args.command == CHANGEPASS:
             if args.oldpass is not None and args.newpass is not None:
-                reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
+                _reset_passphrase(old_pass=args.oldpass, new_pass=args.newpass)
             else:
-                reset_passphrase()
-        elif args.command == CREDRESET:
-            reset_credentials()
+                _reset_passphrase()
         elif args.command == CREDSET:
-            set_credentials()
+            _set_credentials()
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
-            issue_file = get_issue(args.issue)
-            dataset_file = get_datasets(args.dsets)
+            issue_file = _get_issue(args.issue)
+            dataset_file = _get_datasets(args.dsets)
             process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
                             issue_path=args.issue, dataset_path=args.dsets)
         elif args.command == CLOSE:
-            issue_file = get_issue(args.issue)
-            dataset_file = get_datasets(args.dsets)
+            issue_file = _get_issue(args.issue)
+            dataset_file = _get_datasets(args.dsets)
             process_command(command=args.command, issue_file=issue_file, dataset_file=dataset_file,
                             issue_path=args.issue, dataset_path=args.dsets, status=args.status)
         elif args.command == RETRIEVE:
-            list_of_id = prepare_retrieve_ids(args.id)
+            list_of_id = _prepare_retrieve_ids(args.id)
             # issues, dsets = prepare_retrieve_dirs(args.issues, args.dsets, list_of_id)
             if len(list_of_id) >= 1:
                 process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets, list_of_ids=list_of_id)

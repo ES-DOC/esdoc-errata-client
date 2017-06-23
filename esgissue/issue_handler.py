@@ -19,9 +19,9 @@ import simplejson
 import datetime
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
-from utils import test_url, test_pattern, traverse, get_ws_call, get_file_path, resolve_validation_error_code, \
-                  extract_facets, update_json, logging_error, order_json, get_remote_config, prepare_persistence, \
-                  resolve_status
+from utils import _test_url, _traverse, _get_ws_call, _get_file_path, _resolve_validation_error_code, \
+                  _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
+                  _resolve_status
 
 
 class LocalIssue(object):
@@ -37,11 +37,11 @@ class LocalIssue(object):
             if PROJECT in self.json.keys():
                 self.project = self.json[PROJECT].lower()
             else:
-                logging_error(ERROR_DIC[PROJECT])
+                _logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path
         self.dataset_path = dataset_path
         if self.project is not None:
-            self.config = get_remote_config(self.json[PROJECT])
+            self.config = _get_remote_config(self.json[PROJECT])
 
     def validate(self, action):
         """
@@ -60,9 +60,10 @@ class LocalIssue(object):
             schema = load(f)
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
-            facets = extract_facets(dataset, self.project, self.config)
+            facets = _extract_facets(dataset, self.project, self.config)
+
             logging.info('Facets extracted.')
-            self.json = update_json(facets, self.json)
+            self.json = _update_json(facets, self.json)
         try:
             logging.info('Validating issue...')
             validate(self.json, schema)
@@ -72,21 +73,21 @@ class LocalIssue(object):
             print(ve.message)
             print(ve.validator)
             if len(ve.relative_path) != 0:
-                error_code = resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
+                error_code = _resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
             else:
-                error_code = resolve_validation_error_code(ve.message + ve.validator)
-            logging_error(error_code)
+                error_code = _resolve_validation_error_code(ve.message + ve.validator)
+            _logging_error(error_code)
         except ValueError as e:
             logging.error(repr(e.message))
         except Exception as e:
             logging.error(repr(e.message))
-            logging_error(ERROR_DIC['validation_failed'], self.issue_path)
+            _logging_error(ERROR_DIC['validation_failed'], self.issue_path)
         # Test landing page and materials URLs
-        urls = filter(None, traverse(map(self.json.get, [URL, MATERIALS])))
+        urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
             if url != '':
-                if not test_url(url):
-                    logging_error(ERROR_DIC[URLS], url)
+                if not _test_url(url):
+                    _logging_error(ERROR_DIC[URLS], url)
         # Validate the datasets list against the dataset id pattern
         logging.info('Validation Result: SUCCESSFUL')
 
@@ -99,21 +100,21 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            get_ws_call(action=self.action, payload=self.json, credentials=credentials)
+            _get_ws_call(action=self.action, payload=self.json, credentials=credentials)
             logging.info('Updating fields of payload after remote issue creation...')
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
                 if DATASETS in self.json.keys():
                     del self.json[DATASETS]
-                self.json = order_json(self.json)
+                self.json = _order_json(self.json)
                 issue_file.write(simplejson.dumps(self.json, indent=4))
                 logging.info('Issue file has been created successfully!')
         except ConnectionError:
-            logging_error(ERROR_DIC['connection_error'])
+            _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging_error(ERROR_DIC['connection_timeout'])
+            _logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging_error(ERROR_DIC['unknown_error'], repr(e))
+            _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def update(self, credentials):
         """
@@ -123,17 +124,17 @@ class LocalIssue(object):
         logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
-            get_ws_call(action=self.action, payload=self.json, credentials=credentials)
+            _get_ws_call(action=self.action, payload=self.json, credentials=credentials)
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
-                self.json = order_json(self.json)
+                self.json = _order_json(self.json)
 
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
         except ConnectionError:
-            logging_error(ERROR_DIC['connection_error'], None)
+            _logging_error(ERROR_DIC['connection_error'], None)
         except ConnectTimeout:
             logging.error(ERROR_DIC['connection_timeout'], None)
         except Exception as e:
@@ -145,7 +146,7 @@ class LocalIssue(object):
             line = linecache.getline(filename, lineno, f.f_globals)
             print 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj)
 
-            logging_error(ERROR_DIC['unknown_error'], repr(e))
+            _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def close(self, credentials, status):
         """
@@ -157,9 +158,9 @@ class LocalIssue(object):
         try:
             if self.json[STATUS] in [STATUS_NEW, STATUS_ONHOLD]:
                 if status is not None:
-                    status = resolve_status(status)
+                    status = _resolve_status(status)
                     if status not in [STATUS_RESOLVED, STATUS_WONTFIX]:
-                        logging_error(ERROR_DIC[STATUS])
+                        _logging_error(ERROR_DIC[STATUS])
                     else:
                         self.json[STATUS] = status
                         self.action = UPDATE
@@ -182,22 +183,22 @@ class LocalIssue(object):
                         self.action = CLOSE
             else:
                 status = self.json[STATUS]
-            get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials)
+            _get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials)
             # Only in case the webservice operation succeeded.
             self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             if DATASETS in self.json.keys():
                 del self.json[DATASETS]
             with open(self.issue_path, 'w+') as data_file:
-                self.json = order_json(self.json)
+                self.json = _order_json(self.json)
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been closed successfully!')
         except ConnectionError:
-            logging_error(ERROR_DIC['connection_error'])
+            _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging_error(ERROR_DIC['connection_timeout'])
+            _logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging_error(ERROR_DIC['unknown_error'], repr(e))
+            _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def retrieve(self, list_of_ids, issues, dsets):
         """
@@ -210,20 +211,20 @@ class LocalIssue(object):
             logging.info('Processing id {}'.format(n))
             try:
                 logging.info('Contacting ESDoc-Errata server for issue #{} information'.format(n))
-                r = get_ws_call(action=RETRIEVE, uid=n)
+                r = _get_ws_call(action=RETRIEVE, uid=n)
                 if r.json() is not None:
                     logging.info('Retrieved issue #{} information from ESDoc-Errata server, persisting...'.format(n))
-                    data = prepare_persistence(r.json()[ISSUE])
+                    data = _prepare_persistence(r.json()[ISSUE])
                     self.dump_issue(data, issues, dsets)
                     logging.info('Issue #{} has been downloaded.'.format(n))
                 else:
                     logging.info("Issue #{} didn't match any issues in the errata db".format(n))
             except ConnectionError:
-                logging_error(ERROR_DIC['connection_error'])
+                _logging_error(ERROR_DIC['connection_error'])
             except ConnectTimeout:
-                logging_error(ERROR_DIC['connection_timeout'])
+                _logging_error(ERROR_DIC['connection_timeout'])
             except Exception as e:
-                logging_error(ERROR_DIC['unknown_error'], repr(e))
+                _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     def retrieve_all(self, issues, dsets):
         """
@@ -234,18 +235,18 @@ class LocalIssue(object):
         """
         try:
             logging.info('Starting issue archiving process...')
-            r = get_ws_call(action=RETRIEVE_ALL)
+            r = _get_ws_call(action=RETRIEVE_ALL)
             logging.info('Successfully retrieved {} issues from ESDoc-Errata server...'.format(r.json()[COUNT]))
             results = r.json()[ISSUES]
             for issue in results:
-                data = prepare_persistence(issue)
+                data = _prepare_persistence(issue)
                 self.dump_issue(data, issues, dsets)
         except ConnectionError:
-            logging_error(ERROR_DIC['connection_error'])
+            _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
-            logging_error(ERROR_DIC['connection_timeout'])
+            _logging_error(ERROR_DIC['connection_timeout'])
         except Exception as e:
-            logging_error(ERROR_DIC['unknown_error'], repr(e))
+            _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
     @staticmethod
     def dump_issue(data, issues, dsets):
@@ -259,7 +260,7 @@ class LocalIssue(object):
         if DATE_CLOSED in data.keys() and data[DATE_CLOSED] is None:
             del data[DATE_CLOSED]
         # Getting the directory where the issue file is going to be persisted.
-        path_to_issue, path_to_dataset = get_file_path(issues, dsets, data[UID])
+        path_to_issue, path_to_dataset = _get_file_path(issues, dsets, data[UID])
         logging.info('Issue #{} data to issue file {}'.format(data[UID], path_to_issue))
         logging.info('Issue #{} datasets to dataset file {}'.format(data[UID], path_to_dataset))
         # Persisting Datasets
@@ -274,7 +275,7 @@ class LocalIssue(object):
             logging.warn('Issue #{} has no datasets affected.'.format(data[UID]))
         # Persisting issues.
         with open(path_to_issue, 'w') as data_file:
-            data = order_json(data)
+            data = _order_json(data)
             data_file.write(simplejson.dumps(data, indent=4))
         logging.info("Finished processing issue #{}".format(data[UID]))
 
