@@ -6,3 +6,4 @@ repoze.lru
 simplejson
 pyDes
 pbkdf2
+pyopenssl

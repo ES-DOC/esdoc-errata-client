@@ -1,6 +1,6 @@
 import os
 
-VERSION_NUMBER = '0.1.4.4'
+VERSION_NUMBER = '0.1.5.0'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -41,7 +41,9 @@ CREDENTIALS = 'credentials'
 CHANGEPASS = 'changepass'
 CREDRESET = 'credreset'
 CREDSET = 'credset'
-ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL]
+CREDTEST = 'credtest'
+TEST = 'test'
+ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL, CREDTEST]
 
 
 # PATH CONSTANTS
@@ -122,7 +124,8 @@ URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',
            'RETRIEVE': '/1/issue/retrieve?uid=',
-           'RETRIEVE_ALL': '/1/issue/retrieve-all'
+           'RETRIEVE_ALL': '/1/issue/retrieve-all',
+           'CREDTEST': '/1/ops/credtest'
            }
 
 ESDOC_VAR = 'ESDOC_HOME'
@@ -145,8 +148,8 @@ ESGISSUE_GENERAL = """
 
                     See full documentation on https://es-doc.github.io/esdoc-errata-client/"""
 EPILOG = """Developed by:|n
-         Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)|n
-         Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr"""
+         Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.fr)|n
+         Bennasser, A. (UPMC/IPSL - abennasser@ipsl.fr"""
 
 OPTIONAL = 'Optional arguments'
 POSITIONAL = 'Positional arguments'
@@ -232,4 +235,10 @@ CHANGEPASS_DESC = """"esgissue credentials" allows users to interact with their 
 
             See "esgissue -h" for global help."""
 CHANGEPASS_HELP = """Helps user change passphrase for registered credentials.|n
+                    See "esgissue changepass -h" for full help."""
+
+CREDTEST_DESC = """"esgissue credtest" allows users to test their set credentials.
+            See "esgissue -h" for global help."""
+
+CREDTEST_HELP = """Helps user test their registered credentials.|n
                     See "esgissue changepass -h" for full help."""

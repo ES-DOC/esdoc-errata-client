@@ -12,7 +12,11 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
+<<<<<<< HEAD
                   _reset_credentials, _set_credentials, _prepare_retrieve_ids, _prepare_retrieve_dirs
+=======
+                  _set_credentials, _prepare_retrieve_ids, _prepare_retrieve_dirs, _reset_credentials, _cred_test
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -221,9 +225,9 @@ def _get_args():
                             nargs='?',
                             required=False,
                             type=str)
-    ########################################
+    ######################################
     # Subparser for "esgissue credreset" #
-    ########################################
+    ######################################
     credreset = subparsers.add_parser(
             'credreset',
             prog='esgissue credreset',
@@ -233,9 +237,9 @@ def _get_args():
             add_help=False,
             parents=[parent])
 
-    ########################################
+    ####################################
     # Subparser for "esgissue credset" #
-    ########################################
+    ####################################
     credset = subparsers.add_parser(
             'credset',
             prog='esgissue credset',
@@ -244,6 +248,21 @@ def _get_args():
             help=CREDSET_HELP,
             add_help=False,
             parents=[parent])
+    #####################################
+    # Subparser for "esgissue credtest" #
+    #####################################
+    credtest = subparsers.add_parser(
+            'credtest',
+            prog='esgissue credtest',
+            description=CREDTEST_DESC,
+            formatter_class=MultilineFormatter,
+            help=CREDSET_HELP,
+            add_help=False,
+            parents=[parent])
+    credtest.add_argument('--team',
+                            nargs='?',
+                            required=True,
+                            type=str)
 
     return main.parse_args()
 
@@ -316,6 +335,14 @@ def run():
                 _reset_passphrase()
         elif args.command == CREDSET:
             _set_credentials()
+<<<<<<< HEAD
+=======
+        elif args.command == CREDRESET:
+            _reset_credentials()
+        elif args.command == CREDTEST:
+            credentials = _authenticate()
+            _cred_test(credentials, args.team)
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)

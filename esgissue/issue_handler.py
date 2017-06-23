@@ -19,7 +19,11 @@ import simplejson
 import datetime
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
+<<<<<<< HEAD
 from utils import _test_url, _traverse, _get_ws_call, _get_file_path, _resolve_validation_error_code, \
+=======
+from utils import _test_url, _test_pattern, _traverse, _get_ws_call, _get_file_path, _resolve_validation_error_code, \
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
                   _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
                   _resolve_status
 
@@ -61,7 +65,10 @@ class LocalIssue(object):
         # Validate issue attributes against JSON issue schema
         for dataset in self.json[DATASETS]:
             facets = _extract_facets(dataset, self.project, self.config)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
             logging.info('Facets extracted.')
             self.json = _update_json(facets, self.json)
         try:

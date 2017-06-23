@@ -92,6 +92,26 @@ def _test_url(url):
         _logging_error(ERROR_DIC[URLS], url)
 
 
+<<<<<<< HEAD
+=======
+def _test_pattern(text):
+    """
+    Tests a regex pattern on a string.
+
+    :param str text: The item as a string
+    :returns: True if matched
+    :rtype: *boolean*
+
+    """
+    pattern = "^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+#[0-9]{8}$"
+    if not re.match(re.compile(pattern), text):
+        logging.debug('{0} is malformed'.format(text))
+        return False
+    else:
+        return True
+
+
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 def _traverse(l, tree_types=(list, tuple)):
     """
     Iterates through a list of lists and extracts items
@@ -374,6 +394,10 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         r = requests.post(url + uid + '&status=' + payload, auth=credentials)
     elif action == RETRIEVE:
         r = requests.get(url+uid)
+    elif action == CREDTEST:
+        r = requests.get(url, auth=credentials, data=payload)
+        print(url)
+        print(r.text)
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
@@ -388,6 +412,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     return r
 
 
+<<<<<<< HEAD
 # Facets utils
 
 def _get_remote_config(project):
@@ -421,6 +446,8 @@ def _get_remote_config(project):
             raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
 
+=======
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 def _extract_facets(dataset_id, project, config):
     """
     Given a specific project, this function extracts the facets as described in the ini file.
@@ -441,6 +468,7 @@ def _extract_facets(dataset_id, project, config):
                 dataset_id, project))
     except KeyError:
         _logging_error(ERROR_DIC['project_not_supported'])
+<<<<<<< HEAD
 
 
 def _validate_terms(term_string):
@@ -498,6 +526,10 @@ def _validate_facets(facets_dictionary, mip_era):
         logging.warn("Indicated project not supported by pyessv.")
 
 
+=======
+
+
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 def _match_facets_to_cmip6(input_dict):
     matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
                      'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
@@ -530,7 +562,39 @@ def _translate_dataset_regex(pattern, sections):
             pattern = re.sub(re.compile(r'%\(([^()]*)\)s'), r'(?P<\1>[\w-]+)', pattern)
     return pattern
 
+<<<<<<< HEAD
 # credentials settings
+=======
+
+def _get_remote_config(project):
+    """
+    Using github api, this returns config file contents.
+    :param project: str
+    :return: ConfigParser instance with proper configuration
+    """
+    project_ini_file = '{}.ini'.format(project)
+    config = ConfigParser.ConfigParser()
+    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
+        # Reading local file.
+        logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
+        config.read(project_ini_file)
+        return config
+    else:
+        r = requests.get(GH_FILE_API.format(project))
+        if r.status_code == 200:
+            logging.info('NO LOCAL PROJECT CONFIG FILE FOUND OR DEPRECATED FILE FOUND, RETRIEVING FROM REPO...')
+            # Retrieving distant configuration file
+            raw_file = requests.get(r.json()[DOWNLOAD_URL])
+            config.readfp(StringIO.StringIO(raw_file.text))
+            logging.info('FILE RETRIEVED, PERSISTING LOCALLY...')
+            # Keeping local copy
+            with open(project_ini_file, 'w') as project_file:
+                config.write(project_file)
+            logging.info('FILE PERSISTED.')
+            return config
+        else:
+            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 
 
 def _encrypt_with_key(data, passphrase=''):
@@ -563,6 +627,7 @@ def _decrypt_with_key(data, passphrase=''):
 
 
 def _authenticate(**kwargs):
+<<<<<<< HEAD
     if os.environ.get(GITHUB_TOKEN) is not None:
         if os.environ.get(GITHUB_CREDS_ENCRYPTED) is not None:
             token = os.environ.get(GITHUB_TOKEN)
@@ -579,6 +644,41 @@ def _authenticate(**kwargs):
             os.environ[GITHUB_TOKEN] = _encrypt_with_key(token, key)
             os.environ[GITHUB_CREDS_ENCRYPTED] = True
     return token
+=======
+    username = 'errata-client-user'
+    if os.environ.get(GITHUB_TOKEN) is not None:
+        token = os.environ.get(GITHUB_TOKEN)
+    else:
+        path_to_creds = _get_file_location('cred.txt')
+        if os.path.isfile(path_to_creds):
+            with open(path_to_creds, 'r') as credfile:
+                content = credfile.readlines()
+                is_encrypted = content[1].split('entry:')[1]
+                enc_token = content[0].split('entry:')[1].replace('\n', '')
+            if is_encrypted:
+                if 'passphrase' in kwargs:
+                    key = kwargs['passphrase']
+                else:
+                    key = getpass.getpass('Passphrase: ')
+                token = _decrypt_with_key(enc_token, key)
+            else:
+                token = enc_token
+        else:
+            token = raw_input('Token: ')
+            save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+            if save_cred.lower() == 'y':
+                key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
+                with open(path_to_creds, 'wb+') as credfile:
+                    if key != '':
+                        credfile.write('entry:'+_encrypt_with_key(token, key)+'\n')
+                        credfile.write('entry:'+'1')
+                    else:
+                        credfile.write('entry:'+token+'\n')
+                        credfile.write('entry:'+'0')
+                logging.info('Credentials were successfully saved.')
+                print(os.path.isfile(path_to_creds))
+    return token, username
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 
 
 def _reset_passphrase(**kwargs):
@@ -588,37 +688,107 @@ def _reset_passphrase(**kwargs):
     :return: nada
     """
     # check if data exists
+<<<<<<< HEAD
     if os.environ.get(GITHUB_CREDS_ENCRYPTED):
         # if yes:
         token = GITHUB_TOKEN
+=======
+    path_to_creds = _get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
+        # if yes:
+        with open(path_to_creds, 'rb') as cred_file:
+            content = cred_file.readlines()
+        token = content[0].split('entry:')[1].replace('\n', '')
+        is_encrypted = content[1].split('entry:')[1]
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
         if 'old_pass' in kwargs and 'new_pass' in kwargs:
             logging.info('Using new credentials from user input...')
             old_pass = kwargs['old_pass']
             new_pass = kwargs['new_pass']
         else:
             logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
-            old_pass = getpass.getpass('Old Passphrase: ')
+            if is_encrypted == '0':
+                pass
+            else:
+                old_pass = getpass.getpass('Old Passphrase: ')
             new_pass = getpass.getpass('New Passphrase: ')
+<<<<<<< HEAD
         token = _decrypt_with_key(token, old_pass)
         # Writing new data
         os.environ[GITHUB_TOKEN] = _encrypt_with_key(token, new_pass)
+=======
+        if old_pass is not None:
+            token = _decrypt_with_key(token, old_pass)
+        # Writing new data
+        with open(path_to_creds, 'wb') as cred_file:
+            if new_pass != '':
+                cred_file.write('entry:'+_encrypt_with_key(token, new_pass)+'\n')
+                cred_file.write('entry:'+'1')
+            else:
+                cred_file.write('entry:'+token+'\n')
+                cred_file.write('entry:'+'0')
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
         logging.info('Passphrase has been successfully updated.')
     # if no print warning.
     else:
         logging.warn('No credentials found.')
 
 
+<<<<<<< HEAD
+=======
+def _reset_credentials():
+    """
+    resets credentials.
+    :return: nada
+    """
+    path_to_creds = _get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
+        os.remove(path_to_creds)
+        logging.info('Credentials have been successfully reset.')
+    else:
+        logging.warn('No existing credentials found.')
+
+
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
 def _set_credentials(**kwargs):
     """
     set credentials
     :return: nada
     """
     if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
+<<<<<<< HEAD
         logging.info('Using token found in user input...')
+=======
+        logging.info('Using credentials found in user input...')
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
         tkn = kwargs['token']
         passphrase = kwargs['passphrase']
     else:
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
+<<<<<<< HEAD
     os.environ[GITHUB_TOKEN] = _encrypt_with_key(tkn, passphrase)
     logging.info('Your credentials were successfully set.')
+=======
+    path_to_creds = _get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
+        logging.info('Older credentials file was found, resetting...')
+        _reset_credentials()
+    with open(path_to_creds, 'wb') as cred_file:
+        if passphrase != '':
+            cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
+            cred_file.write('entry:'+'1')
+        else:
+            cred_file.write('entry:'+tkn+'\n')
+            cred_file.write('entry:'+'0')
+    logging.info('Your credentials were successfully set.')
+
+
+def _cred_test(credentials, team):
+    """
+
+    :param credentials:
+    :return:
+    """
+    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team})
+>>>>>>> 79a48da54e616e0204627c695be880099436ccf3
