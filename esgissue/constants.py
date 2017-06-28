@@ -64,6 +64,11 @@ INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'mip_era', 5: 'severity
               8: 'materials', 9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed'}
 
 
+# PYESSV STUFF
+
+WCRP_AUTH = "wcrp"
+
+
 # ERROR DICTIONARY
 ERROR_DIC = {
                  'title': [1, 'Title field missing or invalid.'],
@@ -111,9 +116,11 @@ GITHUB_TOKEN = "ERRATA_CLIENT_GITHUB_TOKEN"
 GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 
 # WEBSERVICE
+
 URL_BASE = 'https://test-errata-api.es-doc.org'
 
 # URL_BASE = 'http://localhost:5001'
+
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
            'CLOSE': '/1/issue/close?uid=',

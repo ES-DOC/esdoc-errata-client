@@ -113,7 +113,7 @@
     "items": {
       "type": "string",
       "minLength": 1,
-      "enum":["hadgem3-gc31-hm", "hadgem3-gc31-hh", "giss-e2-1g", "cnrm-cm6-1-hr", "ukesm1-0-ll", "giss-e2-1h", "hadgem3-gc31-ll", "ec-earth3-veg", "access-1-0", "noresm2-hh", "mri-esm2-0", "mpiesm-1-2-hr", "nicam16-7s", "ciesm", "noresm2-lm", "nicam16-9d-l78", "ec-earth3-aerchem", "ec-earth3-hr", "ec-earth3-gris", "nicam16-9s", "ec-earth3-lr", "mpiesm-1-2-lr", "awi-cm-1-0", "cnrm-esm2-1", "cnrm-cm6-1", "emac-2-53-vol", "bnu-esm-1-1", "pcmdi-test-1-0", "hadgem3-gc31-mm", "noresm2-lmec", "noresm2-mh", "noresm2-mm", "ec-earth3-veg-lr", "vresm-1-0", "ec-earth3", "ec-earth3-cc", "cnrm-esm2-1-hr", "ukesm1-0-mmh", "miroc6", "nicam16-8s", "iitm-esm", "mpiesm-2-lr", "emac-2-53-aerchem", "miroc-es2h", "noresm2-lme", "miroc-es2l"]
+      "enum":["ipsl-cm6-1", "hadgem3-gc31-hm", "hadgem3-gc31-hh", "giss-e2-1g", "cnrm-cm6-1-hr", "ukesm1-0-ll", "giss-e2-1h", "hadgem3-gc31-ll", "ec-earth3-veg", "access-1-0", "noresm2-hh", "mri-esm2-0", "mpiesm-1-2-hr", "nicam16-7s", "ciesm", "noresm2-lm", "nicam16-9d-l78", "ec-earth3-aerchem", "ec-earth3-hr", "ec-earth3-gris", "nicam16-9s", "ec-earth3-lr", "mpiesm-1-2-lr", "awi-cm-1-0", "cnrm-esm2-1", "cnrm-cm6-1", "emac-2-53-vol", "bnu-esm-1-1", "pcmdi-test-1-0", "hadgem3-gc31-mm", "noresm2-lmec", "noresm2-mh", "noresm2-mm", "ec-earth3-veg-lr", "vresm-1-0", "ec-earth3", "ec-earth3-cc", "cnrm-esm2-1-hr", "ukesm1-0-mmh", "miroc6", "nicam16-8s", "iitm-esm", "mpiesm-2-lr", "emac-2-53-aerchem", "miroc-es2h", "noresm2-lme", "miroc-es2l"]
             }
     }
 

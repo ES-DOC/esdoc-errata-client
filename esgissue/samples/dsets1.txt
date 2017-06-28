@@ -1,2 +1,11 @@
-cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
-cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp26.yr.ocnBgchem.Oyr.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp45.mon.ocnBgchem.Omon.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp45.mon.ocnBgchem.Omon.r1i1p1#20120804
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp45.yr.ocnBgchem.Oyr.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp45.yr.ocnBgchem.Oyr.r1i1p1#20120804
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp85.mon.ocnBgchem.Omon.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5A-MR.rcp85.yr.ocnBgchem.Oyr.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5B-LR.historical.mon.ocnBgchem.Omon.r1i1p1#20120114
+cmip5.output1.IPSL.IPSL-CM5B-LR.historical.yr.ocnBgchem.Oyr.r1i1p1#20120114
+cmip5.output1.IPSL.IPSL-CM5B-LR.piControl.mon.ocnBgchem.Omon.r1i1p1#20120114
+cmip5.output1.IPSL.IPSL-CM5B-LR.piControl.yr.ocnBgchem.Oyr.r1i1p1#20120114
