@@ -311,6 +311,8 @@ def _get_datasets(dataset_file):
     dsets = list()
     for dset in dataset_file:
         dsets.append(unicode(dset.strip(' \n\r\t')))
+    if len(dsets) == 0:
+        _logging_error(ERROR_DIC['empty_dset_list'])
     return dsets
 
 
@@ -533,7 +535,7 @@ def _authenticate(**kwargs):
                 content = credfile.readlines()
                 is_encrypted = content[1].split('entry:')[1]
                 enc_token = content[0].split('entry:')[1].replace('\n', '')
-            if is_encrypted:
+            if is_encrypted == '1':
                 if 'passphrase' in kwargs:
                     key = kwargs['passphrase']
                 else:
@@ -638,10 +640,12 @@ def _set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def _cred_test(credentials, team):
+def _cred_test(credentials, team=None):
     """
-
+    Test credentials validity.
     :param credentials:
     :return:
     """
+    if not team:
+        team = raw_input('Please specify the institute you wish to test authorization to:')
     _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team})

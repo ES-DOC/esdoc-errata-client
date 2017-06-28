@@ -42,7 +42,7 @@ def get_args():
         action='help',
         help=HELP)
     main.add_argument(
-        '-v',
+        '-v', '--version',
         action='version',
         version='%(prog)s ({0})'.format(__version__),
         help=VERSION_HELP)
@@ -57,14 +57,14 @@ def get_args():
     #######################################
     parent = argparse.ArgumentParser(add_help=False)
     parent.add_argument(
-        '--log',
+        '--log', '-l',
         metavar='$PWD',
         type=str,
         const=os.getcwd(),
         nargs='?',
         help=LOG_HELP)
     parent.add_argument(
-        '-v',
+        '-v', '--version',
         action='store_true',
         default=False,
         help=VERSION_HELP)
@@ -87,14 +87,14 @@ def get_args():
     create._optionals.title = "Arguments"
     create._positionals.title = "Positional arguments"
     create.add_argument(
-        '--issue',
+        '--issue', '-i',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=str,
         help=ISSUE_HELP)
     create.add_argument(
-        '--dsets',
+        '--dsets', '-d',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
@@ -115,14 +115,14 @@ def get_args():
     update._optionals.title = "Optional arguments"
     update._positionals.title = "Positional arguments"
     update.add_argument(
-        '--issue',
+        '--issue', '-i',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=str,
         help=ISSUE_HELP)
     update.add_argument(
-        '--dsets',
+        '--dsets', '-d',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
@@ -144,21 +144,21 @@ def get_args():
     close._optionals.title = "Optional arguments"
     close._positionals.title = "Positional arguments"
     close.add_argument(
-        '--issue',
+        '--issue', '-i',
         nargs='?',
         required=True,
         metavar='PATH/issue.json',
         type=str,
         help=ISSUE_HELP)
     close.add_argument(
-        '--dsets',
+        '--dsets', '-d',
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
         type=argparse.FileType('r'),
         help=DSETS_HELP)
     close.add_argument(
-        '--status',
+        '--status', '-s',
         nargs='?',
         required=False,
         type=str,
@@ -186,14 +186,14 @@ def get_args():
         default=None,
         help='One or several issue number(s) or ESGF id(s) to retrieve.|n Default is to retrieve all errata issues.')
     retrieve.add_argument(
-        '--issues',
+        '--issues', '-i',
         nargs='?',
         metavar='$PWD/issues',
         default='issue_dw',
         type=str,
         help="""Output directory for the retrieved JSON templates.""")
     retrieve.add_argument(
-        '--dsets',
+        '--dsets', '-d',
         nargs='?',
         metavar='$PWD/dsets',
         default='dset_dw',
@@ -255,10 +255,11 @@ def get_args():
             help=CREDSET_HELP,
             add_help=False,
             parents=[parent])
-    credtest.add_argument('--team',
-                            nargs='?',
-                            required=True,
-                            type=str)
+    credtest.add_argument('--institute',
+                          '-i',
+                          nargs='?',
+                          required=True,
+                          type=str)
 
     return main.parse_args()
 
@@ -318,7 +319,7 @@ def run():
         # Get command-line arguments
         args = get_args()
         # init logging
-        if args.v and args.log is not None:
+        if args.version and args.log is not None:
             _init_logging(args.log, level='DEBUG')
         elif args.log is not None:
             _init_logging(args.log)
@@ -335,7 +336,9 @@ def run():
             _reset_credentials()
         elif args.command == CREDTEST:
             credentials = _authenticate()
-            _cred_test(credentials, args.team)
+            institute = args.institute or args.i
+            _cred_test(credentials, institute)
+
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)
@@ -355,7 +358,8 @@ def run():
             else:
                 process_command(command=RETRIEVE_ALL, issue_path=args.issues, dataset_path=args.dsets)
     except KeyboardInterrupt:
-        print('User interruption, now exiting...')
+        print('Keyboard interruption, exiting...')
+
 
 # Main entry point for stand-alone call.
 if __name__ == "__main__":
