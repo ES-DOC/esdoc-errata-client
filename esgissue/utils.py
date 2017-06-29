@@ -321,11 +321,7 @@ def _get_datasets(dataset_file):
     if len(dsets) == 0:
         _logging_error(ERROR_DIC['empty_dset_list'])
     else:
-        for dset in dsets:
-            if '.v' in dset:
-                dsets.append(dset.replace('.v', '#'))
-                dsets.remove(dset)
-            # _test_pattern(dset, pattern=regex_str)
+        dsets = [dset.replace('.v', '#') for dset in dsets]
     dsets = list(set(dsets))
     return dsets
 
