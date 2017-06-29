@@ -54,19 +54,6 @@ Check the help
 
 
 
-Positional arguments:
- command                               One of the four possible actions, create, update, close and retrieve.
-
-Optional arguments:
- --issue                               Issue json file.
-
- --dsets                               dataset list txt file.
-
- --log                                 Directory for log output.
-
- -h, --help                            Show this help message and exit.
-
- -V                                    Program version.
 
 Create an issue
 ---------------
@@ -466,7 +453,33 @@ ____________
 - [12]: Missing or invalid creation date,
 - [13]: Missing or invalid update date,
 - [14]: Missing or invalid close date.
-- [15]: Incoherent dataset id with project drs structure, please make sure both are coherent.
-- [16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)
+- [15]: Field does not support multiple input in a single issue declaration.
+- [16]: Incoherent dataset id with project drs structure, please make sure both are coherent.
+- [17]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)
+- [18]: Github authentication failed.
+- [19]: User lacks privileges to create/update/close issue.
+- [20]: Connection to server failed. Contact admins.
+- [21]: Connection to server timed out. Try again later.
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 
+See full documentation on http://esgissue.readthedocs.org/
+
+The default values are displayed next to the corresponding flags.
+
+Positional arguments:
+ command                               One of the four possible actions, create, update, close and retrieve.
+
+Optional arguments:
+ --issue                               Issue json file.
+
+ --dsets                               dataset list txt file.
+
+ --log                                 Directory for log output.
+
+ -h, --help                            Show this help message and exit.
+
+ -V                                    Program version.
+
+Developed by:
+Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
+Ben Nasser, A. (IPSL - abennasser@ipsl.jussieu.fr)
