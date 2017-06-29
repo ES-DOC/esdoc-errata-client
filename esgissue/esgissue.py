@@ -7,12 +7,13 @@
 
 # Module imports
 import argparse
+import os
 from uuid import uuid4
 from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
-                  _set_credentials, _prepare_retrieve_ids, _prepare_retrieve_dirs, _reset_credentials, _cred_test
+                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test
 
 # Program version
 __version__ = VERSION_NUMBER
