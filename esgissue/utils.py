@@ -325,7 +325,6 @@ def _get_datasets(dataset_file):
             if '.v' in dset:
                 dsets.append(dset.replace('.v', '#'))
                 dsets.remove(dset)
-        print(dsets)
             # _test_pattern(dset, pattern=regex_str)
     dsets = list(set(dsets))
     return dsets
