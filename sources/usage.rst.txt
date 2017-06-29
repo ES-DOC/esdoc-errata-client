@@ -55,21 +55,19 @@ Check the help
     Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
     Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr
 
+    Positional arguments:
+    command                               One of the four possible actions, create, update, close and retrieve.
 
+    Optional arguments:
+    --issue                               Issue json file.
 
-Positional arguments:
- command                               One of the four possible actions, create, update, close and retrieve.
+    --dsets                               dataset list txt file.
 
-Optional arguments:
- --issue                               Issue json file.
+    --log                                 Directory for log output.
 
- --dsets                               dataset list txt file.
+    -h, --help                            Show this help message and exit.
 
- --log                                 Directory for log output.
-
- -h, --help                            Show this help message and exit.
-
- -V                                    Program version.
+    -V                                    Program version.
 
 Exit status
 ***********
