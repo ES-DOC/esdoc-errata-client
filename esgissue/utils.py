@@ -6,6 +6,7 @@
 """
 
 # Module imports
+import os
 import re
 import sys
 import logging
@@ -648,4 +649,4 @@ def _cred_test(credentials, team=None):
     """
     if not team:
         team = raw_input('Please specify the institute you wish to test authorization to:')
-    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team})
+    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
