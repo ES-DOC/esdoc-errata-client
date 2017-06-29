@@ -270,7 +270,6 @@ class LocalIssue(object):
             del data[DATE_CLOSED]
         # Getting the directory where the issue file is going to be persisted.
         path_to_issue, path_to_dataset = _get_retrieve_dirs(issues, dsets, data[UID])
-        print(path_to_issue, path_to_dataset)
         logging.info('Issue #{} data to issue file {}'.format(data[UID], path_to_issue))
         logging.info('Issue #{} datasets to dataset file {}'.format(data[UID], path_to_dataset))
         # Persisting Datasets
