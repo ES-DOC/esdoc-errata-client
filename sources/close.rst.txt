@@ -29,7 +29,7 @@ open for other users to be careful about the affected files in future use. To ma
 To close an issue, users are required to use the client's ``close`` command. Which will mark issue as closed in the remote ESGF Errata server and reflect this change in the local
 files in coherence with every step in the issue life cycle.
 
-From our previous issue (see :ref:`update`), the ``close``subcommand has a similar structure to the creation and update:
+From our previous issue (see :ref:`update`), the ``close`` subcommand has a similar structure to the creation and update:
 
 .. code-block:: bash
 

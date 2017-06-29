@@ -16,6 +16,7 @@ that are notified of the existence of an issue regarding one or many datasets/fi
    close
    retrieve
    usage
+   api
    faq
    credits
    log
