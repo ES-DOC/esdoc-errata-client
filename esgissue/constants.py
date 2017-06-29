@@ -1,5 +1,5 @@
 import os
-VERSION_NUMBER = '0.1.7.3'
+VERSION_NUMBER = '0.1.7.4'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -117,9 +117,9 @@ GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 
 # WEBSERVICE
 
-# URL_BASE = 'https://test-errata-api.es-doc.org'
-
-URL_BASE = 'http://localhost:5001'
+URL_BASE = 'https://test-errata-api.es-doc.org'
+FE_URL = 'https://test-errata.es-doc.org/viewer.html?uid='
+# URL_BASE = 'http://localhost:5001'
 
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',

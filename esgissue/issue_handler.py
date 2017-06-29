@@ -19,9 +19,9 @@ import simplejson
 import datetime
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
-from utils import _test_url, _test_pattern, _traverse, _get_ws_call, _get_file_path, _resolve_validation_error_code, \
+from utils import _test_url, _test_pattern, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
                   _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
-                  _resolve_status
+                  _resolve_status, _prepare_retrieve_dirs
 
 
 class LocalIssue(object):
@@ -59,10 +59,11 @@ class LocalIssue(object):
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
         # Validate issue attributes against JSON issue schema
+        logging.info('Extracting facets...')
         for dataset in self.json[DATASETS]:
             facets = _extract_facets(dataset, self.project, self.config)
-            logging.info('Facets extracted.')
             self.json = _update_json(facets, self.json)
+        logging.info('Facets extracted.')
         try:
             logging.info('Validating issue...')
             validate(self.json, schema)
@@ -108,6 +109,7 @@ class LocalIssue(object):
                 self.json = _order_json(self.json)
                 issue_file.write(simplejson.dumps(self.json, indent=4))
                 logging.info('Issue file has been created successfully!')
+                logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
@@ -132,6 +134,8 @@ class LocalIssue(object):
 
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
+            logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
+
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'], None)
         except ConnectTimeout:
@@ -192,6 +196,7 @@ class LocalIssue(object):
                 self.json = _order_json(self.json)
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been closed successfully!')
+            logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
@@ -206,6 +211,7 @@ class LocalIssue(object):
         :param dsets:
         :return:
         """
+        issues, dsets = _prepare_retrieve_dirs(issues, dsets, list_of_ids)
         for n in list_of_ids:
             logging.info('Processing id {}'.format(n))
             try:
@@ -263,7 +269,8 @@ class LocalIssue(object):
         if DATE_CLOSED in data.keys() and data[DATE_CLOSED] is None:
             del data[DATE_CLOSED]
         # Getting the directory where the issue file is going to be persisted.
-        path_to_issue, path_to_dataset = _get_file_path(issues, dsets, data[UID])
+        path_to_issue, path_to_dataset = _get_retrieve_dirs(issues, dsets, data[UID])
+        print(path_to_issue, path_to_dataset)
         logging.info('Issue #{} data to issue file {}'.format(data[UID], path_to_issue))
         logging.info('Issue #{} datasets to dataset file {}'.format(data[UID], path_to_dataset))
         # Persisting Datasets

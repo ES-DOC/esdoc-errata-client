@@ -92,7 +92,7 @@ def _test_url(url):
         _logging_error(ERROR_DIC[URLS], url)
 
 
-def _test_pattern(text):
+def _test_pattern(text, pattern):
     """
     Tests a regex pattern on a string.
 
@@ -101,9 +101,8 @@ def _test_pattern(text):
     :rtype: *boolean*
 
     """
-    pattern = "^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+#[0-9]{8}$"
     if not re.match(re.compile(pattern), text):
-        _logging_error(ERROR_DIC['malformed_dataset_id'].format(text))
+        _logging_error(ERROR_DIC['malformed_dataset_id'][1].format(text))
         return False
     else:
         return True
@@ -127,7 +126,7 @@ def _traverse(l, tree_types=(list, tuple)):
         yield l
 
 
-def _get_file_path(path_to_issues, path_to_dsets, uid):
+def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     """
     Based on the user input, this function returns the destination of the issue and datasets' file.
     :param path_to_issues: args.issues
@@ -135,9 +134,16 @@ def _get_file_path(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-    if os.path.isdir(path_to_issues) and os.path.isdir(path_to_dsets):
-        path_to_issues = os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2)
-        path_to_dsets = os.path.join(path_to_dsets, DSET_1+uid+DSET_2)
+    download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/downloads/issue_dw')
+    download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/downloads/dset_dw')
+    if not os.path.isdir(download_dir_i):
+        os.makedirs(download_dir_i)
+    if not os.path.isdir(download_dir_d):
+        os.makedirs(download_dir_d)
+    if os.path.isdir(os.path.join(download_dir_i, path_to_issues)) and os.path.isdir(os.path.join(download_dir_d,
+                                                                                                path_to_dsets)):
+        path_to_issues = os.path.join(download_dir_i, os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2))
+        path_to_dsets = os.path.join(download_dir_d, os.path.join(path_to_dsets, DSET_1+uid+DSET_2))
     else:
         path_to_issues = os.path.join(_get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1 + uid + ISSUE_2)
         path_to_dsets = os.path.join(_get_file_location(path_to_dsets, download_dir='downloads'), DSET_1 + uid + DSET_2)
@@ -264,12 +270,12 @@ def _prepare_retrieve_dirs(issues, dsets, list_of_ids):
     :param list_of_ids: list of requested issues.
     :return:
     """
+
     logging.info('Processing requested download directories...')
     if len(list_of_ids) == 1:
         for directory in [issues, dsets]:
-            if not fnmatch(directory, '*.*'):
-                if not os.path.isdir(directory):
-                    os.makedirs(directory)
+            if not os.path.isdir(directory):
+                os.makedirs(directory)
     else:
         for directory in [issues, dsets]:
             if fnmatch(directory, '*.*'):
@@ -317,8 +323,10 @@ def _get_datasets(dataset_file):
     else:
         for dset in dsets:
             if '.v' in dset:
-                dset.replace('.v', '#')
-            _test_pattern(dset)
+                dsets.append(dset.replace('.v', '#'))
+                dsets.remove(dset)
+        print(dsets)
+            # _test_pattern(dset, pattern=regex_str)
     dsets = list(set(dsets))
     return dsets
 
@@ -428,7 +436,6 @@ def _extract_facets(dataset_id, project, config):
         regex_str = _translate_dataset_regex(regex_str, sections)
         match = re.match(regex_str, dataset_id.lower())
         if match:
-            logging.info('Extracting facets...')
             return _match_facets_to_cmip6(match.groupdict())
         else:
             _logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
@@ -662,6 +669,6 @@ def _cred_test(credentials, team=None):
         team = raw_input('Please specify the institute you wish to test authorization to: ')
     r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
     if r.status_code == 200:
-        print('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
+        logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
-        print('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))
+        logging.info('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))
