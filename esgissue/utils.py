@@ -322,6 +322,7 @@ def _get_datasets(dataset_file):
         _logging_error(ERROR_DIC['empty_dset_list'])
     else:
         dsets = [dset.replace('.v', '#') for dset in dsets]
+        dsets = [dset for dset in dsets if dset]
     dsets = list(set(dsets))
     return dsets
 
