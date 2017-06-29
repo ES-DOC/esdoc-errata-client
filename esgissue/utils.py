@@ -601,17 +601,21 @@ def _reset_passphrase(**kwargs):
         logging.warn('No credentials file found.')
 
 
-def _reset_credentials():
-    """
-    resets credentials.
-    :return: nada
-    """
+def _remove_credentials():
     path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         os.remove(path_to_creds)
         logging.info('Credentials have been successfully removed.')
     else:
         logging.warn('No existing credentials found.')
+
+
+def _reset_credentials():
+    """
+    resets credentials.
+    :return: nada
+    """
+    _remove_credentials()
     logging.info('Please reset your credentials.')
     _set_credentials()
 
@@ -631,7 +635,7 @@ def _set_credentials(**kwargs):
     path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         logging.info('Older credentials file was found, resetting...')
-        _reset_credentials()
+        _remove_credentials()
     with open(path_to_creds, 'wb') as cred_file:
         if passphrase != '':
             cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
