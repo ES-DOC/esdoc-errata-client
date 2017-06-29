@@ -157,7 +157,7 @@ def _get_file_location(file_name, download_dir=None):
             file_location += download_dir
         file_location = os.path.join(file_location, file_name)
         if not os.path.isdir(os.path.dirname(file_location)):
-            os.makedirs(file_location)
+            os.makedirs(os.path.dirname(file_location))
         return file_location
 
     else:
@@ -395,8 +395,6 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         r = requests.get(url+uid)
     elif action == CREDTEST:
         r = requests.get(url, auth=credentials, data=payload)
-        print(url)
-        print(r.text)
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
@@ -545,6 +543,8 @@ def _authenticate(**kwargs):
             else:
                 token = enc_token
         else:
+            logging.info('No credentials found on machine. '
+                         'Please set your credentials either on environment variables or on file using this prompt.')
             token = raw_input('Token: ')
             save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
             if save_cred.lower() == 'y':
@@ -557,7 +557,6 @@ def _authenticate(**kwargs):
                         credfile.write('entry:'+token+'\n')
                         credfile.write('entry:'+'0')
                 logging.info('Credentials were successfully saved.')
-                print(os.path.isfile(path_to_creds))
     return token, username
 
 
@@ -582,7 +581,7 @@ def _reset_passphrase(**kwargs):
         else:
             logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
             if is_encrypted == '0':
-                pass
+                old_pass = None
             else:
                 old_pass = getpass.getpass('Old Passphrase: ')
             new_pass = getpass.getpass('New Passphrase: ')
@@ -610,9 +609,11 @@ def _reset_credentials():
     path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         os.remove(path_to_creds)
-        logging.info('Credentials have been successfully reset.')
+        logging.info('Credentials have been successfully removed.')
     else:
         logging.warn('No existing credentials found.')
+    logging.info('Please reset your credentials.')
+    _set_credentials()
 
 
 def _set_credentials(**kwargs):
@@ -648,5 +649,9 @@ def _cred_test(credentials, team=None):
     :return:
     """
     if not team:
-        team = raw_input('Please specify the institute you wish to test authorization to:')
-    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
+        team = raw_input('Please specify the institute you wish to test authorization to: ')
+    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
+    if r.status_code == 200:
+        print('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
+    elif r.status_code == 403:
+        print('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))

@@ -1,5 +1,5 @@
 import os
-VERSION_NUMBER = '0.1.7'
+VERSION_NUMBER = '0.1.7.1'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
