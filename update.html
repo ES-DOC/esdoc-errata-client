@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
         <link rel="next" title="Close an issue" href="close.html"/>
         <link rel="prev" title="Create an issue" href="create.html"/> 
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
@@ -93,7 +102,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -109,8 +119,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">esgissue</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">esgissue</a>
+        
       </nav>
 
 
@@ -119,23 +131,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Update an issue</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Update an issue</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="sources/update.txt" rel="nofollow"> View page source</a>
+            
+            <a href="sources/update.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -143,13 +172,16 @@
             
   <div class="section" id="update-an-issue">
 <span id="update"></span><h1>Update an issue<a class="headerlink" href="#update-an-issue" title="Permalink to this headline">¶</a></h1>
-<p>Once an issue is created, it will be subject to some changes, whether it regards the content of the issue (description
-for instance), its status or the list of affected datasets. The update of an issue is a key part of the issue life-cycle.</p>
+<p>Once an issue is created, it inevitably will be subject to some changes, whether it regards the content of the issue (description
+for instance), its status or the list of affected datasets.</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Updating an issue on the ES-DOC Errata server requires to modify the corresponding issue template or list of affected datasets.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC Errata server using the <span class="xref std std-ref">retrieve</span> subcommand.
-The new issue JSON file is still constrained and validated against a new JSON schema. In fact, to guarantee the issue quality some attributes cannot be changed.</p>
+<p>Updating an issue on the ES-DOC Errata server requires modifying the corresponding issue template or list of affected
+datasets on local files.
+In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC
+Errata server using the <a class="reference internal" href="retrieve.html#retrieve"><span class="std std-ref">Retrieve an issue</span></a> subcommand.
+The new issue JSON file is still constrained and validated against a new JSON schema.
+In fact, to guarantee the issue quality some attributes are immutable.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="29%" />
@@ -200,15 +232,16 @@ The new issue JSON file is still constrained and validated against a new JSON sc
 <p class="first admonition-title">Warning</p>
 <dl class="last docutils">
 <dt>Safeguards requirements are:</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first simple">
 <li>Empty attributes are disallowed.</li>
-<li>As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.</li>
-<li>All optional URLs must be valid (i.e., accessible).</li>
-<li>A status “new” will be affected by the server on the creation.</li>
-<li>The creation date should not be modified in order to preserve an authentic set of records.</li>
-<li>The updated date is returned by the server.</li>
-<li>The issue status cannot change back to &#8220;new&#8221;.</li>
+<li>As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded.</li>
 </ul>
+<p class="last">Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
+- All optional URLs must be valid (i.e., accessible).
+- A status “new” will be affected by the server on the creation.
+- The creation date should not be modified in order to preserve an authentic set of records.
+- The updated date is returned by the server.
+- The issue status cannot change back to “new”.</p>
 </dd>
 </dl>
 </div>
@@ -222,7 +255,7 @@ The new issue JSON file is still constrained and validated against a new JSON sc
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>The life cycle of an issue may incorporate a few changes within the contents of an issue.
 The <code class="docutils literal"><span class="pre">issue.json</span></code> needs to be at contain the same fields as in after the creation action. If your local file is corrupted
-consider using the <span class="xref std std-ref">retrieve</span> subcommand to download a fresh copy.</p>
+consider using the <a class="reference internal" href="retrieve.html#retrieve"><span class="std std-ref">Retrieve an issue</span></a> subcommand to download a fresh copy.</p>
 <p>From our previous issue template (see <a class="reference internal" href="create.html#create"><span class="std std-ref">Create an issue</span></a>), we altered the description of the issue, the severity, the status status and added 2 new affected datasets.
 This will lead to updated files files as follows:</p>
 <p><code class="docutils literal"><span class="pre">issue.json</span></code>:</p>
@@ -253,10 +286,10 @@ cmip5.output1.IPSL.IPSL-CM5A-LR.piControl.mon.land.Lmon.r3i1p1#20130514
 </div>
 <p>The update command has a similar structure as the creation command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue update --issue /path/to/issue.json --dsets /path/to/new_datasets.txt
- 2016/09/06 05:45:14 PM INFO Validating of issue...
- 2016/09/06 05:45:15 PM INFO Validation Result: SUCCESSFUL
- 2016/09/06 05:45:15 PM INFO Update issue <span class="c1">#66b1b471-221a-42ac-ad69-0a048e924cd4</span>
- 2016/09/06 05:45:15 PM INFO Issue has been updated successfully!
+ <span class="m">2016</span>/09/06 <span class="m">05</span>:45:14 PM INFO Validating of issue...
+ <span class="m">2016</span>/09/06 <span class="m">05</span>:45:15 PM INFO Validation Result: SUCCESSFUL
+ <span class="m">2016</span>/09/06 <span class="m">05</span>:45:15 PM INFO Update issue <span class="c1">#66b1b471-221a-42ac-ad69-0a048e924cd4</span>
+ <span class="m">2016</span>/09/06 <span class="m">05</span>:45:15 PM INFO Issue has been updated successfully!
 </pre></div>
 </div>
 <p>On success the local issue file will be modified again. The update date will be modified accordingly:</p>
@@ -292,15 +325,18 @@ an exception will be thrown.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="close.html" class="btn btn-neutral float-right" title="Close an issue" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="close.html" class="btn btn-neutral float-right" title="Close an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="create.html" class="btn btn-neutral" title="Create an issue" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="create.html" class="btn btn-neutral" title="Create an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -334,7 +370,8 @@ an exception will be thrown.</p>
             VERSION:'0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="static/jquery.js"></script>

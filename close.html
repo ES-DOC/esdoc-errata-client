@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,8 +32,11 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
-        <link rel="next" title="&lt;no title&gt;" href="retrieve.html"/>
+        <link rel="next" title="Retrieve an issue" href="retrieve.html"/>
         <link rel="prev" title="Update an issue" href="update.html"/> 
 
   
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
@@ -93,7 +102,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#mistakes-to-avoid">Mistakes to avoid</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -109,8 +119,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">esgissue</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">esgissue</a>
+        
       </nav>
 
 
@@ -119,23 +131,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Close an issue</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Close an issue</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="sources/close.txt" rel="nofollow"> View page source</a>
+            
+            <a href="sources/close.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -143,34 +172,34 @@
             
   <div class="section" id="close-an-issue">
 <span id="close"></span><h1>Close an issue<a class="headerlink" href="#close-an-issue" title="Permalink to this headline">¶</a></h1>
-<p>At the end of an issue&#8217;s lifecycle, it should be marked as a closed issue in order to prevent confusion. To do so a specific <code class="docutils literal"><span class="pre">close</span></code> subcommand is made available in the ESGF errata client .</p>
+<p>At the end of an issue’s lifecycle, it should be marked as a closed issue in order to prevent confusion. To do so a specific <code class="docutils literal"><span class="pre">close</span></code> subcommand is made available in the ESGF errata client .</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>Closing an issue on the ES-DOC Errata server requires the corresponding issue template and list of affected datasets.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC Errata server using the <span class="xref std std-ref">retrieve</span> subcommand.
-Contrary to the <a class="reference internal" href="update.html#update"><span class="std std-ref">Update an issue</span></a> step, closing an issue doesn&#8217;t require to modify the local files.
+In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC Errata server using the <a class="reference internal" href="retrieve.html#retrieve"><span class="std std-ref">Retrieve an issue</span></a> subcommand.
+Contrary to the <a class="reference internal" href="update.html#update"><span class="std std-ref">Update an issue</span></a> step, closing an issue doesn’t require to modify the local files.
 Similar constraints and safeguards are applied to the issue JSON fields (see <a class="reference internal" href="update.html#update"><span class="std std-ref">Update an issue</span></a>)</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The <code class="docutils literal"><span class="pre">close</span></code> subcommand also modifies the issue files by adding the close date and changing the status to &#8220;wontfix&#8221; or &#8220;resolved&#8221; depending the user choice.</p>
+<p class="last">The <code class="docutils literal"><span class="pre">close</span></code> subcommand also modifies the issue files by adding the close date and changing the status to “wontfix” or “resolved” depending the user choice.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If the issue status has already been updated to &#8220;wontfix&#8221; or &#8220;resolved&#8221; the <code class="docutils literal"><span class="pre">close</span></code> subcommand just close the issue on the ES-DOC Errata server.</p>
+<p class="last">If the issue status has already been updated to “wontfix” or “resolved” the <code class="docutils literal"><span class="pre">close</span></code> subcommand just close the issue on the ES-DOC Errata server.</p>
 </div>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>The final step remaining in the life cycle of the issue is either to close the issue and mark it as done with, or flag it as a wontfix, that will however keep the issue
-open for other users to be careful about the affected files in future use. To mark it as a &#8220;wontfix&#8221;, an update as shown above is sufficient.
-To close an issue, users are required to use the client&#8217;s <code class="docutils literal"><span class="pre">close</span></code> command. Which will mark issue as closed in the remote ESGF Errata server and reflect this change in the local
+open for other users to be careful about the affected files in future use. To mark it as a “wontfix”, an update as shown above is sufficient.
+To close an issue, users are required to use the client’s <code class="docutils literal"><span class="pre">close</span></code> command. Which will mark issue as closed in the remote ESGF Errata server and reflect this change in the local
 files in coherence with every step in the issue life cycle.</p>
-<p>From our previous issue (see <a class="reference internal" href="update.html#update"><span class="std std-ref">Update an issue</span></a>), the <a href="#id1"><span class="problematic" id="id2">``</span></a>close``subcommand has a similar structure to the creation and update:</p>
+<p>From our previous issue (see <a class="reference internal" href="update.html#update"><span class="std std-ref">Update an issue</span></a>), the <a href="#id1"><span class="problematic" id="id2">``</span></a>close“subcommand has a similar structure to the creation and update:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue close --issue /path/to/issue.json --dsets /path/to/new_datasets.txt
- 2016/09/06 06:27:53 PM INFO Validating of issue...
- 2016/09/06 06:27:53 PM INFO Validation Result: SUCCESSFUL
- 2016/09/06 06:27:53 PM INFO Closing issue <span class="c1">#66b1b471-221a-42ac-ad69-0a048e924cd4</span>
- 2016/09/06 06:27:53 PM INFO Issue has been closed successfully!
+ <span class="m">2016</span>/09/06 <span class="m">06</span>:27:53 PM INFO Validating of issue...
+ <span class="m">2016</span>/09/06 <span class="m">06</span>:27:53 PM INFO Validation Result: SUCCESSFUL
+ <span class="m">2016</span>/09/06 <span class="m">06</span>:27:53 PM INFO Closing issue <span class="c1">#66b1b471-221a-42ac-ad69-0a048e924cd4</span>
+ <span class="m">2016</span>/09/06 <span class="m">06</span>:27:53 PM INFO Issue has been closed successfully!
 </pre></div>
 </div>
 <p>On success the local issue file will be modified one last time by adding the close date accordingly:</p>
@@ -207,15 +236,18 @@ an exception will be thrown.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="retrieve.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="retrieve.html" class="btn btn-neutral float-right" title="Retrieve an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="update.html" class="btn btn-neutral" title="Update an issue" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="update.html" class="btn btn-neutral" title="Update an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -249,7 +281,8 @@ an exception will be thrown.</p>
             VERSION:'0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="static/jquery.js"></script>

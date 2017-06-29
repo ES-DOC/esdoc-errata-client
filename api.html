@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ESDoc-ERRATA API &mdash; esgissue 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="esgissue 0.1 documentation" href="index.html"/> 
+
+  
+  <script src="static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> esgissue
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">esgissue</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ESDoc-ERRATA API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="esdoc-errata-api">
+<span id="configuration"></span><h1>ESDoc-ERRATA API<a class="headerlink" href="#esdoc-errata-api" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal"><span class="pre">esdoc-errata-client</span></code> uses various endpoints that can also be used by third party software to use the features that
+the ESDoc-ERRATA project has to offer.</p>
+<div class="section" id="issue-creation">
+<h2>Issue Creation<a class="headerlink" href="#issue-creation" title="Permalink to this headline">¶</a></h2>
+<p>Endpoint used for issue creation. Requires proper authentication and authorization.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/create</span></code>
+Method: <code class="docutils literal"><span class="pre">post</span></code>
+tags: “Issue Management”
+summary: “Create a new issue”
+operationId: “createIssue”
+consumes:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">body</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>description: “Issue json schema”</li>
+<li>required: <code class="docutils literal"><span class="pre">true</span></code></li>
+</ul>
+<p>responses:</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”</p>
+<p>security:</p>
+<ul class="simple">
+<li>github personal access token: - “org:read”</li>
+</ul>
+</div>
+<div class="section" id="issue-update">
+<h2>Issue Update<a class="headerlink" href="#issue-update" title="Permalink to this headline">¶</a></h2>
+<p>Endpoint used for issue update. Requires proper authentication and authorization.
+Local files need to be updated, if tampered with beforehand, they can be downloaded using the retrieve endpoint.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/update</span></code>
+Method: <code class="docutils literal"><span class="pre">post</span></code>
+tags: “Issue Management:”
+summary: “Update an issue”
+operationId: “updateIssue”
+consumes:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">body</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>description: “Issue json schema”</li>
+<li>required: true</li>
+</ul>
+<p>responses:</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”
+security:</p>
+<ul class="simple">
+<li>github personal access token: - “org:read”</li>
+</ul>
+</div>
+<div class="section" id="issue-close">
+<h2>Issue Close<a class="headerlink" href="#issue-close" title="Permalink to this headline">¶</a></h2>
+<p>Endpoint used to close an issue marking its lifecycle’s end. Requires proper authentication and authorization.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/close</span></code>
+Method: <code class="docutils literal"><span class="pre">post</span></code>
+tags: “Issue Management:”
+summary: “closes an issue”
+operationId: “closeIssue”
+consumes:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">body</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>description: “Issue json schema”</li>
+<li>required: true</li>
+</ul>
+<p>responses:</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”
+security:</p>
+<ul class="simple">
+<li>github personal access token: - “org:read”</li>
+</ul>
+</div>
+<div class="section" id="issue-retrieve">
+<h2>Issue Retrieve<a class="headerlink" href="#issue-retrieve" title="Permalink to this headline">¶</a></h2>
+<p>This endpoint serves as download endpoint for issue local files (e.g. the issue.json and datasets.txt)
+This endpoint requires no authentication nor authentication.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/retrieve</span></code>
+Method: <code class="docutils literal"><span class="pre">get</span></code>
+tags: “Issue Management:”
+summary: “downloads issue files”
+operationId: “retrieveIssue”
+consumes:</p>
+<ul class="simple">
+<li>param: <code class="docutils literal"><span class="pre">uid</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">url</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">uid</span></code></li>
+<li>description: “list of uids to download”</li>
+<li>required: false</li>
+</ul>
+<p>responses:</p>
+<p>405: “Bad Method”</p>
+</div>
+<div class="section" id="pid-search">
+<h2>Pid search<a class="headerlink" href="#pid-search" title="Permalink to this headline">¶</a></h2>
+<p>This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
+This is the advanced search endpoint, it seeks information about all versions of every dataset.
+This endpoint requires no authentication nor authentication.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/pid</span></code>
+Method: <code class="docutils literal"><span class="pre">get</span></code>
+tags: “Issue Management:”
+summary: “checks dataset (and entire version history) for issues ”
+operationId: “pidSearch”
+consumes:</p>
+<ul class="simple">
+<li>param: <code class="docutils literal"><span class="pre">pids</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">url</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">pids</span></code></li>
+<li>description: “list of uids to download”</li>
+<li>required: false</li>
+</ul>
+<p>responses:</p>
+<p>405: “Bad Method”</p>
+</div>
+<div class="section" id="simple-pid-search">
+<h2>Simple-Pid search<a class="headerlink" href="#simple-pid-search" title="Permalink to this headline">¶</a></h2>
+<p>This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
+This is the simple response version of the pid endpoint, only the queried versions will be inspected.
+This endpoint requires no authentication nor authentication.</p>
+<p>Path: <code class="docutils literal"><span class="pre">1/issue/simple_pid</span></code>
+Method: <code class="docutils literal"><span class="pre">get</span></code>
+tags: “Issue Management:”
+summary: “checks dataset for issues”
+operationId: “simplePidSearch”
+consumes:</p>
+<ul class="simple">
+<li>param: <code class="docutils literal"><span class="pre">pids</span></code></li>
+</ul>
+<p>produces:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+</ul>
+<p>parameters: in <code class="docutils literal"><span class="pre">url</span></code>:</p>
+<ul class="simple">
+<li>name: <code class="docutils literal"><span class="pre">pids</span></code></li>
+<li>description: “list of uids to download”</li>
+<li>required: false</li>
+</ul>
+<p>responses:</p>
+<p>405: “Bad Method”</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
