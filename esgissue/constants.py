@@ -116,9 +116,9 @@ GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 
 # WEBSERVICE
 
-# URL_BASE = 'https://test-errata-api.es-doc.org'
+URL_BASE = 'https://test-errata-api.es-doc.org'
 
-URL_BASE = 'http://localhost:5001'
+# URL_BASE = 'http://localhost:5001'
 
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
