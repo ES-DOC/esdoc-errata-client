@@ -103,7 +103,7 @@ def _test_pattern(text):
     """
     pattern = "^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+#[0-9]{8}$"
     if not re.match(re.compile(pattern), text):
-        logging.debug('{0} is malformed'.format(text))
+        _logging_error(ERROR_DIC['malformed_dataset_id'].format(text))
         return False
     else:
         return True
@@ -314,6 +314,12 @@ def _get_datasets(dataset_file):
         dsets.append(unicode(dset.strip(' \n\r\t')))
     if len(dsets) == 0:
         _logging_error(ERROR_DIC['empty_dset_list'])
+    else:
+        for dset in dsets:
+            if '.v' in dset:
+                dset.replace('.v', '#')
+            _test_pattern(dset)
+    dsets = list(set(dsets))
     return dsets
 
 
