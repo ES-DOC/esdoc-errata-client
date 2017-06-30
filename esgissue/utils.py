@@ -134,6 +134,10 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
+    if path_to_issues is None or path_to_issues == '.':
+        path_to_issues = ''
+    if path_to_dsets is None or path_to_dsets == '.':
+        path_to_dsets = ''
     if os.environ.get('ESDOC_HOME') is not None:
         download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/issue_dw')
         download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/dsets_dw')
@@ -274,19 +278,23 @@ def _prepare_retrieve_dirs(issues, dsets, list_of_ids):
     :param list_of_ids: list of requested issues.
     :return:
     """
-
+    # if issues is None or issues == '.':
+    #     issues = os.path.join('errata/issue_dw')
+    # if dsets is None or issues == '.':
+    #     dsets = os.path.join('errata/dsets_dw')
     logging.info('Processing requested download directories...')
     if len(list_of_ids) == 1:
-        for directory in [issues, dsets]:
-            if not os.path.isdir(directory):
-                os.makedirs(directory)
+        # for directory in [issues, dsets]:
+            # if not os.path.isdir(directory):
+            #     os.makedirs(directory)
+        pass
     else:
         for directory in [issues, dsets]:
             if fnmatch(directory, '*.*'):
                 _logging_error(ERROR_DIC['multiple_ids'])
-            else:
-                if not os.path.isdir(directory):
-                    os.makedirs(directory)
+            # else:
+            #     if not os.path.isdir(directory):
+            #         os.makedirs(directory)
     return issues, dsets
 
 
