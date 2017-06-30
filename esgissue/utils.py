@@ -324,6 +324,11 @@ def _get_datasets(dataset_file):
         dsets = [dset.replace('.v', '#') for dset in dsets]
         dsets = [dset for dset in dsets if dset]
     dsets = list(set(dsets))
+    logging.info('Rearranging dataset file (removing duplicates and updating version format)...')
+    with open(dataset_file, 'w') as dset_file:
+            for dset in dsets:
+                dset_file.write(dset + '\n')
+    logging.info('Local dataset file rearranged.')
     return dsets
 
 
