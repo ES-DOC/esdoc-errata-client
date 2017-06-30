@@ -78,7 +78,7 @@ This will lead to updated files files as follows:
         "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
+        "mip_era": "cmip5",
         "severity": "critical",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
@@ -118,7 +118,7 @@ On success the local issue file will be modified again. The update date will be 
         "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
+        "mip_era": "cmip5",
         "severity": "critical",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
