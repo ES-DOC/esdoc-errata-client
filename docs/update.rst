@@ -25,7 +25,7 @@ In fact, to guarantee the issue quality some attributes are immutable.
 +-------------------+-----------------------------------------------+
 | ``description``   | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
-| ``project``       | Mandatory and unchanged                       |
+| ``mip_era``       | Mandatory and unchanged                       |
 +-------------------+-----------------------------------------------+
 | ``severity``      | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+

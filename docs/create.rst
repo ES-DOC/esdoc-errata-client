@@ -24,7 +24,7 @@ These JSON attributes/fields consist in:
 +-------------------+-----------------------------------------------+
 | ``description``   | Mandatory                                     |
 +-------------------+-----------------------------------------------+
-| ``project``       | Mandatory and value-controlled                |
+| ``mip_era``       | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
 | ``severity``      | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
@@ -80,7 +80,7 @@ On declaration of the issue this is the regular form of an issue:
     {
         "title": "Test issue title",
         "description": "This is a test description, void of meaning.",
-        "project": "cmip5",
+        "mip_era": "cmip5",
         "severity": "medium",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
@@ -93,8 +93,8 @@ On declaration of the issue this is the regular form of an issue:
 
 .. code-block:: none
 
-    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
-    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
+    cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.3hr.clt.gr.v20170531
+    cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
     [...]
 
 After having successfully formatted the both files in the indicated fashion, create your issue using the ``create`` subcommand:
@@ -121,7 +121,7 @@ On success the local issue file will be modified. The creation and update dates 
         "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
         "title": "Test issue title",
         "description": "This is a test description, void of meaning.",
-        "project": "cmip5",
+        "project": "cmip6",
         "severity": "medium",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
