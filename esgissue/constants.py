@@ -1,5 +1,5 @@
 import os
-VERSION_NUMBER = '0.1.8.0'
+VERSION_NUMBER = '0.1.8.2'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -244,3 +244,8 @@ CREDTEST_DESC = """"esgissue credtest" allows users to test their set credential
 
 CREDTEST_HELP = """Helps user test their registered credentials.|n
                     See "esgissue changepass -h" for full help."""
+
+CREDREMOVE_DESC = """"esgissue credremove" allows users to remove their saved credentials.
+            See "esgissue -h" for global help."""
+CREDREMOVE_HELP = """"esgissue credtest" allows users to remove their saved credentials.
+            See "esgissue -h" for global help."""

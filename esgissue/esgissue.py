@@ -99,7 +99,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
-        type=argparse.FileType('r'),
+        type=argparse.FileType('r+'),
         help=DSETS_HELP)
 
     ###################################
@@ -127,7 +127,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
-        type=argparse.FileType('r'),
+        type=argparse.FileType('r+'),
         help=DSETS_HELP)
 
     ##################################
@@ -156,7 +156,7 @@ def get_args():
         nargs='?',
         required=True,
         metavar='PATH/dsets.list',
-        type=argparse.FileType('r'),
+        type=argparse.FileType('r+'),
         help=DSETS_HELP)
     close.add_argument(
         '--status', '-s',
@@ -266,9 +266,9 @@ def get_args():
     credremove = subparsers.add_parser(
             'credremove',
             prog='esgissue credremove',
-            description=CREDTEST_DESC,
+            description=CREDREMOVE_DESC,
             formatter_class=MultilineFormatter,
-            help=CREDSET_HELP,
+            help=CREDREMOVE_DESC,
             add_help=False,
             parents=[parent])
 
@@ -278,10 +278,7 @@ def get_args():
 def process_command(command, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None, status=None,
                     list_of_ids=None, **kwargs):
     payload = issue_file
-    if dataset_file is not None:
-        dsets = _get_datasets(dataset_file)
-    else:
-        dsets = None
+
     # Fill in mandatory fields
     if command in [CREATE, UPDATE, CLOSE]:
         if 'passphrase' in kwargs:
@@ -299,7 +296,7 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
         payload[DATE_CREATED] = datetime.utcnow().strftime(TIME_FORMAT)
         payload[DATE_UPDATED] = payload[DATE_CREATED]
 
-    local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dsets, issue_path=issue_path,
+    local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dataset_file, issue_path=issue_path,
                              dataset_path=dataset_path)
     if command not in [RETRIEVE, RETRIEVE_ALL]:
         local_issue.validate(command)
