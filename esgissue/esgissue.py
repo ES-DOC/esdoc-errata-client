@@ -13,7 +13,7 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
-                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test
+                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test, _remove_credentials
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -190,14 +190,14 @@ def get_args():
         '--issues', '-i',
         nargs='?',
         metavar='$PWD/issues',
-        default='issue_dw',
+        default='errata/issue_dw',
         type=str,
         help="""Output directory for the retrieved JSON templates.""")
     retrieve.add_argument(
         '--dsets', '-d',
         nargs='?',
         metavar='$PWD/dsets',
-        default='dset_dw',
+        default='errata/dsets_dw',
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
@@ -253,13 +253,24 @@ def get_args():
             prog='esgissue credtest',
             description=CREDTEST_DESC,
             formatter_class=MultilineFormatter,
-            help=CREDSET_HELP,
+            help=CREDTEST_HELP,
             add_help=False,
             parents=[parent])
     credtest.add_argument('--institute',
                           '-i',
                           nargs='?',
                           type=str)
+    #####################################
+    # Subparser for "esgissue credremove" #
+    #####################################
+    credremove = subparsers.add_parser(
+            'credremove',
+            prog='esgissue credremove',
+            description=CREDTEST_DESC,
+            formatter_class=MultilineFormatter,
+            help=CREDSET_HELP,
+            add_help=False,
+            parents=[parent])
 
     return main.parse_args()
 
@@ -337,7 +348,8 @@ def run():
         elif args.command == CREDTEST:
             credentials = _authenticate()
             _cred_test(credentials, args.institute)
-
+        elif args.command == CREDREMOVE:
+            _remove_credentials()
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)

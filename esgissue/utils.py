@@ -134,8 +134,12 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-    download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/downloads/issue_dw')
-    download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/downloads/dset_dw')
+    if os.environ.get('ESDOC_HOME') is not None:
+        download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/issue_dw')
+        download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/dsets_dw')
+    else:
+        download_dir_i = 'errata/issue_dw'
+        download_dir_d = 'errata/dsets_dw'
     if not os.path.isdir(download_dir_i):
         os.makedirs(download_dir_i)
     if not os.path.isdir(download_dir_d):
@@ -324,11 +328,11 @@ def _get_datasets(dataset_file):
         dsets = [dset.replace('.v', '#') for dset in dsets]
         dsets = [dset for dset in dsets if dset]
     dsets = list(set(dsets))
-    logging.info('Rearranging dataset file (removing duplicates and updating version format)...')
-    with open(dataset_file, 'w') as dset_file:
-            for dset in dsets:
-                dset_file.write(dset + '\n')
-    logging.info('Local dataset file rearranged.')
+    # logging.info('Rearranging dataset file (removing duplicates and updating version format)...')
+    # with open(dataset_file, 'w') as dset_file:
+    #         for dset in dsets:
+    #             dset_file.write(dset + '\n')
+    # logging.info('Local dataset file rearranged.')
     return dsets
 
 

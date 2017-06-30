@@ -1,5 +1,5 @@
 import os
-VERSION_NUMBER = '0.1.7.8'
+VERSION_NUMBER = '0.1.8.0'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -41,6 +41,7 @@ CHANGEPASS = 'changepass'
 CREDRESET = 'credreset'
 CREDSET = 'credset'
 CREDTEST = 'credtest'
+CREDREMOVE = 'credremove'
 TEST = 'test'
 ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL, CREDTEST]
 
