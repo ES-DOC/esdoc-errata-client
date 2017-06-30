@@ -190,14 +190,12 @@ def get_args():
         '--issues', '-i',
         nargs='?',
         metavar='$PWD/issues',
-        default='errata/issue_dw',
         type=str,
         help="""Output directory for the retrieved JSON templates.""")
     retrieve.add_argument(
         '--dsets', '-d',
         nargs='?',
         metavar='$PWD/dsets',
-        default='errata/dsets_dw',
         type=str,
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 

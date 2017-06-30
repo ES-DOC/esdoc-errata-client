@@ -245,10 +245,6 @@ class LocalIssue(object):
             results = r.json()[ISSUES]
             for issue in results:
                 data = _prepare_persistence(issue)
-                if not os.path.isdir(issues):
-                    os.makedirs(os.path.dirname(issues))
-                if not os.path.isdir(dsets):
-                    os.mkdirs(os.path.dirname(dsets))
                 self.dump_issue(data, issues, dsets)
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'])
