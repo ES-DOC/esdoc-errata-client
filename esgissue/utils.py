@@ -126,38 +126,6 @@ def _traverse(l, tree_types=(list, tuple)):
         yield l
 
 
-def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
-    """
-    Based on the user input, this function returns the destination of the issue and datasets' file.
-    :param path_to_issues: args.issues
-    :param path_to_dsets: args.dsets
-    :param uid: the issue's identifier
-    :return: path_to_issue, path_to_datasets
-    """
-    if path_to_issues is None or path_to_issues == '.':
-        path_to_issues = ''
-    if path_to_dsets is None or path_to_dsets == '.':
-        path_to_dsets = ''
-    if os.environ.get('ESDOC_HOME') is not None:
-        download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/issue_dw')
-        download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/dsets_dw')
-    else:
-        download_dir_i = 'errata/issue_dw'
-        download_dir_d = 'errata/dsets_dw'
-    if not os.path.isdir(download_dir_i):
-        os.makedirs(download_dir_i)
-    if not os.path.isdir(download_dir_d):
-        os.makedirs(download_dir_d)
-    if os.path.isdir(os.path.join(download_dir_i, path_to_issues)) and os.path.isdir(os.path.join(download_dir_d,
-                                                                                                path_to_dsets)):
-        path_to_issues = os.path.join(download_dir_i, os.path.join(path_to_issues, ISSUE_1+uid+ISSUE_2))
-        path_to_dsets = os.path.join(download_dir_d, os.path.join(path_to_dsets, DSET_1+uid+DSET_2))
-    else:
-        path_to_issues = os.path.join(_get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1 + uid + ISSUE_2)
-        path_to_dsets = os.path.join(_get_file_location(path_to_dsets, download_dir='downloads'), DSET_1 + uid + DSET_2)
-    return path_to_issues, path_to_dsets
-
-
 def _get_file_location(file_name, download_dir=None):
     """
     Tests whether ESDOC_HOME variable is declared in user environment, uses it as directory base if it's the case.
@@ -278,24 +246,52 @@ def _prepare_retrieve_dirs(issues, dsets, list_of_ids):
     :param list_of_ids: list of requested issues.
     :return:
     """
-    # if issues is None or issues == '.':
-    #     issues = os.path.join('errata/issue_dw')
-    # if dsets is None or issues == '.':
-    #     dsets = os.path.join('errata/dsets_dw')
     logging.info('Processing requested download directories...')
     if len(list_of_ids) == 1:
-        # for directory in [issues, dsets]:
-            # if not os.path.isdir(directory):
-            #     os.makedirs(directory)
         pass
     else:
         for directory in [issues, dsets]:
             if fnmatch(directory, '*.*'):
                 _logging_error(ERROR_DIC['multiple_ids'])
-            # else:
-            #     if not os.path.isdir(directory):
-            #         os.makedirs(directory)
     return issues, dsets
+
+
+def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
+    """
+    Based on the user input, this function returns the destination of the issue and datasets' file.
+    :param path_to_issues: args.issues
+    :param path_to_dsets: args.dsets
+    :param uid: the issue's identifier
+    :return: path_to_issue, path_to_datasets
+    """
+    if os.environ.get('ESDOC_HOME') is not None and (path_to_issues is None or path_to_dsets is None):
+        path_to_dsets = ''
+        path_to_issues = ''
+        download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/issue_dw')
+        download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/dsets_dw')
+    elif path_to_issues == '.' and path_to_dsets == '.':
+        path_to_dsets = ''
+        path_to_issues = ''
+        download_dir_d = os.path.join(os.getcwd(), './issue_dw')
+        download_dir_i = os.path.join(os.getcwd(), './dsets_dw')
+    elif path_to_issues is None or path_to_dsets is None:
+        path_to_dsets = ''
+        path_to_issues = ''
+        download_dir_i = os.path.join(os.getcwd(), 'issue_dw')
+        download_dir_d = os.path.join(os.getcwd(), 'dsets_dw')
+    if not os.path.isdir(download_dir_i):
+        os.makedirs(download_dir_i)
+    if not os.path.isdir(download_dir_d):
+        os.makedirs(download_dir_d)
+    if os.path.isdir(os.path.join(download_dir_i, path_to_issues)) and os.path.isdir(os.path.join(download_dir_d,
+                                                                                                  path_to_dsets)):
+        path_to_issues = os.path.join(download_dir_i, ISSUE_1+uid+ISSUE_2)
+        path_to_dsets = os.path.join(download_dir_d, path_to_dsets, DSET_1+uid+DSET_2)
+    else:
+        path_to_issues = os.path.join(_get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1 + uid +
+                                      ISSUE_2)
+        path_to_dsets = os.path.join(_get_file_location(path_to_dsets, download_dir='downloads'), DSET_1 + uid + DSET_2)
+    return path_to_issues, path_to_dsets
 
 
 def _prepare_persistence(data):
@@ -335,6 +331,9 @@ def _get_datasets(dataset_file):
     else:
         dsets = [dset.replace('.v', '#') for dset in dsets]
         dsets = [dset for dset in dsets if dset]
+    for dset in dsets:
+        if '#' not in dset:
+            _logging_error(ERROR_DIC['malformed_dataset_id'], additional_data=dset)
     dsets = list(set(dsets))
     dataset_file.close()
     with open(dataset_file.name, 'w+') as dataset_file:
@@ -502,6 +501,10 @@ def _get_remote_config(project):
     """
     project_ini_file = '{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
+    if os.environ.get('ESDOC_HOME'):
+        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '/.esdoc/errata/'+project_ini_file)
+    else:
+        project_ini_file = '.'+project_ini_file
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
         # Reading local file.
         logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
@@ -536,7 +539,7 @@ def _encrypt_with_key(data, passphrase=''):
     # Generate machine specific key
     key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
     k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    return k.encrypt(data)
+    return k.encrypt(data).encode('string_escape').replace('\\\\','\\')
 
 
 def _decrypt_with_key(data, passphrase=''):
@@ -546,6 +549,7 @@ def _decrypt_with_key(data, passphrase=''):
     :param passphrase: key used in encryption
     :return: decrypted data
     """
+    data = data.decode('string_escape').replace('\\', '\\\\')
     if passphrase is None:
         passphrase = ''
     key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
@@ -581,11 +585,12 @@ def _authenticate(**kwargs):
                 key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
                 with open(path_to_creds, 'wb+') as credfile:
                     if key != '':
-                        credfile.write('entry:'+_encrypt_with_key(token, key)+'\n')
-                        credfile.write('entry:'+'1')
+                        credfile.write(r'entry:'+_encrypt_with_key(token, key))
+                        credfile.write('\n')
+                        credfile.write(r'entry:'+'1')
                     else:
-                        credfile.write('entry:'+token+'\n')
-                        credfile.write('entry:'+'0')
+                        credfile.write(r'entry:'+token+'\n')
+                        credfile.write(r'entry:'+'0')
                 logging.info('Credentials were successfully saved.')
     return token, username
 
@@ -620,10 +625,11 @@ def _reset_passphrase(**kwargs):
         # Writing new data
         with open(path_to_creds, 'wb') as cred_file:
             if new_pass != '':
-                cred_file.write('entry:'+_encrypt_with_key(token, new_pass)+'\n')
+                cred_file.write(r'entry:'+_encrypt_with_key(token, new_pass))
+                cred_file.write('\n')
                 cred_file.write('entry:'+'1')
             else:
-                cred_file.write('entry:'+token+'\n')
+                cred_file.write(r'entry:'+token+'\n')
                 cred_file.write('entry:'+'0')
         logging.info('Passphrase has been successfully updated.')
     # if no print warning.
@@ -668,10 +674,12 @@ def _set_credentials(**kwargs):
         _remove_credentials()
     with open(path_to_creds, 'wb') as cred_file:
         if passphrase != '':
-            cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
+            cred_file.write(r'entry:'+_encrypt_with_key(tkn, passphrase))
+            cred_file.write('\n')
             cred_file.write('entry:'+'1')
         else:
-            cred_file.write('entry:'+tkn+'\n')
+            cred_file.write(r'entry:'+tkn)
+            cred_file.write('\n')
             cred_file.write('entry:'+'0')
     logging.info('Your credentials were successfully set.')
 
