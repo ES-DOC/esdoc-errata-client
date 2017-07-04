@@ -58,7 +58,7 @@ In fact, to guarantee the issue quality some attributes are immutable.
 
     If a mistake occurred while declaring the issue, it should be reported to the administrators (see :ref:`credits`).
 
-Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary.
+Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary as long as the dataset list isn't empty.
 
 Example
 *******
