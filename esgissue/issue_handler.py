@@ -78,9 +78,9 @@ class LocalIssue(object):
                 error_code = _resolve_validation_error_code(ve.message + ve.validator)
             _logging_error(error_code)
         except ValueError as e:
-            logging.error(repr(e.message))
+            _logging_error(repr(e.message))
         except Exception as e:
-            logging.error(repr(e.message))
+            _logging_error(repr(e.message))
             _logging_error(ERROR_DIC['validation_failed'], self.issue_path)
         # Test landing page and materials URLs
         urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
@@ -89,7 +89,7 @@ class LocalIssue(object):
                 if not _test_url(url):
                     _logging_error(ERROR_DIC[URLS], url)
         # Validate the datasets list against the dataset id pattern
-        logging.info('Validation Result: SUCCESSFUL')
+#        logging.info('Validation Result: SUCCESSFUL')
 
     def create(self, credentials):
         """
@@ -131,7 +131,6 @@ class LocalIssue(object):
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
                 self.json = _order_json(self.json)
-
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
             logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))

@@ -102,7 +102,7 @@ def _test_pattern(text, pattern):
 
     """
     if not re.match(re.compile(pattern), text):
-        _logging_error(ERROR_DIC['malformed_dataset_id'][1].format(text))
+        _logging_error(ERROR_DIC['malformed_dataset_id'], additional_data=text)
         return False
     else:
         return True
@@ -272,8 +272,8 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     elif path_to_issues == '.' and path_to_dsets == '.':
         path_to_dsets = ''
         path_to_issues = ''
-        download_dir_d = os.path.join(os.getcwd(), './issue_dw')
-        download_dir_i = os.path.join(os.getcwd(), './dsets_dw')
+        download_dir_i = os.path.join(os.getcwd(), './issue_dw')
+        download_dir_d = os.path.join(os.getcwd(), './dsets_dw')
     elif path_to_issues is None or path_to_dsets is None:
         path_to_dsets = ''
         path_to_issues = ''
@@ -502,7 +502,7 @@ def _get_remote_config(project):
     project_ini_file = '{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
     if os.environ.get('ESDOC_HOME'):
-        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '/.esdoc/errata/'+project_ini_file)
+        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '.esdoc/errata/'+project_ini_file)
     else:
         project_ini_file = '.'+project_ini_file
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:

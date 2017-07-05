@@ -1,5 +1,5 @@
 import os
-VERSION_NUMBER = '0.1.9.0'
+VERSION_NUMBER = '0.1.9.1'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
@@ -99,7 +99,7 @@ ERROR_DIC = {
                  'single_entry_field': [25, 'Field only supports single input per issue declaration.'],
                  'project_not_supported': [26, 'Project indicated in issue is not supported by errata service'],
                  'empty_dset_list': [27, 'List of dataset provided is empty, cannot create/update issue'],
-                 'malformed_dataset_id': [28, 'This dataset id is malformed {}'],
+                 'malformed_dataset_id': [28, 'Dataset id is malformed'],
                  'unknown_error': [99, 'An unknown error has been detected. '
                                        'Please provide the admins with the error stack.']
              }
