@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ESDoc-ERRATA API</a></li>
 </ul>
 
             
@@ -174,80 +175,8 @@
 <div class="section" id="check-the-help">
 <h2>Check the help<a class="headerlink" href="#check-the-help" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue -h
-
- usage: esgissue [-h] [-V]  ...
-
- The publication workflow on the ESGF nodes requires to deal with errata issues.
- The cause behind the version changes has to be published alongside the data: what was updated,
- retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
- be motivated by an issue.
-
- &quot;issue-manager&quot; allows the referenced data providers to easily create, document, update, close or
- remove a validated issue. The issue registration always appears prior to the publication process and
- should be mandatory for additional version, version removal or retraction.
-
- &quot;issue-manager&quot; works with both json and txt files. This allows the data provider in charge of ESGF
- issues to manage one or several json templates gathering the issues locally.
-
- See full documentation on http://esgissue.readthedocs.org/
-
- Optional arguments:
-   -h, --help  Show this help message and exit.
-
-   -V          Program version.
-
- Issue actions:
-
-     create     Creates ESGF issues from a json template to the errata database.
-                See &quot;issue-manager create -h&quot; for full help.
-
-     update     Updates ESGF issues from a json template to the errata database.
-                See &quot;issue-manager update -h&quot; for full help.
-
-     close      Closes ESGF issues on the errata repository.
-                See &quot;issue-manager close -h&quot; for full help.
-
-     retrieve   Retrieves ESGF issues from the errata repository to a json template.
-                See &quot;issue-manager retrieve -h&quot; for full help.
-
-     credset    Sets user&#39;s credentials.
-
-     credreset  Resets user&#39;s credentials.
-
-     changepass Changes the old passphrase into a new one of user&#39;s choice.
-
- Developed by:
- Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
- Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>Positional arguments:</dt>
-<dd>command                               One of the four possible actions, create, update, close and retrieve.</dd>
-<dt>Optional arguments:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">--issue</span></kbd></td>
-<td>Issue json file.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--dsets</span></kbd></td>
-<td>dataset list txt file.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--log</span></kbd></td>
-<td>Directory for log output.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>Show this help message and exit.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-V</span></kbd></td>
-<td>Program version.</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
 </div>
 <div class="section" id="exit-status">
 <h2>Exit status<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>

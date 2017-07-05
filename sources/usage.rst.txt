@@ -10,67 +10,6 @@ Check the help
 
    $> esgissue -h
 
-    usage: esgissue [-h] [-V]  ...
-
-    The publication workflow on the ESGF nodes requires to deal with errata issues.
-    The cause behind the version changes has to be published alongside the data: what was updated,
-    retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
-    be motivated by an issue.
-
-    "issue-manager" allows the referenced data providers to easily create, document, update, close or
-    remove a validated issue. The issue registration always appears prior to the publication process and
-    should be mandatory for additional version, version removal or retraction.
-
-    "issue-manager" works with both json and txt files. This allows the data provider in charge of ESGF
-    issues to manage one or several json templates gathering the issues locally.
-
-    See full documentation on http://esgissue.readthedocs.org/
-
-    Optional arguments:
-      -h, --help  Show this help message and exit.
-
-      -V          Program version.
-
-    Issue actions:
-
-        create     Creates ESGF issues from a json template to the errata database.
-                   See "issue-manager create -h" for full help.
-
-        update     Updates ESGF issues from a json template to the errata database.
-                   See "issue-manager update -h" for full help.
-
-        close      Closes ESGF issues on the errata repository.
-                   See "issue-manager close -h" for full help.
-
-        retrieve   Retrieves ESGF issues from the errata repository to a json template.
-                   See "issue-manager retrieve -h" for full help.
-
-        credset    Sets user's credentials.
-
-        credreset  Resets user's credentials.
-
-        changepass Changes the old passphrase into a new one of user's choice.
-
-    Developed by:
-    Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
-    Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr
-
-
-
-Positional arguments:
- command                               One of the four possible actions, create, update, close and retrieve.
-
-Optional arguments:
- --issue                               Issue json file.
-
- --dsets                               dataset list txt file.
-
- --log                                 Directory for log output.
-
- -h, --help                            Show this help message and exit.
-
- -V                                    Program version.
-
 Exit status
 ***********
 
