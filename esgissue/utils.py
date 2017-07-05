@@ -279,6 +279,11 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
         path_to_issues = ''
         download_dir_i = os.path.join(os.getcwd(), 'issue_dw')
         download_dir_d = os.path.join(os.getcwd(), 'dsets_dw')
+    elif path_to_issues is not None and path_to_dsets is not None:
+        download_dir_i = os.path.abspath(path_to_issues)
+        download_dir_d = os.path.abspath(path_to_dsets)
+        path_to_dsets = ''
+        path_to_issues = ''
     if not os.path.isdir(download_dir_i):
         os.makedirs(download_dir_i)
     if not os.path.isdir(download_dir_d):
