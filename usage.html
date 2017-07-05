@@ -36,7 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
-        <link rel="next" title="ESDoc-ERRATA API" href="api.html"/>
+        <link rel="next" title="Frequently asked questions" href="faq.html"/>
         <link rel="prev" title="Retrieve an issue" href="retrieve.html"/> 
 
   
@@ -103,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#exit-status">Exit status</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">ESDoc-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -175,31 +174,103 @@
 <div class="section" id="check-the-help">
 <h2>Check the help<a class="headerlink" href="#check-the-help" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue -h
+
+ usage: esgissue [-h] [-V]  ...
+
+ The publication workflow on the ESGF nodes requires to deal with errata issues.
+ The cause behind the version changes has to be published alongside the data: what was updated,
+ retracted or removed, and why. Consequently, the publication of a new version of a dataset has to
+ be motivated by an issue.
+
+ &quot;issue-manager&quot; allows the referenced data providers to easily create, document, update, close or
+ remove a validated issue. The issue registration always appears prior to the publication process and
+ should be mandatory for additional version, version removal or retraction.
+
+ &quot;issue-manager&quot; works with both json and txt files. This allows the data provider in charge of ESGF
+ issues to manage one or several json templates gathering the issues locally.
+
+ See full documentation on http://esgissue.readthedocs.org/
+
+ Optional arguments:
+   -h, --help  Show this help message and exit.
+
+   -V          Program version.
+
+ Issue actions:
+
+     create     Creates ESGF issues from a json template to the errata database.
+                See &quot;issue-manager create -h&quot; for full help.
+
+     update     Updates ESGF issues from a json template to the errata database.
+                See &quot;issue-manager update -h&quot; for full help.
+
+     close      Closes ESGF issues on the errata repository.
+                See &quot;issue-manager close -h&quot; for full help.
+
+     retrieve   Retrieves ESGF issues from the errata repository to a json template.
+                See &quot;issue-manager retrieve -h&quot; for full help.
+
+     credset    Sets user&#39;s credentials.
+
+     credreset  Resets user&#39;s credentials.
+
+     changepass Changes the old passphrase into a new one of user&#39;s choice.
+
+ Developed by:
+ Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.jussieu.fr)
+ Bennasser, A. (UPMC/IPSL - abennasser@ipsl.jussieu.fr
 </pre></div>
 </div>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd>command                               One of the four possible actions, create, update, close and retrieve.</dd>
+<dt>Optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--issue</span></kbd></td>
+<td>Issue json file.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--dsets</span></kbd></td>
+<td>dataset list txt file.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--log</span></kbd></td>
+<td>Directory for log output.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>Show this help message and exit.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-V</span></kbd></td>
+<td>Program version.</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
 <div class="section" id="exit-status">
 <h2>Exit status<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>[0]: Successful execution of the requested task,</li>
-<li>[1]: Missing or invalid title,</li>
-<li>[2]: Missing or invalid description,</li>
-<li>[3]: Missing or invalid datasets,</li>
-<li>[4]: Missing or invalid severity,</li>
-<li>[5]: Missing or invalid project,</li>
-<li>[6]: Missing or invalid models,</li>
-<li>[7]: Missing or invalid status,</li>
-<li>[8]: Missing or invalid institute,</li>
-<li>[9]: Missing or invalid materials,</li>
-<li>[10]: Missing or invalid urls,</li>
-<li>[11]: Missing or invalid id (uid),</li>
-<li>[12]: Missing or invalid creation date,</li>
-<li>[13]: Missing or invalid update date,</li>
-<li>[14]: Missing or invalid close date.</li>
+<li>[1]: Missing or invalid title in issue json file,</li>
+<li>[2]: Missing or invalid description in issue json file,</li>
+<li>[3]: Missing or invalid datasets in issue json file,</li>
+<li>[4]: Missing or invalid severity in issue json file,</li>
+<li>[5]: Missing or invalid project (mip era) in issue json file,</li>
+<li>[6]: Missing or invalid models (source id) in issue json file,</li>
+<li>[7]: Missing or invalid status in issue json file (status should be one of [new, onhold, wontfix, resolved]),</li>
+<li>[8]: Missing or invalid institute (institution id) in issue json file,</li>
+<li>[9]: Missing or invalid materials in issue json file,</li>
+<li>[10]: Missing or invalid urls in issue json file,</li>
+<li>[11]: Missing or invalid id (uid) in issue json file (do not attempt to tamper with already generated uids download a fresh copy of issue files if necessary),</li>
+<li>[12]: Missing or invalid creation date (creation date should not be altered, download fresh copy of local issue files if necessary),</li>
+<li>[13]: Missing or invalid update date (update date should not be altered, download fresh copy of local issue files if necessary),</li>
+<li>[14]: Missing or invalid close date (close date should not be altered, download fresh copy of local issue files if necessary).</li>
 <li>[15]: Incoherent dataset id with project drs structure, please make sure both are coherent.</li>
 <li>[16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)</li>
 <li>[17]: Authentication failed. Make sure the credentials are correct.</li>
-<li>[18]: User lacks required privilege. Contact admins for further information.</li>
+<li>[18]: User lacks required privilege. Make sure you’re part of the institute’s errata publication team on github. Contact admins for further information.</li>
 <li>[19]: Connection failed, server probably down. Contact admins.</li>
 <li>[20]: Connection timed out, try again later.</li>
 <li>[21]: Multiple issue ids were provided along with a single file destination, aborting.</li>
@@ -208,9 +279,11 @@
 <li>[24]: WS request failed for unknown reason.</li>
 <li>[25]: Field only supports single input per issue declaration.</li>
 <li>[26]: Project indicated in issue is not supported by errata service.</li>
-<li>[27]: A dataset list is required for either creation or update operation. This message also shows in case user tries to close an issue by indicating an empty dataset file.</li>
-<li>[99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.</li>
+<li>[27]: A dataset list is required for either creation or update operation. This message also shows in case user tries</li>
 </ul>
+<p>to close an issue by indicating an empty dataset file.
+- [28]: Dataset malformed and doesn’t comply to the expected regex.
+- [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.</p>
 </div>
 </div>
 
@@ -224,7 +297,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="ESDoc-ERRATA API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="retrieve.html" class="btn btn-neutral" title="Retrieve an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

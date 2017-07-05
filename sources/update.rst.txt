@@ -25,7 +25,7 @@ In fact, to guarantee the issue quality some attributes are immutable.
 +-------------------+-----------------------------------------------+
 | ``description``   | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
-| ``project``       | Mandatory and unchanged                       |
+| ``mip_era``       | Mandatory and unchanged                       |
 +-------------------+-----------------------------------------------+
 | ``severity``      | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
@@ -47,8 +47,7 @@ In fact, to guarantee the issue quality some attributes are immutable.
    Safeguards requirements are:
     - Empty attributes are disallowed.
     - As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded.
-
-   Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
+    Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
     - All optional URLs must be valid (i.e., accessible).
     - A status “new” will be affected by the server on the creation.
     - The creation date should not be modified in order to preserve an authentic set of records.
@@ -59,7 +58,7 @@ In fact, to guarantee the issue quality some attributes are immutable.
 
     If a mistake occurred while declaring the issue, it should be reported to the administrators (see :ref:`credits`).
 
-Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary.
+Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary as long as the dataset list isn't empty.
 
 Example
 *******
@@ -79,7 +78,7 @@ This will lead to updated files files as follows:
         "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
+        "mip_era": "cmip5",
         "severity": "critical",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
@@ -119,7 +118,7 @@ On success the local issue file will be modified again. The update date will be 
         "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
+        "mip_era": "cmip5",
         "severity": "critical",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",

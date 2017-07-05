@@ -171,53 +171,34 @@
             
   <div class="section" id="authentication">
 <span id="configuration"></span><h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>The most important step towards properly configuring and the good use of the ESGF errata cliant is the authentication part.</p>
+<p>Authentication is key to an optimal use of the esgissue-client features.</p>
 <div class="section" id="github-setup">
 <h2>GitHub setup<a class="headerlink" href="#github-setup" title="Permalink to this headline">¶</a></h2>
-<p>The most important step towards properly configuring and the good use of the esdoc-errata issue client is the authentication part.
-A verified github account is required, along with a generated personal access token.</p>
-<p>The personal access token can only be generated on github, if the user’s account email has been verified.
-It can be found under your profile settings page: <a class="reference external" href="https://github.com/settings/profile">https://github.com/settings/profile</a></p>
+<p>A verified GitHub account is required, as well as a personal access token generated through your github profile setting page: <a class="reference external" href="https://github.com/settings/profile">https://github.com/settings/profile</a></p>
 <a class="reference internal image-reference" href="images/token_generation.png"><img alt="Github's personal access token generation interface" class="align-center" src="images/token_generation.png" style="width: 600.0px; height: 400.0px;" /></a>
-<p>When generating the new token make sure you specify a description that you feel appropriate to the Errata client and to select proper scopes.
-Selecting scopes is a crucial part of the token generation, the errata client doesn’t require anything beside the read org and team membership scope.
-This enables us to reduce to a minimum the potential threats, which is the whole point of delegating authentication to a third party.</p>
+<p>Make sure you associate a meaningful name and description for your newly generated token, to help you manage your tokens.
+The next important step is to set the minimum required scope for your personal access token, Orgs:READ.
+Limiting the number of scopes increases the security of your own personal data associated with your github account.</p>
 <a class="reference internal image-reference" href="images/token_scope.png"><img alt="Github's interface of token scopes" class="align-center" src="images/token_scope.png" style="width: 560.0px; height: 630.0px;" /></a>
-<p>Once the access token has been configured, the authentication part of the errata client is ready.
-A user needs, however, proper writing rights to be authorized to create, update and close issues.</p>
-<p>Authorization is controlled using github’s organizations invitational based structure.
-In order to publish issues related to a specific institute, you have to be part of the issue publishing team organisation respective to that institute.
-After contacting the admins about this matter, the github profile should be invited to the appropriate organization and team.</p>
+<p>The authentication part is set by creating the personal access token.
+For the authorization, a user needs to be part of the orgnization team specified for the institute he/she on behalf of which wishes to publish errata.
+Authorization is controlled using github’s organizations invitational based structure. The ESDoc-ERRATA admin is the only person qualified to add github users to the requested teams.</p>
 </div>
 <div class="section" id="credentials-management">
 <h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
-<p>After successfully creating the personal access token on github, what remains to be done is simply for the convenience of the user.
-Saving credentials makes the use of the errata client much easier. After the first usage of the client to create, update or close an issue,
-the user has a choice to save the credentials locally. Of course, this step can be ignored but users will be asked to provide the
-credentials at each and every use of the client (except for retrieving actions).
-Credentials are safely saved at a local file in a git fashion, encrypted using salt and pepper and sha512 encryption with a pass-phrase
-that the user should provide.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;python esgissue.py create --issue samples/issue1.json --dsets samples/dsets1.txt
-$&gt;Username: AtefBN
-$&gt;Token: 44axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-$&gt;Would you like to save your credentials <span class="k">for</span> later uses? <span class="o">(</span>y/n<span class="o">)</span>: y
-$&gt;Select passphrase to encrypt credentials, this will log you in from now on:
-$&gt;2017/01/03 <span class="m">11</span>:57:06 AM INFO Credentials were successfully saved.
-$&gt;2017/01/03 <span class="m">11</span>:57:06 AM INFO Validating issue...
-$&gt;2017/01/03 <span class="m">11</span>:57:07 AM INFO Validation Result: SUCCESSFUL
-$&gt;2017/01/03 <span class="m">11</span>:57:07 AM INFO Requesting issue <span class="c1">#91ad5eb8-d1d1-44ce-94ec-473473e8654a creation from errata service...</span>
-$&gt;2017/01/03 <span class="m">11</span>:57:09 AM INFO Updating fields of payload after remote issue creation...
-$&gt;2017/01/03 <span class="m">11</span>:57:09 AM INFO Issue json schema has been updated, persisting in file...
-$&gt;2017/01/03 <span class="m">11</span>:57:09 AM INFO Issue file has been created successfully!
-</pre></div>
-</div>
-<p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on. In case the user forgets the pass-phrase,
-the saved credentials can be reset using the command:</p>
+<p>In order to ease the interactions with the ESDoc-ERRATA WS, a user can save the credentials for recurrent use.
+This can be done either through environment variables:</p>
+<p>This will enable the client to retrieve the token whenever the action requires it and stops it from prompting the user to type it in.
+However setting the token on environment variables sets it up for grabs in clear text. For this reason an encrypted local file solution is
+more encouraged to be employed by users. This file is encrypted using a chosen passphrase but it also is valid on the currently used machine only.
+In order to generate your token local file:</p>
+<p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
+In case the user forgets the passphrase the saved credentials can be reset using the command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credreset
 $&gt;2017/01/03 <span class="m">11</span>:54:35 AM INFO Credentials have been successfully reset.
 </pre></div>
 </div>
-<p>This will obviously result in the reset of the saved credentials, and the client will now ask for that information in the next usages.</p>
+<p>This will obviously result in resetting the saved credentials, and the client will now ask for that information in the next usages.</p>
 <p>In the case that the user does recall the pass-phrase and just wishes to modify it, this is possible using the following command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass  changepass --oldpass AtefBN --newpass ACatchyPassPhrase
 $&gt;2017/01/03 <span class="m">12</span>:30:04 PM INFO Passphrase has been successfully updated.
@@ -227,11 +208,16 @@ $&gt;2017/01/03 <span class="m">12</span>:30:04 PM INFO Passphrase has been succ
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass
 $&gt;2017/01/03 <span class="m">04</span>:45:59 PM INFO Old and new pass-phrases are required, <span class="k">if</span> you forgot yours, use: esgissue credreset
 $&gt;Old Passphrase: AtefBN
-$&gt;New Passphrase: YoloSwag
+$&gt;New Passphrase: ACoolerPassPhrase
 $&gt;2017/01/03 <span class="m">04</span>:46:10 PM INFO Passphrase has been successfully updated.
 </pre></div>
 </div>
 <p>This will prompt user to type in old and new passphrase.</p>
+<p>In the event of wanting to remove your saved credentials that you have saved on your machine:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credremove
+$&gt;2017/01/03 <span class="m">05</span>:29:57 PM INFO Credentials have been successfully removed.
+</pre></div>
+</div>
 </div>
 </div>
 
