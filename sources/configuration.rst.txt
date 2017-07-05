@@ -39,6 +39,7 @@ In order to ease the interactions with the ESDoc-ERRATA WS, a user can save the 
 This can be done either through environment variables:
 
 .. code-block:: bash
+
     $> export ERRATA_CLIENT_GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 This will enable the client to retrieve the token whenever the action requires it and stops it from prompting the user to type it in.
@@ -47,6 +48,7 @@ more encouraged to be employed by users. This file is encrypted using a chosen p
 In order to generate your token local file:
 
 .. code-block:: bash
+
     $> esgissue credset
     $> Token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     $> Passphrase:

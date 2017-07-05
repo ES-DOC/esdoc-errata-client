@@ -101,8 +101,7 @@ Exit status
 - [24]: WS request failed for unknown reason.
 - [25]: Field only supports single input per issue declaration.
 - [26]: Project indicated in issue is not supported by errata service.
-- [27]: A dataset list is required for either creation or update operation. This message also shows in case user tries
-to close an issue by indicating an empty dataset file.
+- [27]: A dataset list is required for either creation or update operation. This message also shows in case user tries to close an issue by indicating an empty dataset file.
 - [28]: Dataset malformed and doesn't comply to the expected regex.
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 

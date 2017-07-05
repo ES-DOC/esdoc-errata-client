@@ -188,10 +188,19 @@ Authorization is controlled using github’s organizations invitational based st
 <h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
 <p>In order to ease the interactions with the ESDoc-ERRATA WS, a user can save the credentials for recurrent use.
 This can be done either through environment variables:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</pre></div>
+</div>
 <p>This will enable the client to retrieve the token whenever the action requires it and stops it from prompting the user to type it in.
 However setting the token on environment variables sets it up for grabs in clear text. For this reason an encrypted local file solution is
 more encouraged to be employed by users. This file is encrypted using a chosen passphrase but it also is valid on the currently used machine only.
 In order to generate your token local file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credset
+$&gt; Token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$&gt; Passphrase:
+$&gt; <span class="m">2017</span>/01/03 <span class="m">05</span>:25:42 PM INFO Your credentials were successfully set.
+</pre></div>
+</div>
 <p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
 In case the user forgets the passphrase the saved credentials can be reset using the command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credreset
