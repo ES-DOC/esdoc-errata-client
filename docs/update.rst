@@ -47,7 +47,8 @@ In fact, to guarantee the issue quality some attributes are immutable.
    Safeguards requirements are:
     - Empty attributes are disallowed.
     - As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded.
-    Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
+
+   Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
     - All optional URLs must be valid (i.e., accessible).
     - A status “new” will be affected by the server on the creation.
     - The creation date should not be modified in order to preserve an authentic set of records.

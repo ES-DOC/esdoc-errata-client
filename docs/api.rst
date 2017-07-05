@@ -1,4 +1,4 @@
-.. _configuration:
+.. _api:
 
 ESDoc-ERRATA API
 ================

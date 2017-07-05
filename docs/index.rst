@@ -19,6 +19,7 @@ that are notified of the existence of an issue regarding one or many datasets/fi
    faq
    credits
    log
+   api
 
 Indices and tables
 ******************
