@@ -324,6 +324,73 @@ def _prepare_persistence(data):
 # TXT operations
 
 
+def _test_datasets_for_version_and_empty(datasets):
+    """
+    of a list of datasets, this function tests empty list and version number
+    :param datasets: list of dataset id as strings
+    :returns dataset_version_dict: dictionary containing dataset id as key and version as value stripped from .v or #
+    """
+    # Testing for empty list
+    logging.info('Pre-validating dataset list...')
+    if datasets is None or len(datasets) == 0:
+        _logging_error(ERROR_DIC['empty_dset_list'])
+        sys.exit(1)
+    # Testing for version number and preparing dataset:version dictionary
+    dataset_version_dict = dict()
+    dataset_index = 0
+    for dset in datasets:
+        if re.search(VERSION_REGEX, dset) is None:
+            _logging_error(ERROR_DIC['malformed_dataset_id'], additional_data=dset)
+            sys.exit(1)
+        else:
+            match = re.search(VERSION_REGEX, dset)
+            version_string = match.group('version_string')
+            # Remove the found version string from the dataset id.
+            dset = dset.replace(version_string, '')
+            if '.v' in version_string:
+                version_string = version_string.replace('.v', '')
+            else:
+                version_string = version_string.replace('#', '')
+            dataset_version_dict[dataset_index] = (dset, version_string)
+            dataset_index += 1
+    # Making sure the dataset list elements are unique.
+    datasets = list(set(dataset_version_dict.values()))
+    dataset_version_dict = dict()
+    real_idx = 0
+    for dset_and_ver in datasets:
+        dataset_version_dict[real_idx] = dset_and_ver
+        real_idx += 1
+    logging.info('Pre-validated dataset list successfully.')
+    return dataset_version_dict
+
+
+def _format_datasets(dataset_version_dict, dset_file):
+    """
+    After dataset_id extraction and validation (using the appropriate project ini file), the ids need to be formatted to
+    meet the errata system expectations in notation.
+    This was separated from the pre-validation workflow in order to maximize compliance with different projects ini
+    files.
+    :param dataset_version_dict: dataset list
+    :param dset_file: path to the local datasets file.
+    :return: modified txt file.
+    """
+    logging.info('Reformatting dataset file...')
+    uniform_list = list()
+    for dset_and_version in dataset_version_dict.values():
+        uniform_list.append(dset_and_version[0]+'#'+dset_and_version[1])
+    uniform_list = list(set(uniform_list))
+    with open(dset_file.name, 'w+') as df:
+        try:
+            logging.info('Rearranging dataset file (removing duplicates and updating version format)...')
+            for dset in uniform_list:
+                df.write(dset + '\n')
+            logging.info('Local dataset file rearranged.')
+        except Exception as e:
+            print(e.message)
+    logging.info('Dataset file reformatted, changes persisted locally.')
+    return uniform_list
+
+
 def _get_datasets(dataset_file):
     """Returns test affected  datasets by a given issue from the respective txt file.
     :param dataset_file: txt file
@@ -331,26 +398,9 @@ def _get_datasets(dataset_file):
     dsets = list()
     for dset in dataset_file:
         dsets.append(unicode(dset.strip(' \n\r\t')))
-    if len(dsets) == 0:
-        _logging_error(ERROR_DIC['empty_dset_list'])
-    else:
-        dsets = [dset.replace('.v', '#') for dset in dsets]
-        dsets = [dset for dset in dsets if dset]
-    for dset in dsets:
-        if '#' not in dset:
-            _logging_error(ERROR_DIC['malformed_dataset_id'], additional_data=dset)
+    # Removing redundancy
     dsets = list(set(dsets))
-    dataset_file.close()
-    with open(dataset_file.name, 'w+') as dataset_file:
-        try:
-            logging.info('Rearranging dataset file (removing duplicates and updating version format)...')
-            for dset in dsets:
-                dataset_file.write(dset + '\n')
-            logging.info('Local dataset file rearranged.')
-        except Exception as e:
-            print(e.message)
     return dsets
-
 
 # JSON operations
 
@@ -359,8 +409,13 @@ def _get_issue(path):
     """reads json file containing issue from path to file.
     :param path: issue json file
     """
-    with open(path, 'r') as data_file:
-        return json.load(data_file)
+    try:
+        with open(path, 'r') as data_file:
+            return json.load(data_file)
+    except ValueError as ve:
+        logging.error('json file is malformed, check the commas.')
+        logging.error(ve.message)
+        sys.exit(1)
 
 
 def _update_json(facets, original_json):
@@ -370,25 +425,17 @@ def _update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-    multiple_facets = ['experiment_id', 'source_id', 'variable_id']
-    allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id', 'experiment_id']
+
+    # multiple_facets = ['experiment_id', 'source_id', 'variable_id']
+    # allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id', 'experiment_id']
     for key, value in facets.iteritems():
-        if key not in original_json and key in allowed_facets:
-            if key not in multiple_facets:
-                # Case of a single value field like the institute.
-                original_json[key] = value.lower()
-            else:
-                # Case of a field that supports a list.
-                original_json[key] = [value.lower()]
-        elif key in original_json and key in multiple_facets:
-            # This is the case of an attempt to change an extracted facet manually and should not be tolerated.
-            # However an error is not raised because this is not the way things should be done.
-            # pass
-            if value not in original_json[key]:
-                original_json[key].append(value)
-        elif key in original_json and key not in multiple_facets and original_json[key] != value.lower():
-            _logging_error(ERROR_DIC['single_entry_field'], 'attempt to insert {} in {}'.format(original_json[key],
-                                                                                                str(key)))
+        if FACETS_KEY not in original_json.keys():
+            original_json[FACETS_KEY] = dict()
+        if key not in original_json[FACETS_KEY].keys():
+            original_json[FACETS_KEY][key] = [value.lower()]
+        else:
+            if value.lower() not in original_json[FACETS_KEY][key]:
+                original_json[FACETS_KEY][key].append(value.lower())
     return original_json
 
 
@@ -419,6 +466,8 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
     url = URL_BASE + URL_MAP[action.upper()]
+    # Checking if the errata ws server is up.
+    _check_ws_heartbeat()
     if action in [CREATE, UPDATE]:
         try:
             r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
@@ -444,6 +493,18 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     return r
 
 
+def _check_ws_heartbeat():
+    """
+    checks whether the configured errata ws server is up
+    :return: raises exception if down.
+    """
+    r = requests.get(URL_BASE)
+    if r.status_code != 200:
+        sys.exit(ERROR_DIC['server_down'][0])
+    else:
+        return
+
+
 def _extract_facets(dataset_id, project, config):
     """
     Given a specific project, this function extracts the facets as described in the ini file.
@@ -452,12 +513,11 @@ def _extract_facets(dataset_id, project, config):
     :return: dict
     """
     try:
-        sections = config._sections['project:{}'.format(project)]
-        regex_str = sections[DATASET_ID]
-        regex_str = _translate_dataset_regex(regex_str, sections)
+        regex_str = config.translate(DATASET_ID)
         match = re.match(regex_str, dataset_id.lower())
         if match:
-            return _match_facets_to_cmip6(match.groupdict())
+            # return _match_facets_to_cmip6(match.groupdict())
+            return match.groupdict()
         else:
             _logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
                 dataset_id, project))
@@ -465,16 +525,21 @@ def _extract_facets(dataset_id, project, config):
         _logging_error(ERROR_DIC['project_not_supported'])
 
 
-def _match_facets_to_cmip6(input_dict):
-    matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
-                     'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
-                     'ensemble': 'member_id', 'product': 'product',
-                     'ensemble_member': 'variant_label', 'version': 'version', 'frequency': 'frequency',
-                     'modeling_realm': 'realm', 'cmor_table': 'table_id', 'grid_label': 'grid_label'}
-    output_dict = dict()
-    for key, value in input_dict.iteritems():
-        output_dict[matching_dict[key]] = input_dict[key]
-    return output_dict
+# def _match_facets_to_cmip6(input_dict):
+#     matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
+#                      'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
+#                      'ensemble': 'member_id', 'product': 'product',
+#                      'ensemble_member': 'variant_label', 'version': 'version', 'frequency': 'frequency',
+#                      'modeling_realm': 'realm', 'cmor_table': 'table_id', 'grid_label': 'grid_label'}
+#     matching_dict = {'project': 'mip_era', 'institute': 'institute', 'model': 'model',
+#                      'variable': 'variable', 'experiment': 'experiment', 'activity': 'activity',
+#                      'ensemble': 'ensemble', 'product': 'product',
+#                      'ensemble_member': 'ensemble_member', 'version': 'version', 'frequency': 'frequency',
+#                      'modeling_realm': 'modeling_realm', 'cmor_table': 'cmor_table', 'grid_label': 'grid_label'}
+#     output_dict = dict()
+#     for key, value in input_dict.iteritems():
+#         output_dict[matching_dict[key]] = input_dict[key]
+#     return output_dict
 
 
 def _translate_dataset_regex(pattern, sections):
@@ -498,13 +563,46 @@ def _translate_dataset_regex(pattern, sections):
     return pattern
 
 
+def _get_remote_config_path(project):
+    """
+    Using github api, this returns config file contents.
+    :param project: str
+    :return: ConfigParser instance with proper configuration
+    """
+    project_ini_file = 'esg.{}.ini'.format(project)
+    config = ConfigParser.ConfigParser()
+    if os.environ.get('ESDOC_HOME'):
+        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '.esdoc/errata/'+project_ini_file)
+    else:
+        project_ini_file = '.'+project_ini_file
+    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
+        # Reading local file.
+        logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
+        return os.path.dirname(project_ini_file)
+    else:
+        r = requests.get(GH_FILE_API.format(project))
+        if r.status_code == 200:
+            logging.info('NO LOCAL PROJECT CONFIG FILE FOUND OR DEPRECATED FILE FOUND, RETRIEVING FROM REPO...')
+            # Retrieving distant configuration file
+            raw_file = requests.get(r.json()[DOWNLOAD_URL])
+            config.readfp(StringIO.StringIO(raw_file.text))
+            logging.info('FILE RETRIEVED, PERSISTING LOCALLY...')
+            # Keeping local copy
+            with open(project_ini_file, 'w') as project_file:
+                config.write(project_file)
+            logging.info('FILE PERSISTED.')
+            return os.path.dirname(project_ini_file)
+        else:
+            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
+
+
 def _get_remote_config(project):
     """
     Using github api, this returns config file contents.
     :param project: str
     :return: ConfigParser instance with proper configuration
     """
-    project_ini_file = '{}.ini'.format(project)
+    project_ini_file = 'esg.{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
     if os.environ.get('ESDOC_HOME'):
         project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '.esdoc/errata/'+project_ini_file)

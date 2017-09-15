@@ -5,10 +5,8 @@
 
 """
 
-# TODO: Handle Service interaction with errors in case of drs_id and version number does not exists
-# TODO: Handle Service interaction should consider dictionary to records hundreds of PIDs per issue
-
 # Module imports
+import re
 import sys
 import time
 import linecache
@@ -17,11 +15,13 @@ from json import load
 from jsonschema import validate, ValidationError
 import simplejson
 import datetime
+from ESGConfigParser import SectionParser
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
-from utils import _test_url, _test_pattern, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
+from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
                   _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
-                  _resolve_status, _prepare_retrieve_dirs
+                  _resolve_status, _prepare_retrieve_dirs, _get_remote_config_path, _format_datasets, \
+                  _test_datasets_for_version_and_empty
 
 
 class LocalIssue(object):
@@ -42,6 +42,7 @@ class LocalIssue(object):
         self.dataset_path = dataset_path
         if self.project is not None:
             self.config = _get_remote_config(self.json[PROJECT])
+            self.config_path = _get_remote_config_path(self.json[PROJECT])
 
     def validate(self, action):
         """
@@ -56,18 +57,26 @@ class LocalIssue(object):
 
         """
         # Load JSON schema for issue template
+        # Get schema path by using JSON_SCHEMA_PATH constants.
+        ini_file_section = JSON_SCHEMA_SECTION + self.json[PROJECT]
+        self.config = SectionParser(self.config_path, ini_file_section)
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
-        # Validate issue attributes against JSON issue schema
-        logging.info('Extracting facets...')
-        for dataset in self.json[DATASETS]:
-            facets = _extract_facets(dataset, self.project, self.config)
-            self.json = _update_json(facets, self.json)
-        logging.info('Facets extracted.')
+
+        # Pre-validate issue attributes against action-defined JSON issue schema
         try:
-            logging.info('Validating issue...')
+            logging.info('Validating json file input...')
             validate(self.json, schema)
-            logging.info('Issue is valid.')
+            logging.info('Initial json is valid.')
+        except ValidationError as ve:
+            # REQUIRED BECAUSE SOMETIMES THE RELATIVE PATH RETURNS EMPTY DEQUE FOR SOME REASON.
+            print(ve.message)
+            print(ve.validator)
+            if len(ve.relative_path) != 0:
+                error_code = _resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
+            else:
+                error_code = _resolve_validation_error_code(ve.message + ve.validator)
+            _logging_error(error_code)
         except ValidationError as ve:
             # REQUIRED BECAUSE SOMETIMES THE RELATIVE PATH RETURNS EMPTY DEQUE FOR SOME REASON.
             print(ve.message)
@@ -82,14 +91,38 @@ class LocalIssue(object):
         except Exception as e:
             _logging_error(repr(e.message))
             _logging_error(ERROR_DIC['validation_failed'], self.issue_path)
+
+        # Pre-validation of dataset list + reformatting local files.
+        dataset_version_dictionary = _test_datasets_for_version_and_empty(self.json[DATASETS])
+        # Extracting facets from dataset list, plus validation of extracted facets.
+
+        for dataset in dataset_version_dictionary.values():
+            logging.info('Extracting facets...')
+            facets = _extract_facets(dataset[0], self.project, self.config)
+            logging.info("Facets extracted, validating...")
+            for facet_type, facet_value in facets.iteritems():
+                if facet_type.lower() != 'project' and type(self.config.get_options(facet_type)[0]) != re._pattern_type:
+                    if facet_value.lower() not in [x.lower() for x in self.config.get_options(facet_type)[0]]:
+                        logging.error('Facet {} not recognized with value {}...'.format(facet_type, facet_value))
+                        sys.exit(ERROR_DIC['facet_type_not_recognized'][0])
+                elif facet_type.lower() != 'project':
+                    if not re.match(self.config.get_options(facet_type)[0], facet_value):
+                        logging.error("{} didn't match the regex string {}".format(self.config.get_options(facet_type)[0]))
+                        sys.exit(ERROR_DIC['facet_value_not_recognized'][0])
+            logging.info('Facets successfully validated.')
+            self.json = _update_json(facets, self.json)
+        logging.info('Facets extracted.')
         # Test landing page and materials URLs
         urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
             if url != '':
                 if not _test_url(url):
                     _logging_error(ERROR_DIC[URLS], url)
-        # Validate the datasets list against the dataset id pattern
-#        logging.info('Validation Result: SUCCESSFUL')
+        # Once validated, persisting changes to local dataset file.
+        logging.info('Formatting and persisting datasets...')
+        # Persisting datasets locally and updating issue file accordingly.
+        self.json[DATASETS] = _format_datasets(dataset_version_dictionary, self.dataset_path)
+        logging.info('Datasets persisted successfully.')
 
     def create(self, credentials):
         """
@@ -146,7 +179,7 @@ class LocalIssue(object):
             filename = f.f_code.co_filename
             linecache.checkcache(filename)
             line = linecache.getline(filename, lineno, f.f_globals)
-            print 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj)
+            logging.error('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
             _logging_error(ERROR_DIC['unknown_error'], repr(e))
 
@@ -282,14 +315,3 @@ class LocalIssue(object):
             data = _order_json(data)
             data_file.write(simplejson.dumps(data, indent=4))
         logging.info("Finished processing issue #{}".format(data[UID]))
-
-
-
-
-
-
-
-
-
-
-

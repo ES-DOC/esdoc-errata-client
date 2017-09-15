@@ -1,8 +1,21 @@
 {
-"$schema": "http://json-schema.org/schema#",
-"title": "ESGF issue JSON schema",
-"type": "object",
 "properties": {
+
+  "dateCreated": {
+            "type": "string",
+            "format": "date-time"
+  },
+  "dateUpdated": {
+            "type": "string",
+            "format": "date-time"
+  },
+  "dateClosed": {
+            "type": "string",
+            "format": "date-time"
+  },
+
+
+
   "uid": {
     "type": "string",
     "pattern": "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
@@ -24,25 +37,14 @@
       "critical"
     ]
   },
-  "institute": {
-    "type": "string",
-    "minLength": 1
-  },
-  "project": {
-    "type": "string",
-    "minLength": 1
-  },
-  "url": {
-    "type": "string",
-    "minLength": 1
-  },
-  "materials": {
-    "type": "array",
-    "uniqueItems": true,
+  "datasets":{
     "items": {
-      "type": "string",
-      "pattern": "\\.(jpg|gif|png|tiff)$"
-    }
+      "minLength": 1,
+      "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
   },
   "status": {
     "type": "string",
@@ -53,15 +55,28 @@
       "resolved"
     ]
   },
-  "dateCreated": {
-    "type": "string",
-    "format": "date-time"
+
+
+  "url": {
+    "type": "string"
   },
-  "dateUpdated": {
+  "materials": {
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "type": "string",
+      "pattern": "\\.(jpg|gif|png|tiff)$"
+    }
+  },
+
+  "project": {
     "type": "string",
-    "format": "date-time"
+    "minLength": 1,
+    "enum": ["cmip1", "cmip2", "cmip3", "cmip5", "cmip6", "cordex", "obs4mips"]
   }
+
 },
+
 "additionalProperties": true,
 "required": [
   "dateCreated",
@@ -74,11 +89,10 @@
   "datasets",
   "url",
   "materials",
+  "project"
+],
 
-  "mip_era",
-  "activity_id",
-  "institution_id",
-  "source_id",
-  "experiment_id",
-  "variable_id"]
+"$schema": "http://json-schema.org/schema#",
+"title": "ESGF issue JSON schema",
+"type": "object"
 }

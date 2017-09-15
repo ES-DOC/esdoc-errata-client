@@ -5,6 +5,10 @@ JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirnam
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'close': '{0}/templates/close.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
+JSON_SCHEMA_SECTION = 'project:'
+# REGEX STUFF
+
+VERSION_REGEX = r'(?P<version_string>(\.v|#)\d+)$'
 
 # JSON FIELDS
 
@@ -26,8 +30,9 @@ STATUS_NEW = 'new'
 STATUS_ONHOLD = 'onhold'
 STATUS_WONTFIX = 'wontfix'
 STATUS_RESOLVED = 'resolved'
-PROJECT = 'mip_era'
+PROJECT = 'project'
 COUNT = 'count'
+FACETS_KEY = 'facets'
 
 # ACTIONS
 
@@ -60,7 +65,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # JSON FILE ORDER
 
-INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'mip_era', 5: 'severity', 6: 'status', 7: 'url',
+INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url',
               8: 'materials', 9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed'}
 
 
@@ -100,6 +105,9 @@ ERROR_DIC = {
                  'project_not_supported': [26, 'Project indicated in issue is not supported by errata service'],
                  'empty_dset_list': [27, 'List of dataset provided is empty, cannot create/update issue'],
                  'malformed_dataset_id': [28, 'Dataset id is malformed'],
+                 'facet_type_not_recognized': [29, 'Facet type not recognized by this project configuration.'],
+                 'facet_value_not_recognized': [30, 'Facet value not recognized by this project configuration.'],
+                 'server_down': [31, 'ESDoc ERRATA servers are down or under maintenance.'],
                  'unknown_error': [99, 'An unknown error has been detected. '
                                        'Please provide the admins with the error stack.']
              }
@@ -118,9 +126,9 @@ GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 
 # WEBSERVICE
 
-URL_BASE = 'https://test-errata-api.es-doc.org'
+# URL_BASE = 'https://test-errata-api.es-doc.org'
 FE_URL = 'https://test-errata.es-doc.org/viewer.html?uid='
-# URL_BASE = 'http://localhost:5001'
+URL_BASE = 'http://localhost:5001'
 
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
