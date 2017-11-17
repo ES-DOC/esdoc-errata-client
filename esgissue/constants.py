@@ -6,7 +6,6 @@ JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirnam
                      'close': '{0}/templates/close.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
 PROJECT_OPTIONS_PATH = '{}/templates/projects.json'.format(os.path.dirname(os.path.abspath(__file__)))
-JSON_SCHEMA_SECTION = 'project:'
 # REGEX STUFF
 
 VERSION_REGEX = r'(?P<version_string>(\.v|#)\d+)$'
@@ -14,9 +13,6 @@ VERSION_REGEX = r'(?P<version_string>(\.v|#)\d+)$'
 # JSON FIELDS
 
 UID = 'uid'
-DATE_CREATED = 'dateCreated'
-DATE_UPDATED = 'dateUpdated'
-DATE_CLOSED = 'dateClosed'
 CREATED_BY = 'createdBy'
 UPDATED_BY = 'updatedBy'
 CLOSED_BY = 'closedBy'
@@ -33,12 +29,6 @@ STATUS_WONTFIX = 'wontfix'
 STATUS_RESOLVED = 'resolved'
 PROJECT = 'project'
 COUNT = 'count'
-
-#JSON KEYS
-
-JF_KEY = 'facets'
-JF_INSTITUTE = 'institute'
-KEY_FACETS = [JF_INSTITUTE]
 
 # ACTIONS
 
@@ -92,7 +82,7 @@ ERROR_DIC = {
                  'institution_id': [8, 'Institute field missing or invalid.'],
                  'experiment_id': [9, 'Experiment id missing or invalid'],
                  'materials': [10, 'Materials field missing or invalid.'],
-                 'urls': [11, 'URLs are missing or invalid.'],
+                 'url': [11, 'URLs are missing or invalid.'],
                  'uid': [12, 'UID missing or invalid.'],
                  'datecreated': [13, 'Creation date missing or invalid.'],
                  'dateupdated': [14, 'Update date missing or invalid.'],

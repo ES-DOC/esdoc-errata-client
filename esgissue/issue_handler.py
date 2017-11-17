@@ -6,7 +6,6 @@
 """
 
 # Module imports
-import re
 import sys
 import time
 import linecache
@@ -19,9 +18,9 @@ from ESGConfigParser import SectionParser
 from constants import *
 from requests.exceptions import ConnectionError, ConnectTimeout
 from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
-                  _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
+                  _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
                   _resolve_status, _prepare_retrieve_dirs, _get_remote_config_path, _format_datasets, \
-                  _test_datasets_for_version_and_empty, _filter_facets, _extract_key_facets
+                  _test_datasets_for_version_and_empty
 
 
 class LocalIssue(object):
@@ -40,9 +39,6 @@ class LocalIssue(object):
                 _logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path
         self.dataset_path = dataset_path
-        if self.project is not None:
-            self.config = _get_remote_config(self.json[PROJECT])
-            self.config_path = _get_remote_config_path(self.json[PROJECT])
 
     def validate(self, action):
         """
@@ -58,8 +54,6 @@ class LocalIssue(object):
         """
         # Load JSON schema for issue template
         # Get schema path by using JSON_SCHEMA_PATH constants.
-        ini_file_section = JSON_SCHEMA_SECTION + self.json[PROJECT]
-        self.config = SectionParser(ini_file_section, self.config_path)
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
 
@@ -133,7 +127,6 @@ class LocalIssue(object):
 
         try:
             _get_ws_call(action=self.action, payload=self.json, credentials=credentials)
-            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
@@ -194,8 +187,6 @@ class LocalIssue(object):
                 status = self.json[STATUS]
             _get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials)
             # Only in case the webservice operation succeeded.
-            self.json[DATE_UPDATED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            self.json[DATE_CLOSED] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             if DATASETS in self.json.keys():
                 del self.json[DATASETS]
             with open(self.issue_path, 'w+') as data_file:

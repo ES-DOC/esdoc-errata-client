@@ -206,6 +206,7 @@ def _resolve_validation_error_code(message):
     for key, value in ERROR_DIC.iteritems():
         if key in message.lower():
             return value
+    return ERROR_DIC['unknown_error']
 
 # Preparing operations
 
@@ -420,26 +421,6 @@ def _get_issue(path):
 
 # JSON OPERATIONS
 
-def _update_json(facets, original_json):
-    """
-    update self.json with the newly detected facets from dataset ids.
-    :param facets: dictionary
-    :param original_json: dictionary
-    :return: dictionary with new facets detected.
-    """
-    for key, value in facets.iteritems():
-        if JF_KEY not in original_json.keys():
-            original_json[JF_KEY] = dict()
-        if key not in original_json[JF_KEY].keys():
-            original_json[JF_KEY][key] = [value.lower()]
-        else:
-            if value.lower() not in original_json[JF_KEY][key]:
-                original_json[JF_KEY][key].append(value.lower())
-        # Institute facet once extracted is also appended to the main body of the issue json.
-        if key == JF_INSTITUTE:
-            original_json[key] = value
-    return original_json
-
 
 def _order_json(json_body):
     """
@@ -507,56 +488,6 @@ def _check_ws_heartbeat():
     else:
         return
 
-# FACETS OPERATIONS
-
-def _extract_facets(dataset_id, project, config):
-    """
-    Given a specific project, this function extracts the facets as described in the ini file.
-    :param dataset_id: dataset id containing the facets
-    :param project: project identifier
-    :return: dict
-    """
-    try:
-        regex_str = config.translate(DATASET_ID)
-        match = re.match(regex_str, dataset_id.lower())
-        if match:
-            # return _match_facets_to_cmip6(match.groupdict())
-            return match.groupdict()
-        else:
-            _logging_error(ERROR_DIC['dataset_incoherent'], 'dataset id {} is incoherent with {} DRS structure'.format(
-                dataset_id, project))
-    except KeyError:
-        _logging_error(ERROR_DIC['project_not_supported'])
-
-
-def _extract_key_facets(facets, issue_json):
-    """
-    Some extracted issue facets need to be injected in the main issue json
-    and not the facets sub-object.
-    :param facets: issue facets extracted from datasets
-    :param issue_json: issue_json to update
-    :return:
-    """
-    for facet_key in facets.keys():
-        if facet_key in KEY_FACETS:
-            issue_json[facet_key] = facets[facet_key]
-    return issue_json
-
-
-def _filter_facets(facets, project):
-    """
-    Removes unwanted extracted facets
-    :param facets:
-    :param project:
-    :return:
-    """
-    # pass
-    output = dict()
-    for facet in facets.keys():
-        if facet in _get_project(project, get_projects()).keys():
-            output[facet] = facets[facet]
-    return output
-
 
 def _translate_dataset_regex(pattern, sections):
     """
@@ -594,7 +525,7 @@ def _get_remote_config_path(project):
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
         # Reading local file.
         logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
-        return os.path.dirname(project_ini_file)
+        return project_ini_file
     else:
         r = requests.get(GH_FILE_API.format(project))
         if r.status_code == 200:

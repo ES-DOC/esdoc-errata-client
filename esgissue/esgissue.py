@@ -7,9 +7,7 @@
 
 # Module imports
 import argparse
-import os
 from uuid import uuid4
-from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
@@ -288,8 +286,6 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
     if command == CREATE:
         payload[UID] = str(uuid4())
         payload[STATUS] = unicode(STATUS_NEW)
-        payload[DATE_CREATED] = datetime.utcnow().strftime(TIME_FORMAT)
-        payload[DATE_UPDATED] = payload[DATE_CREATED]
 
     # instatiating a localissue object
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dataset_file, issue_path=issue_path,

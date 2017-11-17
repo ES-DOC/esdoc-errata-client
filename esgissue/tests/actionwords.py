@@ -108,7 +108,7 @@ class Actionwords:
             downloaded_data = json.load(remote_issue)
         # Server copy and local copy of date updated and closed will never match
         # on second level.
-        issue_file_test = self.compare_json(local_data, downloaded_data, [DATE_UPDATED, DATE_CLOSED, URL, MATERIALS])
+        issue_file_test = self.compare_json(local_data, downloaded_data, [URL, MATERIALS])
         if not issue_file_test:
             print(local_data)
             print(downloaded_data)
