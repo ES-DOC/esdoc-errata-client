@@ -11,21 +11,24 @@ import re
 import sys
 import logging
 import textwrap
-from argparse import HelpFormatter
+import pbkdf2
+import platform
 import datetime
 import json
 import requests
-from constants import *
-from collections import OrderedDict
 import getpass
 import ConfigParser
 import StringIO
 import pyDes
+import pyessv
+
+from argparse import HelpFormatter
+from constants import *
+from collections import OrderedDict
 from uuid import getnode as get_mac
-import pbkdf2
-import platform
 from time import time
 from fnmatch import fnmatch
+
 
 # SNI required fix for py2.7
 from requests.packages.urllib3.contrib import pyopenssl
@@ -81,12 +84,10 @@ def _test_url(url):
 
     """
     try:
-        r = requests.head(url)
-        if r.status_code != requests.codes.ok:
+        r = requests.head(str(url))
+        if not r.ok:
             logging.debug('The url {0} is invalid, HTTP response: {1}'.format(url, r.status_code))
-        elif r.status_code == 301:
-            logging.warn('Provided URL {} has redirects, please replace it with proper URL.'.format(url))
-        return r.status_code == requests.codes.ok
+        return r.ok
     except Exception as e:
         _logging_error('Return code {}'.format(r.status_code), url)
         _logging_error(ERROR_DIC[URLS], url)
@@ -134,7 +135,7 @@ def _get_file_location(file_name, download_dir=None):
     :return:
     """
     if ESDOC_VAR in os.environ.keys():
-        file_location = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/')
+        file_location = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/')
         if download_dir is not None:
             file_location += download_dir
         file_location = os.path.join(file_location, file_name)
@@ -264,11 +265,11 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-    if os.environ.get('ESDOC_HOME') is not None and (path_to_issues is None or path_to_dsets is None):
+    if os.environ.get(ESDOC_HOME) is not None and (path_to_issues is None or path_to_dsets is None):
         path_to_dsets = ''
         path_to_issues = ''
-        download_dir_i = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/issue_dw')
-        download_dir_d = os.path.join(os.environ['ESDOC_HOME'], '.esdoc/errata/dsets_dw')
+        download_dir_i = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/issue_dw')
+        download_dir_d = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/dsets_dw')
     elif path_to_issues == '.' and path_to_dsets == '.':
         path_to_dsets = ''
         path_to_issues = ''
@@ -417,6 +418,7 @@ def _get_issue(path):
         logging.error(ve.message)
         sys.exit(1)
 
+# JSON OPERATIONS
 
 def _update_json(facets, original_json):
     """
@@ -425,17 +427,17 @@ def _update_json(facets, original_json):
     :param original_json: dictionary
     :return: dictionary with new facets detected.
     """
-
-    # multiple_facets = ['experiment_id', 'source_id', 'variable_id']
-    # allowed_facets = ['mip_era', 'activity_id', 'source_id', 'variable_id', 'institution_id', 'experiment_id']
     for key, value in facets.iteritems():
-        if FACETS_KEY not in original_json.keys():
-            original_json[FACETS_KEY] = dict()
-        if key not in original_json[FACETS_KEY].keys():
-            original_json[FACETS_KEY][key] = [value.lower()]
+        if JF_KEY not in original_json.keys():
+            original_json[JF_KEY] = dict()
+        if key not in original_json[JF_KEY].keys():
+            original_json[JF_KEY][key] = [value.lower()]
         else:
-            if value.lower() not in original_json[FACETS_KEY][key]:
-                original_json[FACETS_KEY][key].append(value.lower())
+            if value.lower() not in original_json[JF_KEY][key]:
+                original_json[JF_KEY][key].append(value.lower())
+        # Institute facet once extracted is also appended to the main body of the issue json.
+        if key == JF_INSTITUTE:
+            original_json[key] = value
     return original_json
 
 
@@ -451,7 +453,7 @@ def _order_json(json_body):
     return OrderedDict(index_tuple)
 
 
-# Web Service related operations
+# WS OPS
 
 def _get_ws_call(action, payload=None, uid=None, credentials=None):
     """
@@ -482,6 +484,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
+        print(r.text)
         if r.status_code == 401:
             _logging_error(ERROR_DIC['authentication'], 'HTTP CODE: ' + str(r.status_code))
 
@@ -504,6 +507,7 @@ def _check_ws_heartbeat():
     else:
         return
 
+# FACETS OPERATIONS
 
 def _extract_facets(dataset_id, project, config):
     """
@@ -525,21 +529,33 @@ def _extract_facets(dataset_id, project, config):
         _logging_error(ERROR_DIC['project_not_supported'])
 
 
-# def _match_facets_to_cmip6(input_dict):
-#     matching_dict = {'project': 'mip_era', 'institute': 'institution_id', 'model': 'source_id',
-#                      'variable': 'variable_id', 'experiment': 'experiment_id', 'activity': 'activity_id',
-#                      'ensemble': 'member_id', 'product': 'product',
-#                      'ensemble_member': 'variant_label', 'version': 'version', 'frequency': 'frequency',
-#                      'modeling_realm': 'realm', 'cmor_table': 'table_id', 'grid_label': 'grid_label'}
-#     matching_dict = {'project': 'mip_era', 'institute': 'institute', 'model': 'model',
-#                      'variable': 'variable', 'experiment': 'experiment', 'activity': 'activity',
-#                      'ensemble': 'ensemble', 'product': 'product',
-#                      'ensemble_member': 'ensemble_member', 'version': 'version', 'frequency': 'frequency',
-#                      'modeling_realm': 'modeling_realm', 'cmor_table': 'cmor_table', 'grid_label': 'grid_label'}
-#     output_dict = dict()
-#     for key, value in input_dict.iteritems():
-#         output_dict[matching_dict[key]] = input_dict[key]
-#     return output_dict
+def _extract_key_facets(facets, issue_json):
+    """
+    Some extracted issue facets need to be injected in the main issue json
+    and not the facets sub-object.
+    :param facets: issue facets extracted from datasets
+    :param issue_json: issue_json to update
+    :return:
+    """
+    for facet_key in facets.keys():
+        if facet_key in KEY_FACETS:
+            issue_json[facet_key] = facets[facet_key]
+    return issue_json
+
+
+def _filter_facets(facets, project):
+    """
+    Removes unwanted extracted facets
+    :param facets:
+    :param project:
+    :return:
+    """
+    # pass
+    output = dict()
+    for facet in facets.keys():
+        if facet in _get_project(project, get_projects()).keys():
+            output[facet] = facets[facet]
+    return output
 
 
 def _translate_dataset_regex(pattern, sections):
@@ -571,8 +587,8 @@ def _get_remote_config_path(project):
     """
     project_ini_file = 'esg.{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
-    if os.environ.get('ESDOC_HOME'):
-        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '.esdoc/errata/'+project_ini_file)
+    if os.environ.get(ESDOC_HOME):
+        project_ini_file = os.path.join(os.environ.get(ESDOC_HOME), '.esdoc/errata/'+project_ini_file)
     else:
         project_ini_file = '.'+project_ini_file
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
@@ -604,8 +620,8 @@ def _get_remote_config(project):
     """
     project_ini_file = 'esg.{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
-    if os.environ.get('ESDOC_HOME'):
-        project_ini_file = os.path.join(os.environ.get('ESDOC_HOME'), '.esdoc/errata/'+project_ini_file)
+    if os.environ.get(ESDOC_HOME):
+        project_ini_file = os.path.join(os.environ.get(ESDOC_HOME), '.esdoc/errata/'+project_ini_file)
     else:
         project_ini_file = '.'+project_ini_file
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
@@ -661,41 +677,51 @@ def _decrypt_with_key(data, passphrase=''):
 
 
 def _authenticate(**kwargs):
-    username = 'errata-client-user'
-    if os.environ.get(GITHUB_TOKEN) is not None:
+    if os.environ.get(GITHUB_TOKEN) is not None and os.environ.get(GITHUB_USERNAME) is not None and \
+                    os.environ.get(GITHUB_CREDS_ENCRYPTED) is not None:
         token = os.environ.get(GITHUB_TOKEN)
+        username = os.environ.get(GITHUB_USERNAME)
+        if os.environ.get(GITHUB_CREDS_ENCRYPTED) == 1:
+            passphrase = getpass.getpass('Passphrase: ')
+            token = _decrypt_with_key(token, passphrase)
+            username = _decrypt_with_key(username, passphrase)
+        return token, username
     else:
         path_to_creds = _get_file_location('cred.txt')
-        if os.path.isfile(path_to_creds):
+        if os.path.isfile(path_to_creds) and os.path.getsize(path_to_creds) > 0:
             with open(path_to_creds, 'r') as credfile:
                 content = credfile.readlines()
-                is_encrypted = content[1].split('entry:')[1]
-                enc_token = content[0].split('entry:')[1].replace('\n', '')
-            if is_encrypted == '1':
+                enc_username = content[0].split('entry:')[1].replace('\n', '')
+                enc_token = content[1].split('entry:')[1].replace('\n', '')
+                is_encrypted = content[2].split('entry:')[1]
+
+            if is_encrypted:
                 if 'passphrase' in kwargs:
                     key = kwargs['passphrase']
                 else:
                     key = getpass.getpass('Passphrase: ')
                 token = _decrypt_with_key(enc_token, key)
+                username = _decrypt_with_key(enc_username, key)
             else:
+                username = enc_username
                 token = enc_token
         else:
-            logging.info('No credentials found on machine. '
-                         'Please set your credentials either on environment variables or on file using this prompt.')
+            username = raw_input('Username: ')
             token = raw_input('Token: ')
             save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
             if save_cred.lower() == 'y':
                 key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
                 with open(path_to_creds, 'wb+') as credfile:
                     if key != '':
-                        credfile.write(r'entry:'+_encrypt_with_key(token, key))
-                        credfile.write('\n')
-                        credfile.write(r'entry:'+'1')
+                        credfile.write('entry:'+_encrypt_with_key(username, key)+'\n')
+                        credfile.write('entry:'+_encrypt_with_key(token, key)+'\n')
+                        credfile.write('entry:'+'1')
                     else:
-                        credfile.write(r'entry:'+token+'\n')
-                        credfile.write(r'entry:'+'0')
+                        credfile.write('entry:'+username+'\n')
+                        credfile.write('entry:'+token+'\n')
+                        credfile.write('entry:'+'0')
                 logging.info('Credentials were successfully saved.')
-    return token, username
+    return username, token
 
 
 def _reset_passphrase(**kwargs):
@@ -705,48 +731,48 @@ def _reset_passphrase(**kwargs):
     :return: nada
     """
     # check if data exists
+    if os.environ.get(GITHUB_CREDS_ENCRYPTED):
+        # if yes:
+        is_encrypted = '1'
+        username = os.environ.get(GITHUB_USERNAME)
+        token = os.environ.get(GITHUB_TOKEN)
     path_to_creds = _get_file_location('cred.txt')
-    if os.path.isfile(path_to_creds):
+    if os.path.isfile(path_to_creds) and os.path.getsize(path_to_creds) > 0:
         # if yes:
         with open(path_to_creds, 'rb') as cred_file:
             content = cred_file.readlines()
-        token = content[0].split('entry:')[1].replace('\n', '')
-        is_encrypted = content[1].split('entry:')[1]
-        if 'old_pass' in kwargs and 'new_pass' in kwargs:
-            logging.info('Using new credentials from user input...')
-            old_pass = kwargs['old_pass']
-            new_pass = kwargs['new_pass']
+        username = content[0].split('entry:')[1].replace('\n', '')
+        token = content[1].split('entry:')[1].replace('\n', '')
+        is_encrypted = content[2].split('entry:')[1]
+    if username is None or token is None:
+        logging.warn('No credentials found.')
+    if 'old_pass' in kwargs and 'new_pass' in kwargs:
+        logging.info('Using new credentials from user input...')
+        old_pass = kwargs['old_pass']
+        new_pass = kwargs['new_pass']
+    else:
+        logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
+        if is_encrypted == '0':
+            pass
         else:
-            logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
-            if is_encrypted == '0':
-                old_pass = None
-            else:
-                old_pass = getpass.getpass('Old Passphrase: ')
-            new_pass = getpass.getpass('New Passphrase: ')
-        if old_pass is not None:
-            token = _decrypt_with_key(token, old_pass)
-        # Writing new data
-        with open(path_to_creds, 'wb') as cred_file:
-            if new_pass != '':
-                cred_file.write(r'entry:'+_encrypt_with_key(token, new_pass))
-                cred_file.write('\n')
-                cred_file.write('entry:'+'1')
-            else:
-                cred_file.write(r'entry:'+token+'\n')
-                cred_file.write('entry:'+'0')
-        logging.info('Passphrase has been successfully updated.')
-    # if no print warning.
-    else:
-        logging.warn('No credentials file found.')
-
-
-def _remove_credentials():
-    path_to_creds = _get_file_location('cred.txt')
-    if os.path.isfile(path_to_creds):
-        os.remove(path_to_creds)
-        logging.info('Credentials have been successfully removed.')
-    else:
-        logging.warn('No existing credentials found.')
+            old_pass = getpass.getpass('Old Passphrase: ')
+        new_pass = getpass.getpass('New Passphrase: ')
+    username = _decrypt_with_key(username, old_pass)
+    token = _decrypt_with_key(token, old_pass)
+    # Writing new data
+    os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, new_pass)
+    os.environ[GITHUB_TOKEN] = _encrypt_with_key(token, new_pass)
+    # Writing new data
+    with open(path_to_creds, 'wb') as cred_file:
+        if new_pass != '':
+            cred_file.write('entry:'+_encrypt_with_key(username, new_pass)+'\n')
+            cred_file.write('entry:'+_encrypt_with_key(token, new_pass)+'\n')
+            cred_file.write('entry:'+'1')
+        else:
+            cred_file.write('entry:'+username+'\n')
+            cred_file.write('entry:'+token+'\n')
+            cred_file.write('entry:'+'0')
+    logging.info('Passphrase has been successfully updated.')
 
 
 def _reset_credentials():
@@ -754,9 +780,12 @@ def _reset_credentials():
     resets credentials.
     :return: nada
     """
-    _remove_credentials()
-    logging.info('Please reset your credentials.')
-    _set_credentials()
+    path_to_creds = _get_file_location('cred.txt')
+    if os.path.isfile(path_to_creds):
+        os.remove(path_to_creds)
+        logging.info('Credentials have been successfully reset.')
+    else:
+        logging.warn('No existing credentials found.')
 
 
 def _set_credentials(**kwargs):
@@ -765,24 +794,36 @@ def _set_credentials(**kwargs):
     :return: nada
     """
     if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
+        logging.info('Using token found in user input...')
         logging.info('Using credentials found in user input...')
+        username = kwargs['username']
         tkn = kwargs['token']
         passphrase = kwargs['passphrase']
     else:
+        username = raw_input('Username: ')
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
+        if passphrase != '' and passphrase is not None:
+            os.environ[GITHUB_CREDS_ENCRYPTED] = 1
+            os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, passphrase)
+            os.environ[GITHUB_TOKEN] = _encrypt_with_key(tkn, passphrase)
+        else:
+            os.environ[GITHUB_CREDS_ENCRYPTED] = 0
+            os.environ[GITHUB_USERNAME] = username
+            os.environ[GITHUB_TOKEN] = tkn
+
     path_to_creds = _get_file_location('cred.txt')
     if os.path.isfile(path_to_creds):
         logging.info('Older credentials file was found, resetting...')
-        _remove_credentials()
+        _reset_credentials()
     with open(path_to_creds, 'wb') as cred_file:
         if passphrase != '':
-            cred_file.write(r'entry:'+_encrypt_with_key(tkn, passphrase))
-            cred_file.write('\n')
+            cred_file.write('entry:'+_encrypt_with_key(username, passphrase)+'\n')
+            cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
             cred_file.write('entry:'+'1')
         else:
-            cred_file.write(r'entry:'+tkn)
-            cred_file.write('\n')
+            cred_file.write('entry:'+username+'\n')
+            cred_file.write('entry:'+tkn+'\n')
             cred_file.write('entry:'+'0')
     logging.info('Your credentials were successfully set.')
 
@@ -800,3 +841,43 @@ def _cred_test(credentials, team=None):
         logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
         logging.info('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))
+
+
+def _get_project(canonical_name, collection):
+    """Returns a project's configuration information.
+
+    """
+    for cfg in collection:
+        if cfg['canonical_name'] == canonical_name:
+            return cfg['facets']
+
+
+def get_projects():
+    """Returns a project's configuration information.
+
+    :returns: Project configuration.
+    :rtype: dict
+
+    """
+    fpath = PROJECT_OPTIONS_PATH
+    with open(fpath, 'r') as fstream:
+        _PROJECTS = json.load(fstream)
+
+    for key, value in _PROJECTS.items():
+        _map_project(key, value)
+
+    return _PROJECTS.values()
+
+
+def _map_project(canonical_name, obj):
+    """Transforms project configuration for ease of use downstream.
+
+    """
+    obj['canonical_name'] = canonical_name
+    obj['facets'] = {k: {
+        'name': k,
+        'label': v,
+        'collection': pyessv.load(v)
+    } for k, v in obj.get('facets', dict()).items()}
+
+    return obj

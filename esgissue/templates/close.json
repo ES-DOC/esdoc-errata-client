@@ -53,8 +53,9 @@
   },
 
 
-  "url": {
-    "type": "string"
+  "urls": {
+    "type": "array",
+    "uniqueItems": true
   },
   "materials": {
     "type": "array",
@@ -83,7 +84,7 @@
   "severity",
   "status",
   "datasets",
-  "url",
+  "urls",
   "materials",
   "project"
 ],

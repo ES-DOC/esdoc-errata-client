@@ -53,8 +53,9 @@
   },
 
 
-  "url": {
-    "type": "string"
+  "urls": {
+    "type": "array",
+    "uniqueItems": true
   },
   "materials": {
     "type": "array",
@@ -68,7 +69,8 @@
   "project": {
     "type": "string",
     "minLength": 1,
-    "enum": ["cmip1", "cmip2", "cmip3", "cmip5", "cmip6", "cordex", "obs4mips"]
+    "enum": ["cmip5", "cmip6", "cordex", "geomip", "lucid", "pmip3", "tamip", "euclipse", "cordex-adjust", "input4mips",
+    "obs4mips", "isimip-ft", "primavera", "cc4e"]
   }
 
 },
@@ -83,7 +85,7 @@
   "severity",
   "status",
   "datasets",
-  "url",
+  "urls",
   "materials",
   "project"
 ],

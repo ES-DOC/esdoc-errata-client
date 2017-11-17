@@ -1,10 +1,11 @@
 import os
-VERSION_NUMBER = '0.1.9.2'
+VERSION_NUMBER = '0.2.0'
 # JSON issue schemas full path
 JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'close': '{0}/templates/close.json'.format(os.path.dirname(os.path.abspath(__file__))),
                      'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
+PROJECT_OPTIONS_PATH = '{}/templates/projects.json'.format(os.path.dirname(os.path.abspath(__file__)))
 JSON_SCHEMA_SECTION = 'project:'
 # REGEX STUFF
 
@@ -20,7 +21,7 @@ CREATED_BY = 'createdBy'
 UPDATED_BY = 'updatedBy'
 CLOSED_BY = 'closedBy'
 DATASETS = 'datasets'
-URL = 'url'
+URL = 'urls'
 URLS = 'urls'
 MATERIALS = 'materials'
 ISSUES = 'issues'
@@ -32,7 +33,12 @@ STATUS_WONTFIX = 'wontfix'
 STATUS_RESOLVED = 'resolved'
 PROJECT = 'project'
 COUNT = 'count'
-FACETS_KEY = 'facets'
+
+#JSON KEYS
+
+JF_KEY = 'facets'
+JF_INSTITUTE = 'institute'
+KEY_FACETS = [JF_INSTITUTE]
 
 # ACTIONS
 
@@ -80,7 +86,7 @@ ERROR_DIC = {
                  'description': [2, 'Description field missing or invalid.'],
                  'datasets': [3, 'Datasets are missing or invalid.'],
                  'severity': [4, 'Issue severity missing or invalid.'],
-                 'mip_era': [5, 'Project field missing or invalid.'],
+                 'project': [5, 'Project field missing or invalid.'],
                  'source_id': [6, 'Models are missing or invalid.'],
                  'status': [7, 'Status field missing or invalid.'],
                  'institution_id': [8, 'Institute field missing or invalid.'],
@@ -122,13 +128,17 @@ DATASET_ID = 'dataset_id'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 FILE_EXPIRATION_TIME = 15
 GITHUB_TOKEN = "ERRATA_CLIENT_GITHUB_TOKEN"
+GITHUB_USERNAME = "ERRATA_CLIENT_GITHUB_TOKEN"
 GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
+ESDOC_HOME = 'ESDOC_HOME'
 
 # WEBSERVICE
-
+# ON RELEASE
 # URL_BASE = 'https://test-errata-api.es-doc.org'
-FE_URL = 'https://test-errata.es-doc.org/viewer.html?uid='
+# ON TEST NODE
 URL_BASE = 'http://localhost:5001'
+
+FE_URL = 'https://test-errata.es-doc.org/viewer.html?uid='
 
 URL_MAP = {'CREATE': '/1/issue/create',
            'UPDATE': '/1/issue/update',
@@ -159,7 +169,7 @@ ESGISSUE_GENERAL = """
                     See full documentation on https://es-doc.github.io/esdoc-errata-client/"""
 EPILOG = """Developed by:|n
          Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.fr)|n
-         Bennasser, A. (UPMC/IPSL - abennasser@ipsl.fr"""
+         Bennasser, A. (UPMC/IPSL - abennasser@ipsl.fr)"""
 
 OPTIONAL = 'Optional arguments'
 POSITIONAL = 'Positional arguments'

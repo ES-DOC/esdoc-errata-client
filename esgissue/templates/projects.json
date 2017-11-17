@@ -1,0 +1,101 @@
+{
+    "cc4e": {
+        "facets": {
+            "product": "Product",
+            "source_data_id": "Source",
+            "variable": "Variable",
+            "work_package": "Work Package"
+        }
+    },
+    "cmip5": {
+        "facets": {
+            "experiment": "esgf-publisher:cmip5:experiment",
+            "model": "esgf-publisher:cmip5:model",
+            "variable": "esgf-publisher:cmip5:variable"
+        }
+    },
+    "cmip6": {
+        "facets": {
+            "experiment": "esgf-publisher:cmip6:experiment",
+            "source_id": "esgf-publisher:cmip6:source-id",
+            "variable": "esgf-publisher:cmip6:variable"
+        }
+    },
+    "cordex": {
+        "facets": {
+            "experiment": "esgf-publisher:cmip6:experiment",
+            "rcm_name": "esgf-publisher:cmip6:source-id",
+            "variable": "esgf-publisher:cmip6:variable"
+        }
+    },
+    "cordex_adjust": {
+        "facets": {
+            "experiment": "Experiment",
+            "rcm_name": "Model",
+            "variable": "Variable"
+        }
+    },
+    "euclipse": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    },
+    "geomip": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    },
+    "input4mips": {
+        "facets": {
+            "data_type": "Data Type",
+            "source": "Source",
+            "variable": "Variable"
+        }
+    },
+    "isimip_ft": {
+        "facets": {
+            "sector": "Sector",
+            "experiment": "Experiment",
+            "impact_model": "Impact Model",
+            "variable": "Variable"
+        }
+    },
+    "lucid": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    },
+    "obs4mips": {
+        "facets": {
+            "source_id": "Source",
+            "variable": "Variable"
+        }
+    },
+    "pmip3": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    },
+    "primavera": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    },
+    "tamip": {
+        "facets": {
+            "experiment": "Experiment",
+            "model": "Model",
+            "variable": "Variable"
+        }
+    }
+}

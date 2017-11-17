@@ -13,7 +13,7 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
-                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test, _remove_credentials
+                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -285,7 +285,7 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
             credentials = _authenticate()
         # Initializing non-mandatory fields to pass validation process.
         if URL not in payload.keys():
-            payload[URL] = ''
+            payload[URL] = []
         if MATERIALS not in payload.keys():
             payload[MATERIALS] = []
     if command == CREATE:
@@ -304,6 +304,7 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
     elif command == UPDATE:
         local_issue.update(credentials)
     elif command == CLOSE:
+        print(credentials)
         local_issue.close(credentials, status)
     elif command == RETRIEVE:
         local_issue.retrieve(list_of_ids, issue_path, dataset_path)
@@ -343,8 +344,8 @@ def run():
         elif args.command == CREDTEST:
             credentials = _authenticate()
             _cred_test(credentials, args.institute)
-        elif args.command == CREDREMOVE:
-            _remove_credentials()
+        # elif args.command == CREDREMOVE:
+        #     _remove_credentials()
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)

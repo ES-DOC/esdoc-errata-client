@@ -21,7 +21,7 @@ from requests.exceptions import ConnectionError, ConnectTimeout
 from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
                   _extract_facets, _update_json, _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
                   _resolve_status, _prepare_retrieve_dirs, _get_remote_config_path, _format_datasets, \
-                  _test_datasets_for_version_and_empty
+                  _test_datasets_for_version_and_empty, _filter_facets, _extract_key_facets
 
 
 class LocalIssue(object):
@@ -59,7 +59,7 @@ class LocalIssue(object):
         # Load JSON schema for issue template
         # Get schema path by using JSON_SCHEMA_PATH constants.
         ini_file_section = JSON_SCHEMA_SECTION + self.json[PROJECT]
-        self.config = SectionParser(self.config_path, ini_file_section)
+        self.config = SectionParser(ini_file_section, self.config_path)
         with open(JSON_SCHEMA_PATHS[action]) as f:
             schema = load(f)
 
@@ -99,13 +99,16 @@ class LocalIssue(object):
         for dataset in dataset_version_dictionary.values():
             logging.info('Extracting facets...')
             facets = _extract_facets(dataset[0], self.project, self.config)
+            self.json = _extract_key_facets(facets, self.json)
+            facets = _filter_facets(facets, self.project)
             logging.info("Facets extracted, validating...")
             for facet_type, facet_value in facets.iteritems():
-                if facet_type.lower() != 'project' and type(self.config.get_options(facet_type)[0]) != re._pattern_type:
+                if facet_type.lower() not in ['project', 'mip_era']\
+                        and type(self.config.get_options(facet_type)[0]) != re._pattern_type:
                     if facet_value.lower() not in [x.lower() for x in self.config.get_options(facet_type)[0]]:
                         logging.error('Facet {} not recognized with value {}...'.format(facet_type, facet_value))
                         sys.exit(ERROR_DIC['facet_type_not_recognized'][0])
-                elif facet_type.lower() != 'project':
+                elif facet_type.lower() not in ['project', 'mip_era']:
                     if not re.match(self.config.get_options(facet_type)[0], facet_value):
                         logging.error("{} didn't match the regex string {}".format(self.config.get_options(facet_type)[0]))
                         sys.exit(ERROR_DIC['facet_value_not_recognized'][0])
