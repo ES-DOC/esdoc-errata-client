@@ -646,6 +646,17 @@ def _get_remote_config(project):
             raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
 
+def _get_credentials(list_of_args):
+    """
+    checks whether a passphrase has been passed in options or not.
+    :param list_of_args: kwargs
+    """
+    if 'passphrase' in list_of_args:
+        return _authenticate(passphrase=list_of_args['passphrase'])
+    else:
+        return _authenticate()
+
+
 def _encrypt_with_key(data, passphrase=''):
     """
     method for key-encryption, uses 24 bits keys, adds fillers in case its less.

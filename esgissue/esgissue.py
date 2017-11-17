@@ -13,7 +13,7 @@ from datetime import datetime
 from issue_handler import LocalIssue
 from constants import *
 from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, _authenticate, _reset_passphrase,\
-                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test
+                  _set_credentials, _prepare_retrieve_ids, _reset_credentials, _cred_test, _get_credentials
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -277,25 +277,25 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
                     list_of_ids=None, **kwargs):
     payload = issue_file
 
-    # Fill in mandatory fields
     if command in [CREATE, UPDATE, CLOSE]:
-        if 'passphrase' in kwargs:
-            credentials = _authenticate(passphrase=kwargs['passphrase'])
-        else:
-            credentials = _authenticate()
+        credentials = _get_credentials(kwargs)
         # Initializing non-mandatory fields to pass validation process.
         if URL not in payload.keys():
             payload[URL] = []
         if MATERIALS not in payload.keys():
             payload[MATERIALS] = []
+    # intializing mandatory new issue fields
     if command == CREATE:
         payload[UID] = str(uuid4())
         payload[STATUS] = unicode(STATUS_NEW)
         payload[DATE_CREATED] = datetime.utcnow().strftime(TIME_FORMAT)
         payload[DATE_UPDATED] = payload[DATE_CREATED]
 
+    # instatiating a localissue object
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dataset_file, issue_path=issue_path,
                              dataset_path=dataset_path)
+
+    # issue file validation
     if command not in [RETRIEVE, RETRIEVE_ALL]:
         local_issue.validate(command)
     # WS Call
@@ -304,7 +304,6 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
     elif command == UPDATE:
         local_issue.update(credentials)
     elif command == CLOSE:
-        print(credentials)
         local_issue.close(credentials, status)
     elif command == RETRIEVE:
         local_issue.retrieve(list_of_ids, issue_path, dataset_path)
@@ -344,8 +343,6 @@ def run():
         elif args.command == CREDTEST:
             credentials = _authenticate()
             _cred_test(credentials, args.institute)
-        # elif args.command == CREDREMOVE:
-        #     _remove_credentials()
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)

@@ -77,15 +77,6 @@ class LocalIssue(object):
             else:
                 error_code = _resolve_validation_error_code(ve.message + ve.validator)
             _logging_error(error_code)
-        except ValidationError as ve:
-            # REQUIRED BECAUSE SOMETIMES THE RELATIVE PATH RETURNS EMPTY DEQUE FOR SOME REASON.
-            print(ve.message)
-            print(ve.validator)
-            if len(ve.relative_path) != 0:
-                error_code = _resolve_validation_error_code(ve.message + ve.validator + ve.relative_path[0])
-            else:
-                error_code = _resolve_validation_error_code(ve.message + ve.validator)
-            _logging_error(error_code)
         except ValueError as e:
             _logging_error(repr(e.message))
         except Exception as e:
@@ -94,27 +85,7 @@ class LocalIssue(object):
 
         # Pre-validation of dataset list + reformatting local files.
         dataset_version_dictionary = _test_datasets_for_version_and_empty(self.json[DATASETS])
-        # Extracting facets from dataset list, plus validation of extracted facets.
 
-        for dataset in dataset_version_dictionary.values():
-            logging.info('Extracting facets...')
-            facets = _extract_facets(dataset[0], self.project, self.config)
-            self.json = _extract_key_facets(facets, self.json)
-            facets = _filter_facets(facets, self.project)
-            logging.info("Facets extracted, validating...")
-            for facet_type, facet_value in facets.iteritems():
-                if facet_type.lower() not in ['project', 'mip_era']\
-                        and type(self.config.get_options(facet_type)[0]) != re._pattern_type:
-                    if facet_value.lower() not in [x.lower() for x in self.config.get_options(facet_type)[0]]:
-                        logging.error('Facet {} not recognized with value {}...'.format(facet_type, facet_value))
-                        sys.exit(ERROR_DIC['facet_type_not_recognized'][0])
-                elif facet_type.lower() not in ['project', 'mip_era']:
-                    if not re.match(self.config.get_options(facet_type)[0], facet_value):
-                        logging.error("{} didn't match the regex string {}".format(self.config.get_options(facet_type)[0]))
-                        sys.exit(ERROR_DIC['facet_value_not_recognized'][0])
-            logging.info('Facets successfully validated.')
-            self.json = _update_json(facets, self.json)
-        logging.info('Facets extracted.')
         # Test landing page and materials URLs
         urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
         for url in urls:
