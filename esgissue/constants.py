@@ -1,11 +1,5 @@
-import os
 VERSION_NUMBER = '0.2.0'
-# JSON issue schemas full path
-JSON_SCHEMA_PATHS = {'create': '{0}/templates/create.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                     'update': '{0}/templates/update.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                     'close': '{0}/templates/close.json'.format(os.path.dirname(os.path.abspath(__file__))),
-                     'retrieve': '{0}/templates/retrieve.json'.format(os.path.dirname(os.path.abspath(__file__)))}
-PROJECT_OPTIONS_PATH = '{}/templates/projects.json'.format(os.path.dirname(os.path.abspath(__file__)))
+
 # REGEX STUFF
 
 VERSION_REGEX = r'(?P<version_string>(\.v|#)\d+)$'
@@ -56,18 +50,12 @@ DSET_2 = '.txt'
 # WebService
 
 WEBSERVICE = 'WEBSERVICE'
-# URL_BASE = 'url_base'
 HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # JSON FILE ORDER
 
 INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url',
               8: 'materials', 9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed'}
-
-
-# PYESSV STUFF
-
-WCRP_AUTH = "wcrp"
 
 
 # ERROR DICTIONARY
@@ -109,7 +97,7 @@ ERROR_DIC = {
              }
 
 # MISC
-
+CONFIG_FULLPATH = 'eec.json'
 GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini?ref=devel'
 DOWNLOAD_URL = 'download_url'
 URL_BASE = 'URL_BASE'
@@ -121,23 +109,6 @@ GITHUB_TOKEN = "ERRATA_CLIENT_GITHUB_TOKEN"
 GITHUB_USERNAME = "ERRATA_CLIENT_GITHUB_TOKEN"
 GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 ESDOC_HOME = 'ESDOC_HOME'
-
-# WEBSERVICE
-# ON RELEASE
-# URL_BASE = 'https://test-errata-api.es-doc.org'
-# ON TEST NODE
-URL_BASE = 'http://localhost:5001'
-
-FE_URL = 'https://test-errata.es-doc.org/viewer.html?uid='
-
-URL_MAP = {'CREATE': '/1/issue/create',
-           'UPDATE': '/1/issue/update',
-           'CLOSE': '/1/issue/close?uid=',
-           'RETRIEVE': '/1/issue/retrieve?uid=',
-           'RETRIEVE_ALL': '/1/issue/retrieve-all',
-           'CREDTEST': '/1/ops/credtest'
-           }
-
 ESDOC_VAR = 'ESDOC_HOME'
 # Argparse:
 

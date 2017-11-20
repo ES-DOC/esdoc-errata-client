@@ -13,21 +13,20 @@ import logging
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
-import datetime
-from ESGConfigParser import SectionParser
 from constants import *
+from config import _get_config_contents
 from requests.exceptions import ConnectionError, ConnectTimeout
 from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
                   _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
                   _resolve_status, _prepare_retrieve_dirs, _get_remote_config_path, _format_datasets, \
                   _test_datasets_for_version_and_empty
 
-
+cf = _get_config_contents()
 class LocalIssue(object):
     """
     An object representing the local issue.
     """
-    def __init__(self, action, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
+    def __init__(self, action, config, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
         self.action = action
         self.project = None
         if issue_file is not None:
@@ -39,6 +38,7 @@ class LocalIssue(object):
                 _logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path
         self.dataset_path = dataset_path
+        self.config = config
 
     def validate(self, action):
         """
@@ -54,7 +54,7 @@ class LocalIssue(object):
         """
         # Load JSON schema for issue template
         # Get schema path by using JSON_SCHEMA_PATH constants.
-        with open(JSON_SCHEMA_PATHS[action]) as f:
+        with open(self.config['json_schema_paths'][action].format(os.path.dirname(os.path.abspath(__file__)))) as f:
             schema = load(f)
 
         # Pre-validate issue attributes against action-defined JSON issue schema
@@ -110,7 +110,7 @@ class LocalIssue(object):
                 self.json = _order_json(self.json)
                 issue_file.write(simplejson.dumps(self.json, indent=4))
                 logging.info('Issue file has been created successfully!')
-                logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
+                logging.info('Issue can be viewed at {}'.format(cf['url_viewer']+self.json[UID]))
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
@@ -133,7 +133,7 @@ class LocalIssue(object):
                 self.json = _order_json(self.json)
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been updated successfully!')
-            logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
+            logging.info('Issue can be viewed at {}'.format(cf['url_viewer']+self.json[UID]))
 
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'], None)
@@ -193,7 +193,7 @@ class LocalIssue(object):
                 self.json = _order_json(self.json)
                 data_file.write(simplejson.dumps(self.json, indent=4))
             logging.info('Issue has been closed successfully!')
-            logging.info('Issue can be viewed at {}'.format(FE_URL+self.json[UID]))
+            logging.info('Issue can be viewed at {}'.format(cf['url_viewer']+self.json[UID]))
         except ConnectionError:
             _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:

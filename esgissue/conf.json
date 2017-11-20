@@ -1,0 +1,20 @@
+{
+"url_base": "http://localhost:5001",
+"url_viewer": "https://test-errata.es-doc.org/viewer.html?uid=",
+"json_schema_paths" : {
+             "create": "{0}/templates/create.json",
+             "update": "{0}/templates/update.json",
+             "close": "{0}/templates/close.json",
+             "retrieve": "{0}/templates/retrieve.json"
+             },
+"api_map" : {
+            "CREATE": "/1/issue/create",
+            "UPDATE": "/1/issue/update",
+            "CLOSE": "/1/issue/close?uid=",
+            "RETRIEVE": "/1/issue/retrieve?uid=",
+            "RETRIEVE_ALL": "/1/issue/retrieve-all",
+            "CREDTEST": "/1/ops/credtest"
+    },
+"validate_issue_urls": true
+
+}

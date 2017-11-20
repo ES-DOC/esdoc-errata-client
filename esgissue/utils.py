@@ -17,10 +17,8 @@ import datetime
 import json
 import requests
 import getpass
-import ConfigParser
 import StringIO
 import pyDes
-import pyessv
 
 from argparse import HelpFormatter
 from constants import *
@@ -28,13 +26,13 @@ from collections import OrderedDict
 from uuid import getnode as get_mac
 from time import time
 from fnmatch import fnmatch
+from ConfigParser import ConfigParser
+from config import _get_config_contents
 
-
-# SNI required fix for py2.7
-from requests.packages.urllib3.contrib import pyopenssl
-pyopenssl.inject_into_urllib3()
-
-
+# # SNI required fix for py2.7
+# from requests.packages.urllib3.contrib import pyopenssl
+# pyopenssl.inject_into_urllib3()
+cf = _get_config_contents()
 class MultilineFormatter(HelpFormatter):
     """
     Custom formatter class for argument parser to use with the Python
@@ -419,8 +417,6 @@ def _get_issue(path):
         logging.error(ve.message)
         sys.exit(1)
 
-# JSON OPERATIONS
-
 
 def _order_json(json_body):
     """
@@ -448,7 +444,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
-    url = URL_BASE + URL_MAP[action.upper()]
+    url = cf['url_base'] + cf['api_map'][action.upper()]
     # Checking if the errata ws server is up.
     _check_ws_heartbeat()
     if action in [CREATE, UPDATE]:
@@ -482,7 +478,7 @@ def _check_ws_heartbeat():
     checks whether the configured errata ws server is up
     :return: raises exception if down.
     """
-    r = requests.get(URL_BASE)
+    r = requests.get(cf['url_base'])
     if r.status_code != 200:
         sys.exit(ERROR_DIC['server_down'][0])
     else:
@@ -576,6 +572,7 @@ def _get_remote_config(project):
         else:
             raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
 
+# Credentials management tools.
 
 def _get_credentials(list_of_args):
     """
@@ -783,43 +780,3 @@ def _cred_test(credentials, team=None):
         logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
         logging.info('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))
-
-
-def _get_project(canonical_name, collection):
-    """Returns a project's configuration information.
-
-    """
-    for cfg in collection:
-        if cfg['canonical_name'] == canonical_name:
-            return cfg['facets']
-
-
-def get_projects():
-    """Returns a project's configuration information.
-
-    :returns: Project configuration.
-    :rtype: dict
-
-    """
-    fpath = PROJECT_OPTIONS_PATH
-    with open(fpath, 'r') as fstream:
-        _PROJECTS = json.load(fstream)
-
-    for key, value in _PROJECTS.items():
-        _map_project(key, value)
-
-    return _PROJECTS.values()
-
-
-def _map_project(canonical_name, obj):
-    """Transforms project configuration for ease of use downstream.
-
-    """
-    obj['canonical_name'] = canonical_name
-    obj['facets'] = {k: {
-        'name': k,
-        'label': v,
-        'collection': pyessv.load(v)
-    } for k, v in obj.get('facets', dict()).items()}
-
-    return obj

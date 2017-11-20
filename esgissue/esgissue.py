@@ -7,6 +7,7 @@
 
 # Module imports
 import argparse
+import os
 from uuid import uuid4
 from issue_handler import LocalIssue
 from constants import *
@@ -17,7 +18,6 @@ from utils import MultilineFormatter, _init_logging, _get_datasets, _get_issue, 
 __version__ = VERSION_NUMBER
 
 # Rabbit MQ unsent messages directory
-__UNSENT_MESSAGES_DIR__ = "{0}/unsent_rabbit_messages".format(os.path.dirname(os.path.abspath(__file__)))
 
 
 def get_args():
