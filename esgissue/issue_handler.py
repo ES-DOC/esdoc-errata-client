@@ -10,6 +10,7 @@ import sys
 import time
 import linecache
 import logging
+import os
 from json import load
 from jsonschema import validate, ValidationError
 import simplejson
@@ -26,7 +27,7 @@ class LocalIssue(object):
     """
     An object representing the local issue.
     """
-    def __init__(self, action, config, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
+    def __init__(self, action, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
         self.action = action
         self.project = None
         if issue_file is not None:
@@ -38,7 +39,6 @@ class LocalIssue(object):
                 _logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path
         self.dataset_path = dataset_path
-        self.config = config
 
     def validate(self, action):
         """
@@ -54,7 +54,7 @@ class LocalIssue(object):
         """
         # Load JSON schema for issue template
         # Get schema path by using JSON_SCHEMA_PATH constants.
-        with open(self.config['json_schema_paths'][action].format(os.path.dirname(os.path.abspath(__file__)))) as f:
+        with open(cf['json_schema_paths'][action].format(os.path.dirname(os.path.abspath(__file__)))) as f:
             schema = load(f)
 
         # Pre-validate issue attributes against action-defined JSON issue schema
@@ -82,10 +82,13 @@ class LocalIssue(object):
 
         # Test landing page and materials URLs
         urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
-        for url in urls:
-            if url != '':
-                if not _test_url(url):
-                    _logging_error(ERROR_DIC[URLS], url)
+        if cf['validate_issue_urls']:
+            logging.info('Validating issue urls...')
+            for url in urls:
+                if url != '':
+                    if not _test_url(url):
+                        _logging_error(ERROR_DIC[URLS], url)
+            logging.info('Issue urls validated.')
         # Once validated, persisting changes to local dataset file.
         logging.info('Formatting and persisting datasets...')
         # Persisting datasets locally and updating issue file accordingly.
@@ -169,7 +172,7 @@ class LocalIssue(object):
                         self.update(credentials)
                         self.action = CLOSE
                 else:
-                    time.sleep(0.5)
+                    time.sleep(0.25)
                     status = raw_input('Issue status does not allow direct closing. '
                                        'Please change it to either (w)ontfix/(r)esolved: ')
                     if status not in ['w', 'r', 'W', 'R']:
@@ -259,8 +262,6 @@ class LocalIssue(object):
         :param dsets: dset directory
         :return:
         """
-        if DATE_CLOSED in data.keys() and data[DATE_CLOSED] is None:
-            del data[DATE_CLOSED]
         # Getting the directory where the issue file is going to be persisted.
         path_to_issue, path_to_dataset = _get_retrieve_dirs(issues, dsets, data[UID])
         logging.info('Issue #{} data to issue file {}'.format(data[UID], path_to_issue))
@@ -271,8 +272,6 @@ class LocalIssue(object):
                 for dset in data[DATASETS]:
                     dset_file.write(dset + '\n')
                 del data[DATASETS]
-        if 'mipEra' in data:
-            data['mip_era'] = data['mipEra']
         else:
             logging.warn('Issue #{} has no datasets affected.'.format(data[UID]))
         # Persisting issues.

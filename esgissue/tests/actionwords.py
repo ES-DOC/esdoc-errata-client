@@ -12,6 +12,7 @@ from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_ke
 
 from b2handle.handleclient import EUDATHandleClient
 import uuid
+import os
 import subprocess as sub
 import json
 import esgfpid
@@ -24,7 +25,7 @@ download_dir = 'samples/download/'
 download_issue = 'dw_issue.json'
 download_dset = 'dw_dset.txt'
 username = 'AtefBN'
-token = 'f33b03b6b1d401542e353e5e013af023e5a0a1b3'
+token = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 passphrase = 'atef'
 new_passphrase = 'newPassphrase@=#125_a'
 

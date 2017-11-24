@@ -189,10 +189,10 @@ def _logging_error(error, additional_data=None):
     :return: logs error
     """
     if error is not None:
-        logging.error(error[1] + ' Error code: {}.'.format(error[0]))
+        logging.error(str(error[1]) + ' Error code: {}.'.format(str(error[0])))
         if additional_data:
-            logging.error('Error caused by {}.'.format(additional_data))
-        sys.exit(error[0])
+            logging.error('Error caused by {}.'.format(str(additional_data)))
+        sys.exit(error[1])
 
 
 def _resolve_validation_error_code(message):
@@ -461,15 +461,8 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
-        print(r.text)
-        if r.status_code == 401:
-            _logging_error(ERROR_DIC['authentication'], 'HTTP CODE: ' + str(r.status_code))
-
-        elif r.status_code == 403:
-            _logging_error(ERROR_DIC['authorization'], 'HTTP CODE: ' + str(r.status_code))
-
-        else:
-            _logging_error(ERROR_DIC['ws_request_failed'], 'HTTP CODE: ' + str(r.status_code))
+        error_json = json.loads(r.text)
+        _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
     return r
 
 
