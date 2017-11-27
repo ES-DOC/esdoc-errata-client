@@ -461,8 +461,11 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
-        error_json = json.loads(r.text)
-        _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
+        try:
+            error_json = json.loads(r.text)
+            _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
+        except Exception as e:
+            _logging_error(ERROR_DIC['unknown_command'], str(r.status_code))
     return r
 
 
@@ -736,11 +739,11 @@ def _set_credentials(**kwargs):
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
         if passphrase != '' and passphrase is not None:
-            os.environ[GITHUB_CREDS_ENCRYPTED] = 1
+            os.environ[GITHUB_CREDS_ENCRYPTED] = '1'
             os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, passphrase)
             os.environ[GITHUB_TOKEN] = _encrypt_with_key(tkn, passphrase)
         else:
-            os.environ[GITHUB_CREDS_ENCRYPTED] = 0
+            os.environ[GITHUB_CREDS_ENCRYPTED] = '0'
             os.environ[GITHUB_USERNAME] = username
             os.environ[GITHUB_TOKEN] = tkn
 

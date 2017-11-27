@@ -54,7 +54,7 @@ HEADERS = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 # JSON FILE ORDER
 
-INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'url',
+INDEX_DICT = {1: 'uid', 2: 'title', 3: 'description', 4: 'project', 5: 'severity', 6: 'status', 7: 'urls',
               8: 'materials', 9: 'dateCreated', 10: 'dateUpdated', 11: 'dateClosed'}
 
 

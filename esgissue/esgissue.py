@@ -256,17 +256,6 @@ def get_args():
                           '-i',
                           nargs='?',
                           type=str)
-    #####################################
-    # Subparser for "esgissue credremove" #
-    #####################################
-    credremove = subparsers.add_parser(
-            'credremove',
-            prog='esgissue credremove',
-            description=CREDREMOVE_DESC,
-            formatter_class=MultilineFormatter,
-            help=CREDREMOVE_DESC,
-            add_help=False,
-            parents=[parent])
 
     return main.parse_args()
 
