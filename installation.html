@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; esgissue 0.1 documentation</title>
+  <title>Installation &mdash; esgissue 0.2.0 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
+    <link rel="top" title="esgissue 0.2.0 documentation" href="index.html"/>
         <link rel="next" title="Authentication" href="configuration.html"/>
-        <link rel="prev" title="Synopsis" href="synopsis.html"/> 
+        <link rel="prev" title="ESGF Errata Client" href="index.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -91,19 +91,20 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#pip-installation-from-the-test-pypi-node">PIP installation from the test PyPI node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usual-pip-installation">Usual PIP installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pip-installation-from-github">PIP installation from GitHub</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-from-github">Installation from GitHub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies-and-requirements">Dependencies and requirements</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -172,59 +173,77 @@
             
   <div class="section" id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pip-installation-from-the-test-pypi-node">
-<h2>PIP installation from the test PyPI node<a class="headerlink" href="#pip-installation-from-the-test-pypi-node" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="usual-pip-installation">
+<h2>Usual PIP installation<a class="headerlink" href="#usual-pip-installation" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>pip install esgissue-client
+</pre></div>
+</div>
+</div>
+<div class="section" id="pip-installation-from-github">
+<h2>PIP installation from GitHub<a class="headerlink" href="#pip-installation-from-github" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install -e git@github.com:ES-DOC/esdoc-errata-client.git@master#egg<span class="o">=</span>esdoc-errata-client
 </pre></div>
 </div>
 </div>
 <div class="section" id="installation-from-github">
 <h2>Installation from GitHub<a class="headerlink" href="#installation-from-github" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>Create a new directory:</li>
+<li>Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>mkdir esdoc-errata-client
-<span class="nb">cd</span> esdoc-errata-client
+<div class="highlight-bash"><div class="highlight"><pre><span></span>git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li>Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</li>
+<li>Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>git init
-git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> esdoc-errata-client
+python setup.py install
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li>Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>python setup.py install
-</pre></div>
-</div>
-<ol class="arabic simple" start="4">
 <li>The <code class="docutils literal"><span class="pre">esgissue</span></code> command-line is ready.</li>
 </ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">To run <code class="docutils literal"><span class="pre">esgissue</span></code> you have to be logged into a machine with internet access.</p>
 </div>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">esgissue</span></code> uses the following basic Python libraries includes in Python 2.5+. Please make sure your Python
-environment includes the following:</p>
-<ul class="simple">
-<li><a class="reference external" href="https://docs.python.org/2/library/os.html">os</a>,</li>
-<li><a class="reference external" href="https://docs.python.org/2/library/sys.html">sys</a>,</li>
-<li><a class="reference external" href="https://docs.python.org/2/library/re.html">re</a>,</li>
-<li><a class="reference external" href="https://docs.python.org/2/library/logging.html">logging</a></li>
+</div>
+<div class="section" id="dependencies-and-requirements">
+<h2>Dependencies and requirements<a class="headerlink" href="#dependencies-and-requirements" title="Permalink to this headline">¶</a></h2>
+<p>Linux distribution with Python 2.6+ is required. <code class="docutils literal"><span class="pre">esgissue</span></code> uses the following basic Python libraries. Ensure that
+your Python environment includes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2/library/os.html">os</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/collections.html">collections</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/fnmatch.html">fnmatch</a></li>
+<li><a class="reference external" href="https://docs.python.org/fr/2.7/library/linecache.html">linecache</a></li>
+<li><a class="reference external" href="https://docs.python.org/fr/2.7/library/getpass.html">getpass</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/sys.html">sys</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/re.html">re</a></li>
+<li><a class="reference external" href="https://docs.python.org/fr/2.7/library/platform.html">platform</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/argparse.html">argparse</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/logging.html">logging</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/configparser.html">ConfigParser</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/datetime.html">datetime</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/uuid.html">uuid</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/string.html">string</a></li>
 <li><a class="reference external" href="https://docs.python.org/2/library/json.html">json</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/textwrap.html">textwrap</a></li>
 </ul>
-<p><code class="docutils literal"><span class="pre">esgissue</span></code> requires the following libraries not included in most Python distributions:</p>
-<ul class="simple">
+</div></blockquote>
+<p>Some required libraries are not included in most Python distributions. Please install them using the usual PIP command:</p>
+<blockquote>
+<div><ul class="simple">
 <li><a class="reference external" href="https://pypi.python.org/pypi/jsonschema">jsonschema</a></li>
 <li><a class="reference external" href="https://pypi.python.org/pypi/requests/2.11.1">requests</a></li>
+<li><a class="reference external" href="https://www.dlitz.net/software/python-pbkdf2/">pbkdf2</a></li>
+<li><a class="reference external" href="http://twhiteman.netfirms.com/des.html">pyDes</a></li>
 </ul>
+</div></blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install &lt;pkg_name&gt;
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -241,7 +260,7 @@ environment includes the following:</p>
         <a href="configuration.html" class="btn btn-neutral float-right" title="Authentication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="synopsis.html" class="btn btn-neutral" title="Synopsis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="ESGF Errata Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -272,7 +291,7 @@ environment includes the following:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

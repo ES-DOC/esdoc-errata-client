@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ESGF Errata Client documentation &mdash; esgissue 0.1 documentation</title>
+  <title>ESGF Errata Client &mdash; esgissue 0.2.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.1 documentation" href="#"/>
-        <link rel="next" title="Synopsis" href="synopsis.html"/> 
+    <link rel="top" title="esgissue 0.2.0 documentation" href="#"/>
+        <link rel="next" title="Installation" href="installation.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -90,18 +90,17 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">ESDoc-ERRATA API</a></li>
 </ul>
 
             
@@ -146,7 +145,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>ESGF Errata Client documentation</li>
+      <li>ESGF Errata Client</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -165,35 +164,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="esgf-errata-client-documentation">
-<h1>ESGF Errata Client documentation<a class="headerlink" href="#esgf-errata-client-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="esgf-errata-client">
+<span id="index"></span><h1>ESGF Errata Client<a class="headerlink" href="#esgf-errata-client" title="Permalink to this headline">¶</a></h1>
+<p>Proper handling of errata information in the ESGF publication workflow has major impact on the quality of data.
+Version changes should be documented and justified by explaining what was updated, retracted and/or removed.
+This leads to the unspoken rule that any publication of a newer version of a dataset needs to have a valid motivation,
+which we will refer to as an issue.
+Consequently, the publication of a new version of a dataset has to be motivated by an issue and conversely.</p>
 <p>The ESGF errata client, called <code class="docutils literal"><span class="pre">esgissue</span></code> is a piece of software that enables the interaction with the errata service.
-It can be used to create, update, close and retrieve issues. The client is basically aimed to be used by publishing teams
+It can be used to easily create, update, close and retrieve issues. The client is basically aimed to be used by data providers and managers
 that are notified of the existence of an issue regarding one or many datasets/files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The issue registration should be executed prior to the publication process and is ought to be mandatory for additional
+versions, version removal or retraction.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="docutils literal"><span class="pre">esgissue</span></code> relies on <code class="docutils literal"><span class="pre">.json</span></code> and <code class="docutils literal"><span class="pre">.txt</span></code> file records. This enables the data provider, in charge of ESGF issues, to
+efficiently manage one or several issues remotely and locally.</p>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">ESDoc-ERRATA API</a></li>
 </ul>
 </div>
+</div>
 <div class="section" id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
 <li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
 <li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
-</div>
 </div>
 
 
@@ -206,7 +219,7 @@ that are notified of the existence of an issue regarding one or many datasets/fi
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="synopsis.html" class="btn btn-neutral float-right" title="Synopsis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -238,7 +251,7 @@ that are notified of the existence of an issue regarding one or many datasets/fi
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

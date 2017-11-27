@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Authentication &mdash; esgissue 0.1 documentation</title>
+  <title>Authentication &mdash; esgissue 0.2.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Create an issue" href="create.html"/>
+    <link rel="top" title="esgissue 0.2.0 documentation" href="index.html"/>
+        <link rel="next" title="Generic usage" href="usage.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -91,18 +91,18 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Authentication</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#github-setup">GitHub setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#credentials-management">Credentials management</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -171,60 +171,66 @@
             
   <div class="section" id="authentication">
 <span id="configuration"></span><h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>Authentication is key to an optimal use of the esgissue-client features.</p>
+<p>Authentication is key to an optimal use of <code class="docutils literal"><span class="pre">esgissue</span></code> features.</p>
 <div class="section" id="github-setup">
 <h2>GitHub setup<a class="headerlink" href="#github-setup" title="Permalink to this headline">¶</a></h2>
-<p>A verified GitHub account is required, as well as a personal access token generated through your github profile setting page: <a class="reference external" href="https://github.com/settings/profile">https://github.com/settings/profile</a></p>
-<a class="reference internal image-reference" href="images/token_generation.png"><img alt="Github's personal access token generation interface" class="align-center" src="images/token_generation.png" style="width: 600.0px; height: 400.0px;" /></a>
-<p>Make sure you associate a meaningful name and description for your newly generated token, to help you manage your tokens.
-The next important step is to set the minimum required scope for your personal access token, Orgs:READ.
+<p>A verified GitHub account is required, as well as a personal access token generated through <a class="reference external" href="https://github.com/settings/profile">your GitHub profile setting page</a>.</p>
+<ol class="arabic simple">
+<li>Go on the bottom of the left menu to access to &#8220;Developer Settings&#8221;:</li>
+</ol>
+<a class="reference internal image-reference" href="images/settings.png"><img alt="Github's personal settings" class="align-center" src="images/settings.png" style="width: 158.2px; height: 387.1px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Click on &#8220;Personal Access Token&#8221;:</li>
+</ol>
+<a class="reference internal image-reference" href="images/developer_settings.png"><img alt="Github's developer settings" class="align-center" src="images/developer_settings.png" style="width: 159.6px; height: 129.5px;" /></a>
+<ol class="arabic simple" start="3">
+<li>Click on &#8220;Generate new token&#8221;</li>
+</ol>
+<img alt="Github's developer settings" class="align-center" src="images/generate_token.png" />
+<ol class="arabic simple" start="4">
+<li>Generate your token</li>
+</ol>
+<a class="reference internal image-reference" href="images/token_generation.png"><img alt="Github's personal access token generation interface" class="align-center" src="images/token_generation.png" style="width: 377.5px; height: 561.0px;" /></a>
+<p>Make sure you associate a meaningful name and description for your newly generated token, to help you manage your tokens.</p>
+<img alt="Github's personal access token generation interface" class="align-center" src="images/token_name.png" />
+<p>The next important step is to set the minimum required scope for your personal access token: <code class="docutils literal"><span class="pre">orgs:READ</span></code>.
 Limiting the number of scopes increases the security of your own personal data associated with your github account.</p>
-<a class="reference internal image-reference" href="images/token_scope.png"><img alt="Github's interface of token scopes" class="align-center" src="images/token_scope.png" style="width: 560.0px; height: 630.0px;" /></a>
-<p>The authentication part is set by creating the personal access token.
-For the authorization, a user needs to be part of the orgnization team specified for the institute he/she on behalf of which wishes to publish errata.
-Authorization is controlled using github’s organizations invitational based structure. The ESDoc-ERRATA admin is the only person qualified to add github users to the requested teams.</p>
+<img alt="Github's personal access token generation interface" class="align-center" src="images/token_scope.png" />
+<p>The authentication part is set by creating the personal access token.</p>
+<p>Authorization is controlled using GitHub&#8217;s organizations invitational based structure.
+The ES-DOC-ERRATA administrator is the only person qualified to add GitHub users to the requested teams.
+For the authorization, a user needs to be part of the organization team specified for the institute and project he/she on behalf of which wishes to publish errata.</p>
 </div>
 <div class="section" id="credentials-management">
 <h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
-<p>In order to ease the interactions with the ESDoc-ERRATA WS, a user can save the credentials for recurrent use.
+<p>In order to ease the interactions with the ES-DOC-ERRATA web service, a user can save the credentials for recurrent use.
 This can be done either through environment variables:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 </pre></div>
 </div>
 <p>This will enable the client to retrieve the token whenever the action requires it and stops it from prompting the user to type it in.
 However setting the token on environment variables sets it up for grabs in clear text. For this reason an encrypted local file solution is
-more encouraged to be employed by users. This file is encrypted using a chosen passphrase but it also is valid on the currently used machine only.
+more encouraged to be employed by users. This file is encrypted using a chosen pass-phrase but it also is valid on the currently used machine only.
 In order to generate your token local file:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credset
-$&gt; Token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-$&gt; Passphrase:
-$&gt; <span class="m">2017</span>/01/03 <span class="m">05</span>:25:42 PM INFO Your credentials were successfully set.
 </pre></div>
 </div>
 <p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
-In case the user forgets the passphrase the saved credentials can be reset using the command:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credreset
-$&gt;2017/01/03 <span class="m">11</span>:54:35 AM INFO Credentials have been successfully reset.
+In case the user forgets the pass-phrase the saved credentials can be reset using the command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credreset
 </pre></div>
 </div>
 <p>This will obviously result in resetting the saved credentials, and the client will now ask for that information in the next usages.</p>
 <p>In the case that the user does recall the pass-phrase and just wishes to modify it, this is possible using the following command:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass  changepass --oldpass AtefBN --newpass ACatchyPassPhrase
-$&gt;2017/01/03 <span class="m">12</span>:30:04 PM INFO Passphrase has been successfully updated.
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue changepass
 </pre></div>
 </div>
-<p>or</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue changepass
-$&gt;2017/01/03 <span class="m">04</span>:45:59 PM INFO Old and new pass-phrases are required, <span class="k">if</span> you forgot yours, use: esgissue credreset
-$&gt;Old Passphrase: AtefBN
-$&gt;New Passphrase: ACoolerPassPhrase
-$&gt;2017/01/03 <span class="m">04</span>:46:10 PM INFO Passphrase has been successfully updated.
-</pre></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Old and new pass-phrases can be submit on the command-line to avoid the prompt.</p>
 </div>
-<p>This will prompt user to type in old and new passphrase.</p>
 <p>In the event of wanting to remove your saved credentials that you have saved on your machine:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt;esgissue credremove
-$&gt;2017/01/03 <span class="m">05</span>:29:57 PM INFO Credentials have been successfully removed.
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credremove
 </pre></div>
 </div>
 </div>
@@ -240,7 +246,7 @@ $&gt;2017/01/03 <span class="m">05</span>:29:57 PM INFO Credentials have been su
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="create.html" class="btn btn-neutral float-right" title="Create an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Generic usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -274,7 +280,7 @@ $&gt;2017/01/03 <span class="m">05</span>:29:57 PM INFO Credentials have been su
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

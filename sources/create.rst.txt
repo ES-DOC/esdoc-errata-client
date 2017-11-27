@@ -9,9 +9,9 @@ community contributions. However, creating an issue must abide to a set of rules
 Requirements
 ************
 
-Publishing an issue on the ES-DOC Errata server, you must first edit an issue template and list all the affected dataset ids.
+Publishing an issue on the ES-DOC Errata server, you must first edit an issue template and list all the affected dataset IDs.
 
-The issue template is a JSON file constrained and validated against a JSON schema.
+The issue template is a `.json` file constrained and validated against a JSON schema.
 Your template has to include several attributes or fields that will interact with the validation process.
 These JSON attributes/fields consist in:
 
@@ -65,10 +65,10 @@ The dataset list gathers all the identifiers of the affected datasets.
 A dataset ID is a sequence of dot-separated facets that follows the *Data Reference Syntax* of the corresponding project.
 The dataset identifiers has to append the dataset version number.
 If one of the dataset ID is malformed or if the dataset list is empty, the command will raise an exception and exit,
-users should correct the malformed dataset id (which will be indicated in the error message).
+users should correct the malformed dataset ID (which will be indicated in the error message).
 
-Example
-*******
+Edit the issue
+**************
 
 Here is concrete example of what an issue declaration through the ESGF issue client should look like.
 On declaration of the issue this is the regular form of an issue:
@@ -83,8 +83,8 @@ On declaration of the issue this is the regular form of an issue:
         "mip_era": "cmip6",
         "severity": "medium",
         "materials": [
-            "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
-            "http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg"
+            "http://myerrata.com/images/before.jpg",
+            "http://myerrata.com/images/after.jpg"
         ],
         "url": "http://websitetest.com/",
     }
@@ -97,28 +97,21 @@ On declaration of the issue this is the regular form of an issue:
     cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
     [...]
 
+Register the issue
+******************
+
 After having successfully formatted the both files in the indicated fashion, create your issue using the ``create`` subcommand:
 
 .. code-block:: bash
 
    $> esgissue create --issue /path/to/issue.json --dsets /path/to/datasets.txt
-    2016/09/06 11:00:50 AM INFO Validating of issue...
-    2016/09/06 11:00:51 AM INFO Validation Result: SUCCESSFUL
-    2016/09/06 11:00:51 AM INFO Requesting issue #03c2e168-7418-443b-82e7-c5d398366144 creation from errata service...
-    2016/09/06 11:00:51 AM INFO Updating fields of payload after remote issue creation...
-    2016/09/06 11:00:51 AM INFO Issue json schema has been updated, persisting in file...
-    2016/09/06 11:00:51 AM INFO Issue file has been created successfully!
-
-.. note::
-
-    The log argument is optional, if not indicated, the standard output will be used.
 
 On success the local issue file will be modified. The creation and update dates will be appended as well as the issue UID and status:
 
 .. code-block:: json
 
     {
-        "uid": "017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1",
+        "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "title": "Test issue title",
         "description": "This is a test description, void of meaning.",
         "mip_era": "cmip6",
@@ -133,49 +126,4 @@ On success the local issue file will be modified. The creation and update dates 
         "dateUpdated": "YYYY-MM-DD HH:MM:SS"
     }
 
-.. note::
-
-    Make sure the client has sufficient writing rights to the file. It updates local files.
-
-Mistakes to avoid
-*****************
-
-If the ``issue.json`` or ``dsets.txt`` file is missing from options:
-
-.. code-block:: bash
-
-   $> esgissue create --dsets esgissue/samples/dsets1.txt
-
-    issue-manager create --dsets esgissue/samples/dsets1.txt usage: esgissue create [--log [$PWD]] [-v] [-h] --issue [PATH/issue.json] --dsets [PATH/dsets.list]
-    esgissue create: error: argument --issue is required
-
-If a the ``issue.json`` is not properly formed as described in the JSON templates:
-
-.. code-block:: bash
-
-   $> esgissue create --issue /path/to/issue_missing_title.json --dsets /path/to/datasets.txt
-
-    - Missing title (applies to all mandatory parameters):
-    2016/09/06 12:06:06 PM INFO Validating of issue...
-    2016/09/06 12:06:06 PM ERROR Validation error: u'title' is a required property for required, while validating deque([]).
-    2016/09/06 12:06:06 PM ERROR The responsible schema part is: {u'title': u'ESGF issue json schema', u'required': [u'dateCreated', u'title', u'description', u'severity', u'mip_era', u'models', u'datasets', u'variables', u'experiments'], u'additionalProperties': False, u'$schema': u'http://json-schema.org/schema#', u'type': u'object', u'properties': {u'status': {u'enum': [u'new', u'onhold', u'wontfix', u'resolved'], u'type': u'string'}, u'datasets': {u'minItems': 1, u'items': {u'minLength': 1, u'type': u'string'}, u'uniqueItems': True, u'type': u'array'}, u'severity': {u'enum': [u'low', u'medium', u'high', u'critical'], u'type': u'string'}, u'title': {u'minLength': 1, u'type': u'string'}, u'institute': {u'minLength': 1, u'type': u'string'}, u'variables': {u'uniqueItems': True, u'items': {u'minLength': 1, u'type': u'string'}, u'type': u'array'}, u'dateCreated': {u'type': u'string', u'format': u'date-time'}, u'mip_era': {u'minLength': 1, u'enum': [u'cmip5', u'cmip6'], u'type': u'string'}, u'models': {u'uniqueItems': True, u'items': {u'minLength': 1, u'type': u'string'}, u'type': u'array'}, u'materials': {u'uniqueItems': True, u'items': {u'pattern': u'\\.(jpg|gif|png|tiff)$', u'type': u'string'}, u'type': u'array'}, u'url': {u'minLength': 1, u'type': u'string'}, u'uid': {u'pattern': u'^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$', u'type': u'string'}, u'experiments': {u'uniqueItems': True, u'items': {u'minLength': 1, u'type': u'string'}, u'type': u'array'}, u'description': {u'minLength': 1, u'type': u'string'}}}
-
-If the ``dsets.txt`` is empty:
-
-.. code-block:: bash
-
-   $> esgissue create --issue /path/to/issue.json --dsets /path/to/empty_dataset_list.txt
-
-    2016/09/06 12:24:15 PM INFO Validating of issue...
-    2016/09/06 12:24:15 PM ERROR Validation error: [] is too short for minItems, while validating deque([u'datasets']).
-    2016/09/06 12:24:15 PM ERROR The responsible schema part is: {u'minItems': 1, u'items': {u'minLength': 1, u'type': u'string'}, u'uniqueItems': True, u'type': u'array'}
-
-If the ``dsets.txt`` contains malformed dataset identifiers:
-
-.. code-block:: bash
-
-
-   $> esgissue create --issue /path/to/issue.json --dsets /path/to/malformed_datasets.txt
-
-    2016/09/06 03:15:50 PM INFO Validating of issue...
-    2016/09/06 03:15:51 PM ERROR Validation Result: FAILED // Dataset IDs have invalid format, error code: 3
+.. note:: Make sure the client has sufficient writing rights to the file. It updates local files.

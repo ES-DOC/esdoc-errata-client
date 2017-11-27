@@ -1,5 +1,6 @@
 .. _usage:
 
+
 Generic usage
 =============
 
@@ -9,6 +10,27 @@ Check the help
 .. code-block:: bash
 
    $> esgissue -h
+   $> esgprep SUBCOMMAND -h
+
+Check the version
+*****************
+
+.. code-block:: bash
+
+    $> esgprep -v
+
+Use a logfile
+*************
+
+All information are logged into a file named ``esgissue-YYYYMMDD-HHMMSS-PID.log`` only if ``--log`` is submitted.
+If not, the standard output is used following the verbose mode.
+By default, the logfiles are stored in your current working directory.
+It can be changed by adding a optional logfile directory to the flag.
+
+.. code-block:: bash
+
+    $> esgprep SUBCOMMAND --log
+    $> esgprep SUBCOMMAND --log /PATH/TO/LOGDIR/
 
 Exit status
 ***********

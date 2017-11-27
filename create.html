@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Create an issue &mdash; esgissue 0.1 documentation</title>
+  <title>Create an issue &mdash; esgissue 0.2.0 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.1 documentation" href="index.html"/>
+    <link rel="top" title="esgissue 0.2.0 documentation" href="index.html"/>
         <link rel="next" title="Update an issue" href="update.html"/>
-        <link rel="prev" title="Authentication" href="configuration.html"/> 
+        <link rel="prev" title="Generic usage" href="usage.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -91,19 +91,19 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="synopsis.html">Synopsis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Create an issue</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mistakes-to-avoid">Mistakes to avoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-the-issue">Edit the issue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#register-the-issue">Register the issue</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
@@ -176,8 +176,8 @@
 community contributions. However, creating an issue must abide to a set of rules enforced by the JSON validation.</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Publishing an issue on the ES-DOC Errata server, you must first edit an issue template and list all the affected dataset ids.</p>
-<p>The issue template is a JSON file constrained and validated against a JSON schema.
+<p>Publishing an issue on the ES-DOC Errata server, you must first edit an issue template and list all the affected dataset IDs.</p>
+<p>The issue template is a <cite>.json</cite> file constrained and validated against a JSON schema.
 Your template has to include several attributes or fields that will interact with the validation process.
 These JSON attributes/fields consist in:</p>
 <table border="1" class="docutils">
@@ -260,10 +260,10 @@ These JSON attributes/fields consist in:</p>
 A dataset ID is a sequence of dot-separated facets that follows the <em>Data Reference Syntax</em> of the corresponding project.
 The dataset identifiers has to append the dataset version number.
 If one of the dataset ID is malformed or if the dataset list is empty, the command will raise an exception and exit,
-users should correct the malformed dataset id (which will be indicated in the error message).</p>
+users should correct the malformed dataset ID (which will be indicated in the error message).</p>
 </div>
-<div class="section" id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="edit-the-issue">
+<h2>Edit the issue<a class="headerlink" href="#edit-the-issue" title="Permalink to this headline">¶</a></h2>
 <p>Here is concrete example of what an issue declaration through the ESGF issue client should look like.
 On declaration of the issue this is the regular form of an issue:</p>
 <p><code class="docutils literal"><span class="pre">issue.json</span></code>:</p>
@@ -273,8 +273,8 @@ On declaration of the issue this is the regular form of an issue:</p>
     <span class="nt">&quot;mip_era&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
     <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
     <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;http://errata.ipsl.upmc.fr/static/images_errata/time.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;http://errata.ipsl.upmc.fr/static/images_errata/time5.jpg&quot;</span>
+        <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://myerrata.com/images/after.jpg&quot;</span>
     <span class="p">],</span>
     <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://websitetest.com/&quot;</span><span class="p">,</span>
 <span class="p">}</span>
@@ -286,23 +286,16 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
 [...]
 </pre></div>
 </div>
+</div>
+<div class="section" id="register-the-issue">
+<h2>Register the issue<a class="headerlink" href="#register-the-issue" title="Permalink to this headline">¶</a></h2>
 <p>After having successfully formatted the both files in the indicated fashion, create your issue using the <code class="docutils literal"><span class="pre">create</span></code> subcommand:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue create --issue /path/to/issue.json --dsets /path/to/datasets.txt
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:50 AM INFO Validating of issue...
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:51 AM INFO Validation Result: SUCCESSFUL
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:51 AM INFO Requesting issue <span class="c1">#03c2e168-7418-443b-82e7-c5d398366144 creation from errata service...</span>
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:51 AM INFO Updating fields of payload after remote issue creation...
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:51 AM INFO Issue json schema has been updated, persisting in file...
- <span class="m">2016</span>/09/06 <span class="m">11</span>:00:51 AM INFO Issue file has been created successfully!
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The log argument is optional, if not indicated, the standard output will be used.</p>
 </div>
 <p>On success the local issue file will be modified. The creation and update dates will be appended as well as the issue UID and status:</p>
 <div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;017597ba-d6ab-41c8-a1d2-e0aa3f0dd0c1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
     <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
     <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test description, void of meaning.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;mip_era&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
@@ -323,40 +316,6 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
 <p class="last">Make sure the client has sufficient writing rights to the file. It updates local files.</p>
 </div>
 </div>
-<div class="section" id="mistakes-to-avoid">
-<h2>Mistakes to avoid<a class="headerlink" href="#mistakes-to-avoid" title="Permalink to this headline">¶</a></h2>
-<p>If the <code class="docutils literal"><span class="pre">issue.json</span></code> or <code class="docutils literal"><span class="pre">dsets.txt</span></code> file is missing from options:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue create --dsets esgissue/samples/dsets1.txt
-
- issue-manager create --dsets esgissue/samples/dsets1.txt usage: esgissue create <span class="o">[</span>--log <span class="o">[</span><span class="nv">$PWD</span><span class="o">]]</span> <span class="o">[</span>-v<span class="o">]</span> <span class="o">[</span>-h<span class="o">]</span> --issue <span class="o">[</span>PATH/issue.json<span class="o">]</span> --dsets <span class="o">[</span>PATH/dsets.list<span class="o">]</span>
- esgissue create: error: argument --issue is required
-</pre></div>
-</div>
-<p>If a the <code class="docutils literal"><span class="pre">issue.json</span></code> is not properly formed as described in the JSON templates:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue create --issue /path/to/issue_missing_title.json --dsets /path/to/datasets.txt
-
- - Missing title <span class="o">(</span>applies to all mandatory parameters<span class="o">)</span>:
- <span class="m">2016</span>/09/06 <span class="m">12</span>:06:06 PM INFO Validating of issue...
- <span class="m">2016</span>/09/06 <span class="m">12</span>:06:06 PM ERROR Validation error: u<span class="s1">&#39;title&#39;</span> is a required property <span class="k">for</span> required, <span class="k">while</span> validating deque<span class="o">([])</span>.
- <span class="m">2016</span>/09/06 <span class="m">12</span>:06:06 PM ERROR The responsible schema part is: <span class="o">{</span>u<span class="s1">&#39;title&#39;</span>: u<span class="s1">&#39;ESGF issue json schema&#39;</span>, u<span class="s1">&#39;required&#39;</span>: <span class="o">[</span>u<span class="s1">&#39;dateCreated&#39;</span>, u<span class="s1">&#39;title&#39;</span>, u<span class="s1">&#39;description&#39;</span>, u<span class="s1">&#39;severity&#39;</span>, u<span class="s1">&#39;mip_era&#39;</span>, u<span class="s1">&#39;models&#39;</span>, u<span class="s1">&#39;datasets&#39;</span>, u<span class="s1">&#39;variables&#39;</span>, u<span class="s1">&#39;experiments&#39;</span><span class="o">]</span>, u<span class="s1">&#39;additionalProperties&#39;</span>: False, u<span class="s1">&#39;$schema&#39;</span>: u<span class="s1">&#39;http://json-schema.org/schema#&#39;</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;object&#39;</span>, u<span class="s1">&#39;properties&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;status&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;enum&#39;</span>: <span class="o">[</span>u<span class="s1">&#39;new&#39;</span>, u<span class="s1">&#39;onhold&#39;</span>, u<span class="s1">&#39;wontfix&#39;</span>, u<span class="s1">&#39;resolved&#39;</span><span class="o">]</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;datasets&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minItems&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>, u<span class="s1">&#39;severity&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;enum&#39;</span>: <span class="o">[</span>u<span class="s1">&#39;low&#39;</span>, u<span class="s1">&#39;medium&#39;</span>, u<span class="s1">&#39;high&#39;</span>, u<span class="s1">&#39;critical&#39;</span><span class="o">]</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;title&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;institute&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;variables&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>, u<span class="s1">&#39;dateCreated&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span>, u<span class="s1">&#39;format&#39;</span>: u<span class="s1">&#39;date-time&#39;</span><span class="o">}</span>, u<span class="s1">&#39;mip_era&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;enum&#39;</span>: <span class="o">[</span>u<span class="s1">&#39;cmip5&#39;</span>, u<span class="s1">&#39;cmip6&#39;</span><span class="o">]</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;models&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>, u<span class="s1">&#39;materials&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;pattern&#39;</span>: u<span class="s1">&#39;\\.(jpg|gif|png|tiff)$&#39;</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>, u<span class="s1">&#39;url&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;uid&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;pattern&#39;</span>: u<span class="s1">&#39;^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$&#39;</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;experiments&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>, u<span class="s1">&#39;description&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}}}</span>
-</pre></div>
-</div>
-<p>If the <code class="docutils literal"><span class="pre">dsets.txt</span></code> is empty:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue create --issue /path/to/issue.json --dsets /path/to/empty_dataset_list.txt
-
- <span class="m">2016</span>/09/06 <span class="m">12</span>:24:15 PM INFO Validating of issue...
- <span class="m">2016</span>/09/06 <span class="m">12</span>:24:15 PM ERROR Validation error: <span class="o">[]</span> is too short <span class="k">for</span> minItems, <span class="k">while</span> validating deque<span class="o">([</span>u<span class="s1">&#39;datasets&#39;</span><span class="o">])</span>.
- <span class="m">2016</span>/09/06 <span class="m">12</span>:24:15 PM ERROR The responsible schema part is: <span class="o">{</span>u<span class="s1">&#39;minItems&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;items&#39;</span>: <span class="o">{</span>u<span class="s1">&#39;minLength&#39;</span>: <span class="m">1</span>, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;string&#39;</span><span class="o">}</span>, u<span class="s1">&#39;uniqueItems&#39;</span>: True, u<span class="s1">&#39;type&#39;</span>: u<span class="s1">&#39;array&#39;</span><span class="o">}</span>
-</pre></div>
-</div>
-<p>If the <code class="docutils literal"><span class="pre">dsets.txt</span></code> contains malformed dataset identifiers:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue create --issue /path/to/issue.json --dsets /path/to/malformed_datasets.txt
-
- <span class="m">2016</span>/09/06 <span class="m">03</span>:15:50 PM INFO Validating of issue...
- <span class="m">2016</span>/09/06 <span class="m">03</span>:15:51 PM ERROR Validation Result: FAILED // Dataset IDs have invalid format, error code: <span class="m">3</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -372,7 +331,7 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
         <a href="update.html" class="btn btn-neutral float-right" title="Update an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="configuration.html" class="btn btn-neutral" title="Authentication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="usage.html" class="btn btn-neutral" title="Generic usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -403,7 +362,7 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
