@@ -1,10 +1,11 @@
 .. _api:
 
-ESDoc-ERRATA API
-================
+
+ES-DOC-ERRATA API
+=================
 
 The ``esdoc-errata-client`` uses various endpoints that can also be used by third party software to use the features that
-the ESDoc-ERRATA project has to offer.
+the ES-DOC-ERRATA project has to offer.
 
 Issue Creation
 **************
@@ -13,18 +14,22 @@ Endpoint used for issue creation. Requires proper authentication and authorizati
 
 Path: ``1/issue/create``
 Method: ``post``
-tags: "Issue Management"
-summary: "Create a new issue"
-operationId: "createIssue"
-consumes:
+Tags: "Issue Management"
+Summary: "Create a new issue"
+OperationId: "createIssue"
+
+Consumes
+--------
 
 - ``application/json``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``body``:
+Parameters
+----------
 
 - name: ``body``
 
@@ -32,16 +37,17 @@ parameters: in ``body``:
 
 - required: ``true``
 
-responses:
+Responses
+---------
 
 401: "Unauthenticated"
 403: "Unauthorized"
 405: "Bad Method"
 
-security:
+Security
+--------
 
 - github personal access token: - "org:read"
-
 
 Issue Update
 ************
@@ -49,21 +55,24 @@ Issue Update
 Endpoint used for issue update. Requires proper authentication and authorization.
 Local files need to be updated, if tampered with beforehand, they can be downloaded using the retrieve endpoint.
 
-
 Path: ``1/issue/update``
 Method: ``post``
-tags: "Issue Management:"
-summary: "Update an issue"
-operationId: "updateIssue"
-consumes:
+Tags: "Issue Management:"
+Summary: "Update an issue"
+OperationId: "updateIssue"
+
+Consumes
+--------
 
 - ``application/json``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``body``:
+Parameters
+----------
 
 - name: ``body``
 
@@ -71,36 +80,41 @@ parameters: in ``body``:
 
 - required: true
 
-responses:
+Responses
+---------
 
 401: "Unauthenticated"
 403: "Unauthorized"
 405: "Bad Method"
-security:
+
+Security
+--------
 
 - github personal access token: - "org:read"
-
 
 Issue Close
 ***********
 
 Endpoint used to close an issue marking its lifecycle's end. Requires proper authentication and authorization.
 
-
 Path: ``1/issue/close``
 Method: ``post``
-tags: "Issue Management:"
-summary: "closes an issue"
-operationId: "closeIssue"
-consumes:
+Tags: "Issue Management:"
+Summary: "closes an issue"
+OperationId: "closeIssue"
+
+Consumes
+--------
 
 - ``application/json``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``body``:
+Parameters
+----------
 
 - name: ``body``
 
@@ -108,12 +122,15 @@ parameters: in ``body``:
 
 - required: true
 
-responses:
+Responses
+---------
 
 401: "Unauthenticated"
 403: "Unauthorized"
 405: "Bad Method"
-security:
+
+Security
+--------
 
 - github personal access token: - "org:read"
 
@@ -123,21 +140,24 @@ Issue Retrieve
 This endpoint serves as download endpoint for issue local files (e.g. the issue.json and datasets.txt)
 This endpoint requires no authentication nor authentication.
 
-
 Path: ``1/issue/retrieve``
 Method: ``get``
-tags: "Issue Management:"
-summary: "downloads issue files"
-operationId: "retrieveIssue"
-consumes:
+Tags: "Issue Management:"
+Summary: "downloads issue files"
+OperationId: "retrieveIssue"
+
+Consumes
+--------
 
 - param: ``uid``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``url``:
+Parameters
+----------
 
 - name: ``uid``
 
@@ -145,10 +165,10 @@ parameters: in ``url``:
 
 - required: false
 
-responses:
+Responses
+---------
 
 405: "Bad Method"
-
 
 Pid search
 **********
@@ -159,18 +179,22 @@ This endpoint requires no authentication nor authentication.
 
 Path: ``1/issue/pid``
 Method: ``get``
-tags: "Issue Management:"
-summary: "checks dataset (and entire version history) for issues "
-operationId: "pidSearch"
-consumes:
+Tags: "Issue Management:"
+Summary: "checks dataset (and entire version history) for issues "
+OperationId: "pidSearch"
+
+Consumes
+--------
 
 - param: ``pids``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``url``:
+Parameters
+----------
 
 - name: ``pids``
 
@@ -178,10 +202,10 @@ parameters: in ``url``:
 
 - required: false
 
-responses:
+Responses
+---------
 
 405: "Bad Method"
-
 
 Simple-Pid search
 *****************
@@ -192,18 +216,22 @@ This endpoint requires no authentication nor authentication.
 
 Path: ``1/issue/simple_pid``
 Method: ``get``
-tags: "Issue Management:"
-summary: "checks dataset for issues"
-operationId: "simplePidSearch"
-consumes:
+Tags: "Issue Management:"
+Summary: "checks dataset for issues"
+OperationId: "simplePidSearch"
+
+Consumes
+--------
 
 - param: ``pids``
 
-produces:
+Produces
+--------
 
 - ``application/json``
 
-parameters: in ``url``:
+Parameters
+----------
 
 - name: ``pids``
 
@@ -211,6 +239,7 @@ parameters: in ``url``:
 
 - required: false
 
-responses:
+Responses
+---------
 
 405: "Bad Method"
