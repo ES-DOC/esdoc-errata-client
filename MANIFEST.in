@@ -2,3 +2,4 @@ include README.rst
 include esgissue/templates/*
 include setup.py
 include requirements.txt
+include esgissue/conf.json
