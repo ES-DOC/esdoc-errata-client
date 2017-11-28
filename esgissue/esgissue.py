@@ -256,18 +256,10 @@ def get_args():
                           '-i',
                           nargs='?',
                           type=str)
-    #####################################
-    # Subparser for "esgissue credremove" #
-    #####################################
-    credremove = subparsers.add_parser(
-            'credremove',
-            prog='esgissue credremove',
-            description=CREDREMOVE_DESC,
-            formatter_class=MultilineFormatter,
-            help=CREDREMOVE_DESC,
-            add_help=False,
-            parents=[parent])
-
+    credtest.add_argument('--project',
+                          '-p',
+                          nargs='?',
+                          type=str)
     return main.parse_args()
 
 
@@ -338,7 +330,7 @@ def run():
             _reset_credentials()
         elif args.command == CREDTEST:
             credentials = _authenticate()
-            _cred_test(credentials, args.institute)
+            _cred_test(credentials, args.institute, args.project)
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)

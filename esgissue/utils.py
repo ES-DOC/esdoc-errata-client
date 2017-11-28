@@ -457,12 +457,15 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     elif action == RETRIEVE:
         r = requests.get(url+uid)
     elif action == CREDTEST:
-        r = requests.get(url, auth=credentials, data=payload)
+        r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
-        error_json = json.loads(r.text)
-        _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
+        try:
+            error_json = json.loads(r.text)
+            _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
+        except Exception as e:
+            _logging_error(ERROR_DIC['unknown_command'], str(r.status_code))
     return r
 
 
@@ -736,11 +739,11 @@ def _set_credentials(**kwargs):
         tkn = raw_input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
         if passphrase != '' and passphrase is not None:
-            os.environ[GITHUB_CREDS_ENCRYPTED] = 1
+            os.environ[GITHUB_CREDS_ENCRYPTED] = '1'
             os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, passphrase)
             os.environ[GITHUB_TOKEN] = _encrypt_with_key(tkn, passphrase)
         else:
-            os.environ[GITHUB_CREDS_ENCRYPTED] = 0
+            os.environ[GITHUB_CREDS_ENCRYPTED] = '0'
             os.environ[GITHUB_USERNAME] = username
             os.environ[GITHUB_TOKEN] = tkn
 
@@ -760,15 +763,19 @@ def _set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def _cred_test(credentials, team=None):
+def _cred_test(credentials, team=None, project=None):
     """
     Test credentials validity.
     :param credentials:
     :return:
     """
-    if not team:
+    while not team:
         team = raw_input('Please specify the institute you wish to test authorization to: ')
-    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
+    while not project:
+        project = raw_input('Please specify the project you wish to test authorization to: ')
+    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
+                                                                             'project': project.lower()})
+    print(r.text)
     if r.status_code == 200:
         logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
