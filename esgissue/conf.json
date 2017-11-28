@@ -1,5 +1,6 @@
 {
-"url_base": "http://localhost:5001",
+"url_base": "https://test-errata-api.es-doc.org",
+"url_base_aux": "http://localhost:5001",
 "url_viewer": "https://test-errata.es-doc.org/viewer.html?uid=",
 "json_schema_paths" : {
              "create": "{0}/templates/create.json",
@@ -13,7 +14,7 @@
             "CLOSE": "/1/issue/close?uid=",
             "RETRIEVE": "/1/issue/retrieve?uid=",
             "RETRIEVE_ALL": "/1/issue/retrieve-all",
-            "CREDTEST": "/1/ops/credtest"
+            "CREDTEST": "/verify-authorization?login={}&token={}&institute={}&project={}"
     },
 "validate_issue_urls": true
 

@@ -457,7 +457,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     elif action == RETRIEVE:
         r = requests.get(url+uid)
     elif action == CREDTEST:
-        r = requests.get(url, auth=credentials, data=payload)
+        r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
     else:
         r = requests.get(url)
     if r.status_code != requests.codes.ok:
@@ -763,15 +763,19 @@ def _set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def _cred_test(credentials, team=None):
+def _cred_test(credentials, team=None, project=None):
     """
     Test credentials validity.
     :param credentials:
     :return:
     """
-    if not team:
+    while not team:
         team = raw_input('Please specify the institute you wish to test authorization to: ')
-    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower()})
+    while not project:
+        project = raw_input('Please specify the project you wish to test authorization to: ')
+    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
+                                                                             'project': project.lower()})
+    print(r.text)
     if r.status_code == 200:
         logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
