@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
    :platform: Unix
    :synopsis: Useful functions to use with esgissue module.
@@ -590,10 +591,12 @@ def _encrypt_with_key(data, passphrase=''):
     """
     if passphrase is None:
         passphrase = ''
-    # Generate machine specific key
-    key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
-    k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    return k.encrypt(data).encode('string_escape').replace('\\\\','\\')
+    if passphrase != '':
+        key = pbkdf2.PBKDF2(passphrase, "\0\0\0\0\0\0\0\0").read(24)
+        k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+        return k.encrypt(data).encode('string_escape').replace('\\\\','\\')
+    else:
+        return data
 
 
 def _decrypt_with_key(data, passphrase=''):
@@ -606,9 +609,12 @@ def _decrypt_with_key(data, passphrase=''):
     data = data.decode('string_escape').replace('\\', '\\\\')
     if passphrase is None:
         passphrase = ''
-    key = pbkdf2.PBKDF2(passphrase, platform.machine() + platform.processor() + str(get_mac())).read(24)
-    k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-    return k.decrypt(data)
+    if passphrase != '':
+        key = pbkdf2.PBKDF2(passphrase, "\0\0\0\0\0\0\0\0").read(24)
+        k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
+        return k.decrypt(data)
+    else:
+        return data
 
 
 def _authenticate(**kwargs):
