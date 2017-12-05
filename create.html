@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Create an issue &mdash; esgissue 0.2.0 documentation</title>
+  <title>Create an issue &mdash; esgissue 0.2.2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.2.0 documentation" href="index.html"/>
+    <link rel="top" title="esgissue 0.2.2 documentation" href="index.html"/>
         <link rel="next" title="Update an issue" href="update.html"/>
         <link rel="prev" title="Generic usage" href="usage.html"/> 
 
@@ -200,7 +200,7 @@ These JSON attributes/fields consist in:</p>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">description</span></code></td>
 <td>Mandatory</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">mip_era</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">project</span></code></td>
 <td>Mandatory and value-controlled</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">severity</span></code></td>
@@ -270,7 +270,7 @@ On declaration of the issue this is the regular form of an issue:</p>
 <div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
     <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test description, void of meaning.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;mip_era&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
     <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
     <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
@@ -298,7 +298,7 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
     <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
     <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
     <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test description, void of meaning.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;mip_era&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip6&quot;</span><span class="p">,</span>
     <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
     <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;http://errata.ipsl.upmc.fr/static/images_errata/time.jpg&quot;</span><span class="p">,</span>
@@ -362,7 +362,7 @@ cmip6.CMIP.IPSL.IPSL-CM6-1.historical.r1i1p1f1.Amon.tas.gr.v20170531
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.0',
+            VERSION:'0.2.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

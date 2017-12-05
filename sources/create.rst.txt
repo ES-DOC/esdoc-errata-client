@@ -24,7 +24,7 @@ These JSON attributes/fields consist in:
 +-------------------+-----------------------------------------------+
 | ``description``   | Mandatory                                     |
 +-------------------+-----------------------------------------------+
-| ``mip_era``       | Mandatory and value-controlled                |
+| ``project``       | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
 | ``severity``      | Mandatory and value-controlled                |
 +-------------------+-----------------------------------------------+
@@ -80,7 +80,7 @@ On declaration of the issue this is the regular form of an issue:
     {
         "title": "Test issue title",
         "description": "This is a test description, void of meaning.",
-        "mip_era": "cmip6",
+        "project": "cmip6",
         "severity": "medium",
         "materials": [
             "http://myerrata.com/images/before.jpg",
@@ -114,7 +114,7 @@ On success the local issue file will be modified. The creation and update dates 
         "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "title": "Test issue title",
         "description": "This is a test description, void of meaning.",
-        "mip_era": "cmip6",
+        "project": "cmip6",
         "severity": "medium",
         "materials": [
             "http://errata.ipsl.upmc.fr/static/images_errata/time.jpg",
