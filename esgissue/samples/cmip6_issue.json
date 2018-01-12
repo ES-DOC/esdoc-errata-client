@@ -1,6 +1,6 @@
 {
     "title": "Empty dataset issue",
     "description": "An issue with no datasets.",
-    "mip_era": "cmip6",
+    "project": "cmip6",
     "severity": "medium"
 }

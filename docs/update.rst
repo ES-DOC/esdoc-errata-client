@@ -75,7 +75,7 @@ This will lead to updated files files as follows:
         "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "mip_era": "cmip5",
+        "project": "cmip5",
         "severity": "critical",
         "materials": [
             "http://myerrata.com/images/before.jpg",
@@ -114,7 +114,7 @@ On success the local issue file will be modified again. The update date will be 
         "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "title": "Test issue title",
         "description": "This is a NEW test description, void of meaning.",
-        "mip_era": "cmip5",
+        "project": "cmip5",
         "severity": "critical",
         "materials": [
             "http://myerrata.com/images/before.jpg",

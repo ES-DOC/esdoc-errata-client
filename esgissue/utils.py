@@ -784,7 +784,6 @@ def _cred_test(credentials, team=None, project=None):
         project = raw_input('Please specify the project you wish to test authorization to: ')
     r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
                                                                              'project': project.lower()})
-    print(r.text)
     if r.status_code == 200:
         logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
     elif r.status_code == 403:
