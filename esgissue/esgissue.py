@@ -229,16 +229,6 @@ def get_args():
             help=CREDRESET_HELP,
             add_help=False,
             parents=[parent])
-
-    credreset.add_argument('--username', '-u',
-                         nargs='?',
-                         required=False,
-                         type=str)
-    credreset.add_argument('--token', '-t',
-                         nargs='?',
-                         required=False,
-                         type=str)
-
     ####################################
     # Subparser for "esgissue credset" #
     ####################################
