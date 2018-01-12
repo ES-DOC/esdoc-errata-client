@@ -734,12 +734,15 @@ def _set_credentials(**kwargs):
     set credentials
     :return: nada
     """
-    if 'username' in kwargs and 'token' in kwargs and 'passphrase' in kwargs:
+    if 'username' in kwargs and 'token' in kwargs:
         logging.info('Using token found in user input...')
         logging.info('Using credentials found in user input...')
         username = kwargs['username']
         tkn = kwargs['token']
-        passphrase = kwargs['passphrase']
+        if 'passphrase' in kwargs:
+            passphrase = kwargs['passphrase']
+        else:
+            passphrase = ''
     else:
         username = raw_input('Username: ')
         tkn = raw_input('Token: ')

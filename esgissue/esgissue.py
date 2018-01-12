@@ -161,7 +161,7 @@ def get_args():
         nargs='?',
         required=False,
         type=str,
-        help='specifies status of closed issue.'
+        help='specifies status of closed issue, please choose either (r)esolved or (w)ontfix.'
     )
 
     #####################################
@@ -230,6 +230,15 @@ def get_args():
             add_help=False,
             parents=[parent])
 
+    credreset.add_argument('--username', '-u',
+                         nargs='?',
+                         required=False,
+                         type=str)
+    credreset.add_argument('--token', '-t',
+                         nargs='?',
+                         required=False,
+                         type=str)
+
     ####################################
     # Subparser for "esgissue credset" #
     ####################################
@@ -241,6 +250,14 @@ def get_args():
             help=CREDSET_HELP,
             add_help=False,
             parents=[parent])
+    credset.add_argument('--username', '-u',
+                         nargs='?',
+                         required=False,
+                         type=str)
+    credset.add_argument('--token', '-t',
+                         nargs='?',
+                         required=False,
+                         type=str)
     #####################################
     # Subparser for "esgissue credtest" #
     #####################################
