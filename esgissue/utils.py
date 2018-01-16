@@ -636,7 +636,7 @@ def _authenticate(**kwargs):
                 enc_token = content[1].split('entry:')[1].replace('\n', '')
                 is_encrypted = content[2].split('entry:')[1]
 
-            if is_encrypted:
+            if is_encrypted == "1":
                 if 'passphrase' in kwargs:
                     key = kwargs['passphrase']
                 else:

@@ -139,7 +139,6 @@ def get_args():
         help=CLOSE_HELP,
         add_help=False,
         parents=[parent])
-    changepass = subparsers.add_parser('changepass')
     close._optionals.title = "Optional arguments"
     close._positionals.title = "Positional arguments"
     close.add_argument(
