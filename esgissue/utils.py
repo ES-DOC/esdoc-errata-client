@@ -772,7 +772,7 @@ def _set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def _cred_test(credentials, team=None, project=None):
+def _cred_test(credentials, team=None, project=None, passphrase=None):
     """
     Test credentials validity.
     :param credentials:

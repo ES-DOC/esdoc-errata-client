@@ -266,6 +266,10 @@ def get_args():
                           '-p',
                           nargs='?',
                           type=str)
+    credtest.add_argument('--passphrase',
+                      '-pass',
+                      nargs='?',
+                      type=str)
     return main.parse_args()
 
 
@@ -335,7 +339,7 @@ def run():
         elif args.command == CREDRESET:
             _reset_credentials()
         elif args.command == CREDTEST:
-            credentials = _authenticate()
+            credentials = _authenticate(passphrase=args.passphrase)
             _cred_test(credentials, args.institute, args.project)
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
