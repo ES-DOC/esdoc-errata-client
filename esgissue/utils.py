@@ -618,14 +618,14 @@ def _decrypt_with_key(data, passphrase=''):
 
 
 def _authenticate(**kwargs):
-    if os.environ.get(GITHUB_TOKEN) is not None and os.environ.get(GITHUB_USERNAME) is not None and \
-                    os.environ.get(GITHUB_CREDS_ENCRYPTED) is not None:
+    if os.environ.get(GITHUB_TOKEN) is not None and os.environ.get(GITHUB_USERNAME) is not None:
         token = os.environ.get(GITHUB_TOKEN)
         username = os.environ.get(GITHUB_USERNAME)
-        if os.environ.get(GITHUB_CREDS_ENCRYPTED) == 1:
-            passphrase = getpass.getpass('Passphrase: ')
-            token = _decrypt_with_key(token, passphrase)
-            username = _decrypt_with_key(username, passphrase)
+        if os.environ.get(GITHUB_CREDS_ENCRYPTED) is not None:
+            if str(os.environ.get(GITHUB_CREDS_ENCRYPTED)) == '1':
+                passphrase = getpass.getpass('Passphrase: ')
+                token = _decrypt_with_key(token, passphrase)
+                username = _decrypt_with_key(username, passphrase)
         return token, username
     else:
         path_to_creds = _get_file_location('cred.txt')

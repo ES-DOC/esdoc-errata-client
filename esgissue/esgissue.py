@@ -335,7 +335,7 @@ def run():
             else:
                 _reset_passphrase()
         elif args.command == CREDSET:
-            _set_credentials()
+            _set_credentials(username=args.username, token=args.token)
         elif args.command == CREDRESET:
             _reset_credentials()
         elif args.command == CREDTEST:
