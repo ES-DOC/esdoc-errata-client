@@ -464,6 +464,10 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     if r.status_code != requests.codes.ok:
         try:
             error_json = json.loads(r.text)
+            if r.status_code == 401:
+                _logging_error(ERROR_DIC['authentication'])
+            elif r.status_code == 403:
+                _logging_error(ERROR_DIC['authorization'])
             _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
         except Exception as e:
             _logging_error(ERROR_DIC['unknown_command'], str(r.status_code))
@@ -594,7 +598,7 @@ def _encrypt_with_key(data, passphrase=''):
     if passphrase != '':
         key = pbkdf2.PBKDF2(passphrase, "\0\0\0\0\0\0\0\0").read(24)
         k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-        return k.encrypt(data).encode('string_escape').replace('\\\\','\\')
+        return k.encrypt(data).encode('string_escape').replace('\\\\', '\\')
     else:
         return data
 
@@ -626,7 +630,7 @@ def _authenticate(**kwargs):
                 passphrase = getpass.getpass('Passphrase: ')
                 token = _decrypt_with_key(token, passphrase)
                 username = _decrypt_with_key(username, passphrase)
-        return token, username
+        return username, token
     else:
         path_to_creds = _get_file_location('cred.txt')
         if os.path.isfile(path_to_creds) and os.path.getsize(path_to_creds) > 0:
@@ -782,9 +786,6 @@ def _cred_test(credentials, team=None, project=None, passphrase=None):
         team = raw_input('Please specify the institute you wish to test authorization to: ')
     while not project:
         project = raw_input('Please specify the project you wish to test authorization to: ')
-    r = _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
-                                                                             'project': project.lower()})
-    if r.status_code == 200:
-        logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
-    elif r.status_code == 403:
-        logging.info('HTTP CODE 403: User unauthorized to post issues related to institute {}'.format(team))
+    _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
+                                                                         'project': project.lower()})
+    logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))

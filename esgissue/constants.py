@@ -77,8 +77,10 @@ ERROR_DIC = {
                  'dateclosed': [15, 'Closed date missing or invalid.'],
                  'dataset_incoherent': [16, 'Incoherent dataset id with declared project DRS structure, '
                                             'please make sure both are coherent.'],
-                 'authentication': [17, 'Authentication failed. Make sure the credentials are correct.'],
-                 'authorization': [18, 'User lacks required privilege. Contact admins for further information.'],
+                 'authentication': [17, 'Authentication failed. Make sure the credentials are correctly set as detailed'
+                                        ' in the package documentation.'],
+                 'authorization': [18, 'User lacks required privilege. Contact github moderators to be affiliated '
+                                       'with the proper institute team.'],
                  'connection_error': [19, 'Connection failed, server probably down. Contact admins.'],
                  'connection_timeout': [20, 'Connection timed out, try again later.'],
                  'multiple_ids': [21, 'Multiple issue ids were provided along with a single file destination, aborting.'],
