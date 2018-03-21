@@ -206,13 +206,10 @@ class Actionwords:
             passphrase_key = new_passphrase
         encrypted_username = _encrypt_with_key(username, passphrase_key)
         encrypted_token = _encrypt_with_key(token, passphrase_key)
-        print(_get_file_location('cred.txt'))
         with open(_get_file_location('cred.txt'), 'rb') as cred_file:
             content = cred_file.readlines()
         file_username = content[0].split('entry:')[1].replace('\n', '')
         file_token = content[1].split('entry:')[1].replace('\n', '')
-        print(file_username, file_token)
-        print(encrypted_username, encrypted_token)
         if file_username == encrypted_username and file_token == encrypted_token:
             return True
         else:

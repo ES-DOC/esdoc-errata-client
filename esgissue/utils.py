@@ -133,7 +133,7 @@ def _get_file_location(file_name, download_dir=None):
     :param download_dir:
     :return:
     """
-    file_location = get_target_path('/errata/')
+    file_location = get_target_path(target='')
     if download_dir is not None:
         file_location += download_dir
     file_location = os.path.join(file_location, file_name)
@@ -258,6 +258,8 @@ def get_target_path(target=None):
     if os.environ.get(ESDOC_HOME) is not None:
         return os.path.join(os.environ.get(ESDOC_HOME), target)
     else:
+        print('here')
+        print os.path.join('{}/.esdoc/errata'.format(os.getenv('HOME')), target)
         return os.path.join('{}/.esdoc/errata'.format(os.getenv('HOME')), target)
 
 
