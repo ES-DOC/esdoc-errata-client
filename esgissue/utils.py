@@ -133,20 +133,13 @@ def _get_file_location(file_name, download_dir=None):
     :param download_dir:
     :return:
     """
-    if ESDOC_VAR in os.environ.keys():
-        file_location = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/')
-        if download_dir is not None:
-            file_location += download_dir
-        file_location = os.path.join(file_location, file_name)
-        if not os.path.isdir(os.path.dirname(file_location)):
-            os.makedirs(os.path.dirname(file_location))
-        return file_location
-
-    else:
-        logging.warn('ESDOC_HOME environment variable is not defined, using installation location for files')
-        fpath = 'cred.txt'
-    return fpath
-
+    file_location = get_target_path('/errata/')
+    if download_dir is not None:
+        file_location += download_dir
+    file_location = os.path.join(file_location, file_name)
+    if not os.path.isdir(os.path.dirname(file_location)):
+        os.makedirs(os.path.dirname(file_location))
+    return file_location
 
 # Logging
 
@@ -257,6 +250,17 @@ def _prepare_retrieve_dirs(issues, dsets, list_of_ids):
     return issues, dsets
 
 
+def get_target_path(target=None):
+    """
+    :param target can be a filename or a directory
+    returns
+    """
+    if os.environ.get(ESDOC_HOME) is not None:
+        return os.path.join(os.environ.get(ESDOC_HOME), target)
+    else:
+        return os.path.join('{}/.esdoc/errata'.format(os.getenv('HOME')), target)
+
+
 def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     """
     Based on the user input, this function returns the destination of the issue and datasets' file.
@@ -265,16 +269,16 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
     :param uid: the issue's identifier
     :return: path_to_issue, path_to_datasets
     """
-    if os.environ.get(ESDOC_HOME) is not None and (path_to_issues is None or path_to_dsets is None):
+    if path_to_dsets is None and path_to_dsets is None:
         path_to_dsets = ''
         path_to_issues = ''
-        download_dir_i = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/issue_dw')
-        download_dir_d = os.path.join(os.environ[ESDOC_HOME], '.esdoc/errata/dsets_dw')
+        download_dir_i = get_target_path('issue_dw')
+        download_dir_d = get_target_path('dsets_dw')
     elif path_to_issues == '.' and path_to_dsets == '.':
-        path_to_dsets = ''
         path_to_issues = ''
-        download_dir_i = os.path.join(os.getcwd(), './issue_dw')
-        download_dir_d = os.path.join(os.getcwd(), './dsets_dw')
+        path_to_dsets = ''
+        download_dir_i = get_target_path('issue_dw')
+        download_dir_d = get_target_path('dsets_dw')
     elif path_to_issues is None or path_to_dsets is None:
         path_to_dsets = ''
         path_to_issues = ''
@@ -469,7 +473,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
             elif r.status_code == 403:
                 _logging_error(ERROR_DIC['authorization'])
             _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
-        except Exception as e:
+        except Exception:
             _logging_error(ERROR_DIC['unknown_command'], str(r.status_code))
     return r
 
@@ -515,10 +519,7 @@ def _get_remote_config_path(project):
     """
     project_ini_file = 'esg.{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
-    if os.environ.get(ESDOC_HOME):
-        project_ini_file = os.path.join(os.environ.get(ESDOC_HOME), '.esdoc/errata/'+project_ini_file)
-    else:
-        project_ini_file = '.'+project_ini_file
+    project_ini_file = get_target_path('/errata/'+project_ini_file)
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
         # Reading local file.
         logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
@@ -548,10 +549,7 @@ def _get_remote_config(project):
     """
     project_ini_file = 'esg.{}.ini'.format(project)
     config = ConfigParser.ConfigParser()
-    if os.environ.get(ESDOC_HOME):
-        project_ini_file = os.path.join(os.environ.get(ESDOC_HOME), '.esdoc/errata/'+project_ini_file)
-    else:
-        project_ini_file = '.'+project_ini_file
+    project_ini_file = get_target_path('/errata/'+project_ini_file)
     if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
         # Reading local file.
         logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')

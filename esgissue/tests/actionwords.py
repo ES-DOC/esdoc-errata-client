@@ -6,8 +6,7 @@ from esgissue.constants import *
 #                             prepare_persistence, _get_f
 
 from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_key, _reset_credentials, _get_datasets, \
-                           _prepare_persistence, _prepare_retrieve_dirs, _prepare_retrieve_ids, _get_retrieve_dirs, \
-                           _get_file_location
+                           _get_retrieve_dirs, _get_file_location
 
 
 from b2handle.handleclient import EUDATHandleClient
@@ -25,7 +24,7 @@ download_dir = 'samples/download/'
 download_issue = 'dw_issue.json'
 download_dset = 'dw_dset.txt'
 username = 'AtefBN'
-token = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 passphrase = 'atef'
 new_passphrase = 'newPassphrase@=#125_a'
 

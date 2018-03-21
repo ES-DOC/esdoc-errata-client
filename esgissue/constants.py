@@ -1,4 +1,4 @@
-VERSION_NUMBER = '0.2.6'
+VERSION_NUMBER = '0.2.7'
 
 # REGEX STUFF
 
@@ -33,10 +33,9 @@ RETRIEVE = 'retrieve'
 RETRIEVE_ALL = 'retrieve_all'
 CREDENTIALS = 'credentials'
 CHANGEPASS = 'changepass'
-CREDRESET = 'credreset'
+CREDREMOVE = 'credremove'
 CREDSET = 'credset'
 CREDTEST = 'credtest'
-CREDREMOVE = 'credremove'
 TEST = 'test'
 ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL, CREDTEST]
 
