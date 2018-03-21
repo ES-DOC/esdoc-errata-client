@@ -218,11 +218,11 @@ def get_args():
                             required=False,
                             type=str)
     ######################################
-    # Subparser for "esgissue credreset" #
+    # Subparser for "esgissue credremove" #
     ######################################
-    credreset = subparsers.add_parser(
-            'credreset',
-            prog='esgissue credreset',
+    credremove = subparsers.add_parser(
+            'credremove',
+            prog='esgissue credremove',
             description=CREDRESET_DESC,
             formatter_class=MultilineFormatter,
             help=CREDRESET_HELP,
