@@ -35,6 +35,7 @@ class LocalIssue(object):
             self.json[DATASETS] = dataset_file
             if PROJECT in self.json.keys():
                 self.project = self.json[PROJECT].lower()
+                self.json[PROJECT] = self.project
             else:
                 _logging_error(ERROR_DIC[PROJECT])
         self.issue_path = issue_path

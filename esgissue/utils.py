@@ -258,8 +258,6 @@ def get_target_path(target=None):
     if os.environ.get(ESDOC_HOME) is not None:
         return os.path.join(os.environ.get(ESDOC_HOME), target)
     else:
-        print('here')
-        print os.path.join('{}/.esdoc/errata'.format(os.getenv('HOME')), target)
         return os.path.join('{}/.esdoc/errata'.format(os.getenv('HOME')), target)
 
 
