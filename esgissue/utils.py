@@ -510,67 +510,6 @@ def _translate_dataset_regex(pattern, sections):
             pattern = re.sub(re.compile(r'%\(([^()]*)\)s'), r'(?P<\1>[\w-]+)', pattern)
     return pattern
 
-
-def _get_remote_config_path(project):
-    """
-    Using github api, this returns config file contents.
-    :param project: str
-    :return: ConfigParser instance with proper configuration
-    """
-    project_ini_file = 'esg.{}.ini'.format(project)
-    config = ConfigParser.ConfigParser()
-    project_ini_file = get_target_path('/errata/'+project_ini_file)
-    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
-        # Reading local file.
-        logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
-        return project_ini_file
-    else:
-        r = requests.get(GH_FILE_API.format(project))
-        if r.status_code == 200:
-            logging.info('NO LOCAL PROJECT CONFIG FILE FOUND OR DEPRECATED FILE FOUND, RETRIEVING FROM REPO...')
-            # Retrieving distant configuration file
-            raw_file = requests.get(r.json()[DOWNLOAD_URL])
-            config.readfp(StringIO.StringIO(raw_file.text))
-            logging.info('FILE RETRIEVED, PERSISTING LOCALLY...')
-            # Keeping local copy
-            with open(project_ini_file, 'w') as project_file:
-                config.write(project_file)
-            logging.info('FILE PERSISTED.')
-            return os.path.dirname(project_ini_file)
-        else:
-            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
-
-
-def _get_remote_config(project):
-    """
-    Using github api, this returns config file contents.
-    :param project: str
-    :return: ConfigParser instance with proper configuration
-    """
-    project_ini_file = 'esg.{}.ini'.format(project)
-    config = ConfigParser.ConfigParser()
-    project_ini_file = get_target_path('/errata/'+project_ini_file)
-    if os.path.isfile(project_ini_file) and (time()-os.path.getmtime(project_ini_file))/60 < FILE_EXPIRATION_TIME:
-        # Reading local file.
-        logging.info('RECENT PROJECT CONFIGURATION FILE FOUND LOCALLY. READING...')
-        config.read(project_ini_file)
-        return config
-    else:
-        r = requests.get(GH_FILE_API.format(project))
-        if r.status_code == 200:
-            logging.info('NO LOCAL PROJECT CONFIG FILE FOUND OR DEPRECATED FILE FOUND, RETRIEVING FROM REPO...')
-            # Retrieving distant configuration file
-            raw_file = requests.get(r.json()[DOWNLOAD_URL])
-            config.readfp(StringIO.StringIO(raw_file.text))
-            logging.info('FILE RETRIEVED, PERSISTING LOCALLY...')
-            # Keeping local copy
-            with open(project_ini_file, 'w') as project_file:
-                config.write(project_file)
-            logging.info('FILE PERSISTED.')
-            return config
-        else:
-            raise Exception('CONFIG FILE NOT FOUND {}.'.format(r.status_code))
-
 # Credentials management tools.
 
 def _get_credentials(list_of_args):

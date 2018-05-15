@@ -7,9 +7,6 @@ VERSION_REGEX = r'(?P<version_string>(\.v|#)\d+)$'
 # JSON FIELDS
 
 UID = 'uid'
-CREATED_BY = 'createdBy'
-UPDATED_BY = 'updatedBy'
-CLOSED_BY = 'closedBy'
 DATASETS = 'datasets'
 URL = 'urls'
 URLS = 'urls'
@@ -98,8 +95,6 @@ ERROR_DIC = {
              }
 
 # MISC
-CONFIG_FULLPATH = 'eec.json'
-GH_FILE_API = 'https://api.github.com/repos/ESGF/config/contents/publisher-configs/ini/esg.{}.ini?ref=devel'
 DOWNLOAD_URL = 'download_url'
 URL_BASE = 'URL_BASE'
 PATTERN = 'PATTERN'
@@ -153,30 +148,30 @@ CREATE_DESC = """esgissue create" registers one or several issues on a defined e
                     The issue registration sets:|n
                     - the issue status to "new",|n
 
-                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO REGISTER AN ISSUE.|n|n
+                    SEE https://es-doc.github.io/esdoc-errata-client/usage.html TO FOLLOW ALL REQUIREMENTS TO REGISTER AN ISSUE.|n|n
 
                     See "esgissue -h" for global help."""
 CREATE_HELP = """Creates ESGF issues from a JSON template to the errata database.|n
                 See "esgissue create -h" for full help."""
 UPDATE_DESC = """"esgissue update" updates one or several issues on a defined errata repository. The data
                     provider submits one or several JSON files gathering all issues information with a list of all
-                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
+                    affected dataset IDs (see https://es-doc.github.io/esdoc-errata-client/configuration.html to get a template).|n|n
 
                     This action returns the time and date of the update to the corresponding local JSON template.|n|n
 
-                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO UPDATE AN ISSUE.|n|n
+                    SEE https://es-doc.github.io/esdoc-errata-client/usage.html TO FOLLOW ALL REQUIREMENTS TO UPDATE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help."""
 UPDATE_HELP = """Updates ESGF issues from a JSON template to the errata database.|n
                 See "esgissue update -h" for full help."""
 CLOSE_DESC = """"esgissue close" closes one or several issues on a defined errata database. The data
                     provider submits one or several JSON files gathering all issues information with a list of all
-                    affected dataset IDs (see http://esgissue.readthedocs.org/configuration.html to get a template).|n|n
+                    affected dataset IDs (see https://es-doc.github.io/esdoc-errata-client/configuration.html to get a template).|n|n
 
                     This action returns the date of closure to the corresponding local JSON template (which is the same
                     as the date of the last update).|n|n
 
-                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO CLOSE AN ISSUE.|n|n
+                    SEE https://es-doc.github.io/esdoc-errata-client/usage.html TO FOLLOW ALL REQUIREMENTS TO CLOSE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help."""
 CLOSE_HELP = """Closes ESGF issues on the errata repository.|n
@@ -189,7 +184,7 @@ RETRIEVE_DESC = """"esgissue retrieve" retrieves one or several issues from a de
                     - the corresponding issue template as a JSON file,|n
                     - the attached affected datasets list as a TEXT file.|n|n
 
-                    SEE http://esgissue.readthedocs.org/usage.html TO FOLLOW ALL REQUIREMENTS TO RETRIEVE AN ISSUE.|n|n
+                    SEE https://es-doc.github.io/esdoc-errata-client/usage.html TO FOLLOW ALL REQUIREMENTS TO RETRIEVE AN ISSUE.|n|n
 
                     See "esgissue -h" for global help."""
 RETRIEVE_HELP = """Retrieves ESGF issues from the errata repository to a JSON template.|n

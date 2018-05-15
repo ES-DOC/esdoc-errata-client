@@ -18,9 +18,8 @@ from constants import *
 from config import _get_config_contents
 from requests.exceptions import ConnectionError, ConnectTimeout
 from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
-                  _logging_error, _order_json, _get_remote_config, _prepare_persistence, \
-                  _resolve_status, _prepare_retrieve_dirs, _get_remote_config_path, _format_datasets, \
-                  _test_datasets_for_version_and_empty
+                  _logging_error, _order_json, _prepare_persistence, _resolve_status, _prepare_retrieve_dirs,\
+                  _format_datasets, _test_datasets_for_version_and_empty
 
 cf = _get_config_contents()
 class LocalIssue(object):
