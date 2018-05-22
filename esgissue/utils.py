@@ -639,7 +639,7 @@ def _authenticate(**kwargs):
                 is_encrypted = content[2].split('entry:')[1]
 
             if is_encrypted == "1":
-                if 'passphrase' in kwargs:
+                if 'passphrase' in kwargs and kwargs['passphrase'] is not None:
                     key = kwargs['passphrase']
                 else:
                     key = getpass.getpass('Passphrase: ')
@@ -774,16 +774,16 @@ def _set_credentials(**kwargs):
     logging.info('Your credentials were successfully set.')
 
 
-def _cred_test(credentials, team=None, project=None, passphrase=None):
+def _cred_test(team=None, project=None, passphrase=None):
     """
     Test credentials validity.
-    :param credentials:
     :return:
     """
     while not team:
         team = raw_input('Please specify the institute you wish to test authorization to: ')
     while not project:
         project = raw_input('Please specify the project you wish to test authorization to: ')
+    credentials = _authenticate(passphrase=passphrase)
     _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
                                                                          'project': project.lower()})
     logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))

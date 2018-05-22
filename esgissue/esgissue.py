@@ -342,8 +342,8 @@ def run():
         elif args.command == CREDREMOVE:
             _reset_credentials()
         elif args.command == CREDTEST:
-            credentials = _authenticate(passphrase=args.passphrase)
-            _cred_test(credentials, args.institute, args.project)
+            # credentials = _authenticate(passphrase=args.passphrase)
+            _cred_test(args.institute, args.project, args.passphrase)
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)
