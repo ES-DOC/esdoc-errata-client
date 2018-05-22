@@ -633,7 +633,8 @@ def _reset_passphrase(**kwargs):
         old_pass = kwargs['old_pass']
         new_pass = kwargs['new_pass']
     else:
-        logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credreset')
+        logging.info('Old and new pass-phrases are required, if you forgot yours, use: esgissue credremove')
+        old_pass = ''
         if is_encrypted == '0':
             pass
         else:
