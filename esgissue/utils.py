@@ -483,11 +483,14 @@ def _check_ws_heartbeat():
     checks whether the configured errata ws server is up
     :return: raises exception if down.
     """
-    r = requests.get(cf['url_base'])
-    if r.status_code != 200:
-        sys.exit(ERROR_DIC['server_down'][0])
-    else:
-        return
+    try:
+        r = requests.get(cf['url_base'])
+        if r.status_code != 200:
+            sys.exit(ERROR_DIC['server_down'][0])
+        else:
+            return
+    except requests.exceptions.ConnectionError as ce:
+        sys.exit(ERROR_DIC['server_down'])
 
 
 def _translate_dataset_regex(pattern, sections):
