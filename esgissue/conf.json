@@ -1,5 +1,5 @@
 {
-"url_base": "https://test-errata-api.es-doc.org",
+"url_base": "https://errata.es-doc.org",
 "url_base_aux": "http://localhost:5001",
 "url_viewer": "https://test-errata.es-doc.org/viewer.html?uid=",
 "json_schema_paths" : {
