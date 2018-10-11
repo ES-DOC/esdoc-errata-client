@@ -10,14 +10,14 @@ Check the help
 .. code-block:: bash
 
    $> esgissue -h
-   $> esgprep SUBCOMMAND -h
+   $> esgissue SUBCOMMAND -h
 
 Check the version
 *****************
 
 .. code-block:: bash
 
-    $> esgprep -v
+    $> esgissue -v
 
 Use a logfile
 *************
@@ -29,13 +29,13 @@ It can be changed by adding a optional logfile directory to the flag.
 
 .. code-block:: bash
 
-    $> esgprep SUBCOMMAND --log
-    $> esgprep SUBCOMMAND --log /PATH/TO/LOGDIR/
+    $> esgissue SUBCOMMAND --log
+    $> esgissue SUBCOMMAND --log /PATH/TO/LOGDIR/
 
 Exit status
 ***********
 
-- [0]: Successful execution of the requested task,
+- [0]: Successful execution of the requested operation,
 - [1]: Missing or invalid title in issue json file,
 - [2]: Missing or invalid description in issue json file,
 - [3]: Missing or invalid datasets in issue json file,
@@ -64,5 +64,8 @@ Exit status
 - [26]: Project indicated in issue is not supported by errata service.
 - [27]: A dataset list is required for either creation or update operation. This message also shows in case user tries to close an issue by indicating an empty dataset file.
 - [28]: Dataset malformed and doesn't comply to the expected regex.
+- [29]: Facet type not recognized by the selected project configuration.
+- [30]: Facet value not recognized by the selected project configuration.
+- [31]: Errata servers are down or under maintenance.
 - [99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.
 

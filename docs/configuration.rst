@@ -4,12 +4,12 @@
 Authentication
 ==============
 
-Authentication is key to an optimal use of ``esgissue`` features.
+Authentication is essential to use the "write" features of the ``esgissue`` package.
 
 GitHub setup
 ************
 
-A verified GitHub account is required, as well as a personal access token generated through `your GitHub profile setting page <https://github.com/settings/profile>`_.
+A verified (by email) GitHub account is required, as well as a personal access token generated through `your GitHub profile setting page <https://github.com/settings/profile>`_.
 
 1. Go on the bottom of the left menu to access to "Developer Settings":
 
@@ -76,16 +76,16 @@ In order to generate your token local file:
 
     $> esgissue credset
 
-After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
-In case the user forgets the pass-phrase the saved credentials can be reset using the command:
+
+After setting your credentials you might want to give the new credentials a test and see if they work as expected.
+To do this the credtest command test your authentication then authorization linked to the selected institute errata management for a specific project.
 
 .. code-block:: bash
 
-   $> esgissue credreset
+    $> esgissue credtest -i institute_name -p project
 
-This will obviously result in resetting the saved credentials, and the client will now ask for that information in the next usages.
-
-In the case that the user does recall the pass-phrase and just wishes to modify it, this is possible using the following command:
+After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
+In case the user forgets the pass-phrase the saved credentials can be reset using the command:
 
 .. code-block:: bash
 
