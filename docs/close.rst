@@ -4,57 +4,59 @@
 Close an issue
 ==============
 
-At the end of an issue's lifecycle, it should be marked as a closed issue in order to prevent confusion. To do so a specific ``close`` subcommand is made available in the ESGF errata client .
+At the end of an issue's lifecycle, it should be marked as a closed issue in order to prevent confusion. Closure is a particular step of the :ref:`update <update>` procedure with similar rules.
 
-Requirements
-************
+#. :ref:`Log in to the Errata Service <login>`
 
-Closing an issue on the ES-DOC Errata server requires the corresponding issue template and list of affected datasets.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC Errata server using the :ref:`retrieve` subcommand.
-Contrary to the :ref:`update` step, closing an issue doesn't require to modify the local files.
-Similar constraints and safeguards are applied to the issue JSON fields (see :ref:`update`)
+#. From the `Errata Service home page <https://errata.es-doc.org/>`_, click on any issue your are authorized to modify on behalf of your institute.
 
-.. note:: The ``close`` subcommand also modifies the issue files by adding the close date and changing the status to "wontfix" or "resolved" depending the user choice.
+#. The corresponding issue pops up.
 
-.. note:: If the issue status has already been updated to "wontfix" or "resolved" the ``close`` subcommand just close the issue on the ES-DOC Errata server.
+#. Click on "**Edit**" in the upper-right menu.
 
-.. warning:: The previously explained safeguards for the issue creation are also valid in the update context, empty dataset
-    lists are rejected as well as malformed dataset ids. The issue json should always be conform to the templates otherwise
-    an exception will be thrown.
+    .. image:: images/edit_button.png
+        :scale: 70 %
+        :alt: Create Issue Form
+        :align: center
 
-Close the issue
-***************
+#. Use the update form to choose the appropriate status:
 
-The final step remaining in the life cycle of the issue is either to close the issue and mark it as done with, or flag it as a "wontfix", that will however keep the issue
-open for other users to be careful about the affected files in future use. To mark it as a "wontfix", an update as shown above is sufficient.
-To close an issue, users are required to use the client's ``close`` command. Which will mark issue as closed in the remote ESGF Errata server and reflect this change in the local
-files in coherence with every step in the issue life cycle.
+    .. note::
+        "Resolved"
+            The issue has been resolved **AND** the corrected files have been published on ESGF with a new dataset version.
+        "Wontfix"
+            The issue cannot/won't be fixed by the data provider. This may occur in the following cases:
 
-From our previous issue (see :ref:`update`), the ``close`` subcommand has a similar structure to the creation and update:
+                - the model should be re-run to correct the issue,
+                - an "Low" severity issue without any consequences on the analyzes.
 
-.. code-block:: bash
+    .. warning::
+        The previously explained safeguards for the :ref:`issue update <update>` are also valid in this context.
 
-   $> esgissue close --issue /path/to/issue.json --dsets /path/to/new_datasets.txt
+#. Click on "**Save**" in the upper-right menu.
 
-On success the local issue file will be modified one last time by adding the close date accordingly:
+    .. image:: images/save_button.png
+        :scale: 70 %
+        :alt: Create Menu
+        :align: center
 
-.. code-block:: json
+#. Your request will be processed and validated by the server.
 
-    {
-        "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "title": "Test issue title",
-        "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip6",
-        "severity": "critical",
-        "materials": [
-            "http://myerrata.com/images/before.jpg",
-            "http://myerrata.com/images/after.jpg"
-        ],
-        "url": "http://websitetest.com/",
-        "status": "resolved",
-        "dateClosed": "YYYY-MM-DD HH:MM:SS",
-        "dateUpdated": "YYYY-MM-DD HH:MM:SS",
-        "dateClosed": "YYYY-MM-DD HH:MM:SS"
-    }
+#. If successfully saved, you are redirected to the newly generated view of your issue.
 
-The issue is now closed and is kept for archiving/consultation purposes.
+    .. image:: images/success.png
+        :scale: 50 %
+        :alt: Creation Success
+        :align: center
+
+#. If invalid issue, you are requested to correct the form depending on the error message and try again.
+
+    .. image:: images/fail.png
+        :scale: 50 %
+        :alt: Creation Fail
+        :align: center
+
+#. The issue is now closed and is kept for archiving/consultation purposes.
+
+.. note::
+    The update date and authors are automatically modified to the issue by the server.

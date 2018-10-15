@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'esgissue'
+project = u'ESGF Errata Service'
 copyright = u'2016, Atef BEN NASSER, Guillaume LEVAVASSEUR'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -234,10 +234,10 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index',
-   'esgissue',
-   u'esgissue Documentation',
+   'ESGF Errata Service',
+   u'ESGF Errata Service Documentation',
    u'Atef BEN NASSER, Guillaume LEVAVASSEUR',
-   'esgissue',
+   'ESGF Errata Service',
    'One line description of project.',
    'Miscellaneous'),
 ]

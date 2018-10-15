@@ -9,8 +9,8 @@ Check the help
 
 .. code-block:: bash
 
-   $> esgissue -h
-   $> esgissue SUBCOMMAND -h
+    $> esgissue -h
+    $> esgissue SUBCOMMAND -h
 
 Check the version
 *****************
