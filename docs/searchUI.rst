@@ -8,7 +8,7 @@ The `Errata Service home page <https://errata.es-doc.org/>`_ displays the whole 
 
 .. image:: images/front-end.png
     :scale: 70 %
-    :alt: Errata Fron-End
+    :alt: Errata Front-End
     :align: center
 
 The list can be filtered by several useful parameters as:
