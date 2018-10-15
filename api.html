@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ES-DOC-ERRATA API &mdash; esgissue 0.2.2 documentation</title>
+  <title>ES-DOC-ERRATA API &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.2.2 documentation" href="index.html"/>
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
         <link rel="next" title="Frequently asked questions" href="faq.html"/>
-        <link rel="prev" title="Retrieve an issue" href="retrieve.html"/> 
+        <link rel="prev" title="Retrieve an issue" href="retrieve_cli.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> esgissue
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
           
 
           
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -91,13 +91,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ES-DOC-ERRATA API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#issue-creation">Issue Creation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#consumes">Consumes</a></li>
@@ -163,7 +164,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">esgissue</a>
+          <a href="index.html">ESGF Errata Service</a>
         
       </nav>
 
@@ -221,9 +222,9 @@ the ES-DOC-ERRATA project has to offer.</p>
 <p>Endpoint used for issue creation. Requires proper authentication and authorization.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/create</span></code>
 Method: <code class="docutils literal"><span class="pre">post</span></code>
-Tags: &#8220;Issue Management&#8221;
-Summary: &#8220;Create a new issue&#8221;
-OperationId: &#8220;createIssue&#8221;</p>
+Tags: “Issue Management”
+Summary: “Create a new issue”
+OperationId: “createIssue”</p>
 <div class="section" id="consumes">
 <h3>Consumes<a class="headerlink" href="#consumes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -240,20 +241,20 @@ OperationId: &#8220;createIssue&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
-<li>description: &#8220;Issue json schema&#8221;</li>
+<li>description: “Issue json schema”</li>
 <li>required: <code class="docutils literal"><span class="pre">true</span></code></li>
 </ul>
 </div>
 <div class="section" id="responses">
 <h3>Responses<a class="headerlink" href="#responses" title="Permalink to this headline">¶</a></h3>
-<p>401: &#8220;Unauthenticated&#8221;
-403: &#8220;Unauthorized&#8221;
-405: &#8220;Bad Method&#8221;</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”</p>
 </div>
 <div class="section" id="security">
 <h3>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>github personal access token: - &#8220;org:read&#8221;</li>
+<li>github personal access token: - “org:read”</li>
 </ul>
 </div>
 </div>
@@ -263,9 +264,9 @@ OperationId: &#8220;createIssue&#8221;</p>
 Local files need to be updated, if tampered with beforehand, they can be downloaded using the retrieve endpoint.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/update</span></code>
 Method: <code class="docutils literal"><span class="pre">post</span></code>
-Tags: &#8220;Issue Management:&#8221;
-Summary: &#8220;Update an issue&#8221;
-OperationId: &#8220;updateIssue&#8221;</p>
+Tags: “Issue Management:”
+Summary: “Update an issue”
+OperationId: “updateIssue”</p>
 <div class="section" id="id1">
 <h3>Consumes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -282,31 +283,31 @@ OperationId: &#8220;updateIssue&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
-<li>description: &#8220;Issue json schema&#8221;</li>
+<li>description: “Issue json schema”</li>
 <li>required: true</li>
 </ul>
 </div>
 <div class="section" id="id4">
 <h3>Responses<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>401: &#8220;Unauthenticated&#8221;
-403: &#8220;Unauthorized&#8221;
-405: &#8220;Bad Method&#8221;</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”</p>
 </div>
 <div class="section" id="id5">
 <h3>Security<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>github personal access token: - &#8220;org:read&#8221;</li>
+<li>github personal access token: - “org:read”</li>
 </ul>
 </div>
 </div>
 <div class="section" id="issue-close">
 <h2>Issue Close<a class="headerlink" href="#issue-close" title="Permalink to this headline">¶</a></h2>
-<p>Endpoint used to close an issue marking its lifecycle&#8217;s end. Requires proper authentication and authorization.</p>
+<p>Endpoint used to close an issue marking its lifecycle’s end. Requires proper authentication and authorization.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/close</span></code>
 Method: <code class="docutils literal"><span class="pre">post</span></code>
-Tags: &#8220;Issue Management:&#8221;
-Summary: &#8220;closes an issue&#8221;
-OperationId: &#8220;closeIssue&#8221;</p>
+Tags: “Issue Management:”
+Summary: “closes an issue”
+OperationId: “closeIssue”</p>
 <div class="section" id="id6">
 <h3>Consumes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -323,20 +324,20 @@ OperationId: &#8220;closeIssue&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
-<li>description: &#8220;Issue json schema&#8221;</li>
+<li>description: “Issue json schema”</li>
 <li>required: true</li>
 </ul>
 </div>
 <div class="section" id="id9">
 <h3>Responses<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
-<p>401: &#8220;Unauthenticated&#8221;
-403: &#8220;Unauthorized&#8221;
-405: &#8220;Bad Method&#8221;</p>
+<p>401: “Unauthenticated”
+403: “Unauthorized”
+405: “Bad Method”</p>
 </div>
 <div class="section" id="id10">
 <h3>Security<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>github personal access token: - &#8220;org:read&#8221;</li>
+<li>github personal access token: - “org:read”</li>
 </ul>
 </div>
 </div>
@@ -346,9 +347,9 @@ OperationId: &#8220;closeIssue&#8221;</p>
 This endpoint requires no authentication nor authentication.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/retrieve</span></code>
 Method: <code class="docutils literal"><span class="pre">get</span></code>
-Tags: &#8220;Issue Management:&#8221;
-Summary: &#8220;downloads issue files&#8221;
-OperationId: &#8220;retrieveIssue&#8221;</p>
+Tags: “Issue Management:”
+Summary: “downloads issue files”
+OperationId: “retrieveIssue”</p>
 <div class="section" id="id11">
 <h3>Consumes<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -365,13 +366,13 @@ OperationId: &#8220;retrieveIssue&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">uid</span></code></li>
-<li>description: &#8220;list of uids to download&#8221;</li>
+<li>description: “list of uids to download”</li>
 <li>required: false</li>
 </ul>
 </div>
 <div class="section" id="id14">
 <h3>Responses<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
-<p>405: &#8220;Bad Method&#8221;</p>
+<p>405: “Bad Method”</p>
 </div>
 </div>
 <div class="section" id="pid-search">
@@ -381,9 +382,9 @@ This is the advanced search endpoint, it seeks information about all versions of
 This endpoint requires no authentication nor authentication.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/pid</span></code>
 Method: <code class="docutils literal"><span class="pre">get</span></code>
-Tags: &#8220;Issue Management:&#8221;
-Summary: &#8220;checks dataset (and entire version history) for issues &#8221;
-OperationId: &#8220;pidSearch&#8221;</p>
+Tags: “Issue Management:”
+Summary: “checks dataset (and entire version history) for issues ”
+OperationId: “pidSearch”</p>
 <div class="section" id="id15">
 <h3>Consumes<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -400,13 +401,13 @@ OperationId: &#8220;pidSearch&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">pids</span></code></li>
-<li>description: &#8220;list of uids to download&#8221;</li>
+<li>description: “list of uids to download”</li>
 <li>required: false</li>
 </ul>
 </div>
 <div class="section" id="id18">
 <h3>Responses<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
-<p>405: &#8220;Bad Method&#8221;</p>
+<p>405: “Bad Method”</p>
 </div>
 </div>
 <div class="section" id="simple-pid-search">
@@ -416,9 +417,9 @@ This is the simple response version of the pid endpoint, only the queried versio
 This endpoint requires no authentication nor authentication.</p>
 <p>Path: <code class="docutils literal"><span class="pre">1/issue/simple_pid</span></code>
 Method: <code class="docutils literal"><span class="pre">get</span></code>
-Tags: &#8220;Issue Management:&#8221;
-Summary: &#8220;checks dataset for issues&#8221;
-OperationId: &#8220;simplePidSearch&#8221;</p>
+Tags: “Issue Management:”
+Summary: “checks dataset for issues”
+OperationId: “simplePidSearch”</p>
 <div class="section" id="id19">
 <h3>Consumes<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -435,13 +436,13 @@ OperationId: &#8220;simplePidSearch&#8221;</p>
 <h3>Parameters<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>name: <code class="docutils literal"><span class="pre">pids</span></code></li>
-<li>description: &#8220;list of uids to download&#8221;</li>
+<li>description: “list of uids to download”</li>
 <li>required: false</li>
 </ul>
 </div>
 <div class="section" id="id22">
 <h3>Responses<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
-<p>405: &#8220;Bad Method&#8221;</p>
+<p>405: “Bad Method”</p>
 </div>
 </div>
 </div>
@@ -459,7 +460,7 @@ OperationId: &#8220;simplePidSearch&#8221;</p>
         <a href="faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="retrieve.html" class="btn btn-neutral" title="Retrieve an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="retrieve_cli.html" class="btn btn-neutral" title="Retrieve an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -490,7 +491,7 @@ OperationId: &#8220;simplePidSearch&#8221;</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

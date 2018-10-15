@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Update an issue &mdash; esgissue 0.2.2 documentation</title>
+  <title>Update an issue &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.2.2 documentation" href="index.html"/>
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
         <link rel="next" title="Close an issue" href="close.html"/>
         <link rel="prev" title="Create an issue" href="create.html"/> 
 
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> esgissue
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
           
 
           
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -91,18 +91,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Update an issue</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#modify-the-issue">Modify the issue</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#send-the-changes">Send the changes</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -121,7 +117,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">esgissue</a>
+          <a href="index.html">ESGF Errata Service</a>
         
       </nav>
 
@@ -173,145 +169,99 @@
   <div class="section" id="update-an-issue">
 <span id="update"></span><h1>Update an issue<a class="headerlink" href="#update-an-issue" title="Permalink to this headline">¶</a></h1>
 <p>Once an issue is created, it inevitably will be subject to some changes, whether it regards the content of the issue (description
-for instance), its status or the list of affected datasets.</p>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Updating an issue on the ES-DOC Errata server requires modifying the corresponding issue template or list of affected
-datasets on local files.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC
-Errata server using the <a class="reference internal" href="retrieve.html#retrieve"><span class="std std-ref">Retrieve an issue</span></a> subcommand.
-The new issue <cite>.json</cite> file is still constrained and validated against a new JSON schema.
+for instance), its status or the list of affected datasets. Updating an issue is still constrained and validated against some rules.
 In fact, to guarantee the issue quality some attributes are immutable.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="29%" />
-<col width="71%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Field</th>
-<th class="head">Requirement</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">uid</span></code></td>
-<td>Mandatory and unchanged</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">title</span></code></td>
-<td>Mandatory and unchanged</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">description</span></code></td>
-<td>Mandatory and value-controlled</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">mip_era</span></code></td>
-<td>Mandatory and unchanged</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">severity</span></code></td>
-<td>Mandatory and value-controlled</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">status</span></code></td>
-<td>Mandatory and value-controlled</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">landing_page</span></code></td>
-<td>Optional</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">materials</span></code></td>
-<td>Optional</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">dateCreated</span></code></td>
-<td>Mandatory and unchanged</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">dateUpdated</span></code></td>
-<td>Mandatory and unchanged</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">dateClosed</span></code></td>
-<td>Not expected</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
+<ol class="arabic">
+<li><p class="first"><a class="reference internal" href="login.html#login"><span class="std std-ref">Log in to the Errata Service</span></a></p>
+</li>
+<li><p class="first">From the <a class="reference external" href="https://errata.es-doc.org/">Errata Service home page</a>, click on any issue your are authorized to modify on behalf of your institute.</p>
+</li>
+<li><p class="first">The corresponding issue pops up.</p>
+</li>
+<li><p class="first">Click on “<strong>Edit</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/edit_button.png"><img alt="Create Issue Form" class="align-center" src="images/edit_button.png" style="width: 1402.8px; height: 100.8px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Update the form following the requirements:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">The project and the title cannot be changed.</p>
+</li>
+<li><p class="first">A description between 16 and 1023 characters is mandatory.</p>
+<blockquote>
+<div><div class="admonition warning">
 <p class="first admonition-title">Warning</p>
+<p class="last">As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">The severity is mandatory and value-controlled.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The accepted terms for issue severity are:</p>
 <dl class="last docutils">
-<dt>Safeguards requirements are:</dt>
-<dd><ul class="first last simple">
-<li>Empty attributes are disallowed.</li>
-<li>As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.</li>
-<li>All optional URLs must be valid (i.e., accessible).</li>
-<li>A status “new” will be affected by the server on the creation.</li>
-<li>The creation date should not be modified in order to preserve an authentic set of records.</li>
-<li>The updated date is returned by the server.</li>
-<li>The issue status cannot change back to &#8220;new&#8221;.</li>
-</ul>
+<dt>“Low”</dt>
+<dd><p class="first last">The issue concerns file management (e.g., addition, removal, period extension, etc.),</p>
+</dd>
+<dt>“Medium”</dt>
+<dd><p class="first last">The issue concerns metadata (NetCDF attributes) without undermining the values of the involved variable,</p>
+</dd>
+<dt>“High”</dt>
+<dd><p class="first last">The issue concerns single point variable or axis values,</p>
+</dd>
+<dt>“Critical”</dt>
+<dd><p class="first last">The issue concerns the variable or axis values undermining the analysis. The use of this data is strongly discouraged.</p>
 </dd>
 </dl>
 </div>
+</div></blockquote>
+</li>
+<li><p class="first">The status is mandatory and value-controlled.</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">An issue status cannot change back to “<strong>New</strong>”.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Optional links and materials are expected to be a valid URL(s) (checked upon validation).</p>
+</li>
+<li><p class="first">The datasets list is mandatory and gathers all the identifiers of the affected datasets. Any dataset ID can be add or modify as long as the dataset list isn’t empty.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A dataset identifier is a sequence of dot-separated facets that follows the <em>Data Reference Syntax</em> of the corresponding project.
+The dataset identifiers has to append the dataset version number. If one of the dataset ID is malformed or if the dataset list is empty, the form will raise an error.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<a class="reference internal image-reference" href="images/update_form.png"><img alt="Create Issue Form" class="align-center" src="images/update_form.png" style="width: 630.0px; height: 613.2px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Click on “<strong>Save</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/save_button.png"><img alt="Create Menu" class="align-center" src="images/save_button.png" style="width: 1401.4px; height: 103.6px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Your request will be processed and validated by the server.</p>
+</li>
+<li><p class="first">If successfully saved, you are redirected to the newly generated view of your issue.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/success.png"><img alt="Creation Success" class="align-center" src="images/success.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">If invalid issue, you are requested to correct the form depending on the error message and try again.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/fail.png"><img alt="Creation Fail" class="align-center" src="images/fail.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+</ol>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If a mistake occurred while declaring the issue, it should be reported to the administrators (see <a class="reference internal" href="credits.html#credits"><span class="std std-ref">Credits</span></a>).</p>
-</div>
-<p>Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary as long as the dataset list isn&#8217;t empty. The life cycle of an issue may incorporate a few changes within the contents of an issue.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The <code class="docutils literal"><span class="pre">issue.json</span></code> needs to be at contain the same fields as in after the creation action. If your local file is corrupted
-consider using the <a class="reference internal" href="retrieve.html#retrieve"><span class="std std-ref">Retrieve an issue</span></a> subcommand to download a fresh copy. The issue json should always be conform to the templates otherwise
-an exception will be thrown.</p>
-</div>
-</div>
-<div class="section" id="modify-the-issue">
-<h2>Modify the issue<a class="headerlink" href="#modify-the-issue" title="Permalink to this headline">¶</a></h2>
-<p>From our previous issue template (see <a class="reference internal" href="create.html#create"><span class="std std-ref">Create an issue</span></a>), we altered the description of the issue, the severity, the status status and added 2 new affected datasets.
-This will lead to updated files files as follows:</p>
-<p><code class="docutils literal"><span class="pre">issue.json</span></code>:</p>
-<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a NEW test description, void of meaning.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip5&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;critical&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;http://myerrata.com/images/after.jpg&quot;</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://websitetest.com/&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;onhold&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dateClosed&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dateUpdated&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">dataset.txt</span></code>:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
-cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
-cmip5.output1.IPSL.IPSL-CM5A-LR.historical.mon.land.Lmon.r3i1p1#20130514
-cmip5.output1.IPSL.IPSL-CM5A-LR.piControl.mon.land.Lmon.r3i1p1#20130514
-[...]
-</pre></div>
-</div>
-</div>
-<div class="section" id="send-the-changes">
-<h2>Send the changes<a class="headerlink" href="#send-the-changes" title="Permalink to this headline">¶</a></h2>
-<p>The update command has a similar structure as the creation command:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue update --issue /path/to/issue.json --dsets /path/to/new_datasets.txt
-</pre></div>
-</div>
-<p>On success the local issue file will be modified again. The update date will be modified accordingly:</p>
-<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a NEW test description, void of meaning.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip5&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;critical&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;http://myerrata.com/images/after.jpg&quot;</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://websitetest.com/&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;onhold&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dateClosed&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dateUpdated&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>The updates now are registered both in the remote errata service and are reflected in the local issue files.</p>
+<p class="last">The update date and authors are also automatically assigned/modified to the issue by the server.</p>
 </div>
 </div>
 
@@ -359,7 +309,7 @@ cmip5.output1.IPSL.IPSL-CM5A-LR.piControl.mon.land.Lmon.r3i1p1#20130514
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

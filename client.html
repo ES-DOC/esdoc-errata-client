@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; ESGF Errata Service 0.3 documentation</title>
+  <title>Command Line Interface &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -34,8 +34,10 @@
   
         <link rel="index" title="Index"
               href="genindex.html"/>
-        <link rel="search" title="Search" href="#"/>
-    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/> 
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
+        <link rel="next" title="Installation" href="installation.html"/>
+        <link rel="prev" title="Close an issue" href="close.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -71,7 +73,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -88,7 +90,7 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
@@ -96,7 +98,16 @@
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_cli.html">Create an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="update_cli.html">Update an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="close_cli.html">Close an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retrieve_cli.html">Retrieve an issue</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -145,10 +156,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Command Line Interface</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="sources/client.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -160,19 +175,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="command-line-interface">
+<span id="client"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
+<p>The ESGF errata client, called <code class="docutils literal"><span class="pre">esgissue</span></code> is a piece of software that enables the interaction with the errata service.
+Like the web forms, it can be used to easily create, update, close and retrieve issues. The client is basically aimed to be used by publishing teams, data providers and managers
+that are notified of the existence of an issue regarding one or many datasets/files.</p>
+<p>This lightweight CLI relies on <code class="docutils literal"><span class="pre">.json</span></code> and <code class="docutils literal"><span class="pre">.txt</span></code> file records. This enables the data provider, in charge of ESGF issues, to efficiently manage one or several issues remotely and locally.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_cli.html">Create an issue (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update_cli.html">Update an issue (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close_cli.html">Close an issue (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieve_cli.html">Retrieve an issue</a></li>
+</ul>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            <div class="articleComments">
@@ -180,6 +201,15 @@
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="close.html" class="btn btn-neutral" title="Close an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -218,7 +248,6 @@
       <script type="text/javascript" src="static/jquery.js"></script>
       <script type="text/javascript" src="static/underscore.js"></script>
       <script type="text/javascript" src="static/doctools.js"></script>
-      <script type="text/javascript" src="static/searchtools.js"></script>
 
   
 
@@ -234,14 +263,7 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

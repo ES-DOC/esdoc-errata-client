@@ -7,9 +7,9 @@ Credits
 Developer/Author
 ****************
 
-`Guillaume LEVAVASSEUR <glipsl@ipsl.fr>`_ (`UPMC <http://www.upmc.fr/>`_ /`IPSL <https://www.ipsl.fr/>`_)
+`Guillaume LEVAVASSEUR <glipsl@ipsl.fr>`_ (`SU <https://www.sorbonne-universite.fr/>`_/`IPSL <https://www.ipsl.fr/>`_)
 
-`Atef BEN NASSER <abennasser@ipsl.fr>`_ (`IPSL <https://www.ipsl.fr/>`_)
+`Atef BEN NASSER <abennasser@ipsl.fr>`_ (`CNRS <http://www.cnrs.fr>`_/`IPSL <https://www.ipsl.fr/>`_)
 
 Contacts
 ********

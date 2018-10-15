@@ -4,126 +4,83 @@ Update an issue
 ===============
 
 Once an issue is created, it inevitably will be subject to some changes, whether it regards the content of the issue (description
-for instance), its status or the list of affected datasets.
-
-Requirements
-************
-
-Updating an issue on the ES-DOC Errata server requires modifying the corresponding issue template or list of affected
-datasets on local files.
-In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC
-Errata server using the :ref:`retrieve` subcommand.
-The new issue `.json` file is still constrained and validated against a new JSON schema.
+for instance), its status or the list of affected datasets. Updating an issue is still constrained and validated against some rules.
 In fact, to guarantee the issue quality some attributes are immutable.
 
-+-------------------+-----------------------------------------------+
-| Field             | Requirement                                   |
-+===================+===============================================+
-| ``uid``           | Mandatory and unchanged                       |
-+-------------------+-----------------------------------------------+
-| ``title``         | Mandatory and unchanged                       |
-+-------------------+-----------------------------------------------+
-| ``description``   | Mandatory and value-controlled                |
-+-------------------+-----------------------------------------------+
-| ``mip_era``       | Mandatory and unchanged                       |
-+-------------------+-----------------------------------------------+
-| ``severity``      | Mandatory and value-controlled                |
-+-------------------+-----------------------------------------------+
-| ``status``        | Mandatory and value-controlled                |
-+-------------------+-----------------------------------------------+
-| ``landing_page``  | Optional                                      |
-+-------------------+-----------------------------------------------+
-| ``materials``     | Optional                                      |
-+-------------------+-----------------------------------------------+
-| ``dateCreated``   | Mandatory and unchanged                       |
-+-------------------+-----------------------------------------------+
-| ``dateUpdated``   | Mandatory and unchanged                       |
-+-------------------+-----------------------------------------------+
-| ``dateClosed``    | Not expected                                  |
-+-------------------+-----------------------------------------------+
+#. :ref:`Log in to the Errata Service <login>`
 
-.. warning::
+#. From the `Errata Service home page <https://errata.es-doc.org/>`_, click on any issue your are authorized to modify on behalf of your institute.
 
-   Safeguards requirements are:
-    - Empty attributes are disallowed.
-    - As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
-    - All optional URLs must be valid (i.e., accessible).
-    - A status “new” will be affected by the server on the creation.
-    - The creation date should not be modified in order to preserve an authentic set of records.
-    - The updated date is returned by the server.
-    - The issue status cannot change back to "new".
+#. The corresponding issue pops up.
 
-.. note:: If a mistake occurred while declaring the issue, it should be reported to the administrators (see :ref:`credits`).
+#. Click on "**Edit**" in the upper-right menu.
 
-Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary as long as the dataset list isn't empty. The life cycle of an issue may incorporate a few changes within the contents of an issue.
+    .. image:: images/edit_button.png
+        :scale: 70 %
+        :alt: Create Issue Form
+        :align: center
 
-.. warning:: The ``issue.json`` needs to be at contain the same fields as in after the creation action. If your local file is corrupted
-    consider using the :ref:`retrieve` subcommand to download a fresh copy. The issue json should always be conform to the templates otherwise
-    an exception will be thrown.
+#. Update the form following the requirements:
 
-Modify the issue
-****************
+    - The project and the title cannot be changed.
+    - A description between 16 and 1023 characters is mandatory.
 
-From our previous issue template (see :ref:`create`), we altered the description of the issue, the severity, the status status and added 2 new affected datasets.
-This will lead to updated files files as follows:
+        .. warning::
+            As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.
 
-``issue.json``:
+    - The severity is mandatory and value-controlled.
 
-.. code-block:: json
+        .. note::
+            The accepted terms for issue severity are:
 
-    {
-        "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "title": "Test issue title",
-        "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
-        "severity": "critical",
-        "materials": [
-            "http://myerrata.com/images/before.jpg",
-            "http://myerrata.com/images/after.jpg"
-        ],
-        "url": "http://websitetest.com/",
-        "status": "onhold",
-        "dateClosed": "YYYY-MM-DD HH:MM:SS",
-        "dateUpdated": "YYYY-MM-DD HH:MM:SS"
-    }
+            "Low"
+                The issue concerns file management (e.g., addition, removal, period extension, etc.),
+            "Medium"
+                The issue concerns metadata (NetCDF attributes) without undermining the values of the involved variable,
+            "High"
+                The issue concerns single point variable or axis values,
+            "Critical"
+                The issue concerns the variable or axis values undermining the analysis. The use of this data is strongly discouraged.
 
-``dataset.txt``:
+    - The status is mandatory and value-controlled.
 
-.. code-block:: none
+        .. warning::
+            An issue status cannot change back to "**New**".
 
-    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
-    cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
-    cmip5.output1.IPSL.IPSL-CM5A-LR.historical.mon.land.Lmon.r3i1p1#20130514
-    cmip5.output1.IPSL.IPSL-CM5A-LR.piControl.mon.land.Lmon.r3i1p1#20130514
-    [...]
+    - Optional links and materials are expected to be a valid URL(s) (checked upon validation).
+    - The datasets list is mandatory and gathers all the identifiers of the affected datasets. Any dataset ID can be add or modify as long as the dataset list isn't empty.
 
-Send the changes
-****************
+        .. note::
+            A dataset identifier is a sequence of dot-separated facets that follows the *Data Reference Syntax* of the corresponding project.
+            The dataset identifiers has to append the dataset version number. If one of the dataset ID is malformed or if the dataset list is empty, the form will raise an error.
 
-The update command has a similar structure as the creation command:
+    .. image:: images/update_form.png
+        :scale: 70 %
+        :alt: Create Issue Form
+        :align: center
 
-.. code-block:: bash
+#. Click on "**Save**" in the upper-right menu.
 
-   $> esgissue update --issue /path/to/issue.json --dsets /path/to/new_datasets.txt
+    .. image:: images/save_button.png
+        :scale: 70 %
+        :alt: Create Menu
+        :align: center
 
-On success the local issue file will be modified again. The update date will be modified accordingly:
+#. Your request will be processed and validated by the server.
 
-.. code-block:: json
+#. If successfully saved, you are redirected to the newly generated view of your issue.
 
-    {
-        "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "title": "Test issue title",
-        "description": "This is a NEW test description, void of meaning.",
-        "project": "cmip5",
-        "severity": "critical",
-        "materials": [
-            "http://myerrata.com/images/before.jpg",
-            "http://myerrata.com/images/after.jpg"
-        ],
-        "url": "http://websitetest.com/",
-        "status": "onhold",
-        "dateClosed": "YYYY-MM-DD HH:MM:SS",
-        "dateUpdated": "YYYY-MM-DD HH:MM:SS"
-    }
+    .. image:: images/success.png
+        :scale: 50 %
+        :alt: Creation Success
+        :align: center
 
-The updates now are registered both in the remote errata service and are reflected in the local issue files.
+#. If invalid issue, you are requested to correct the form depending on the error message and try again.
+
+    .. image:: images/fail.png
+        :scale: 50 %
+        :alt: Creation Fail
+        :align: center
+
+.. note::
+    The update date and authors are also automatically assigned/modified to the issue by the server.

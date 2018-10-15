@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Retrieve an issue &mdash; esgissue 0.2.2 documentation</title>
+  <title>Issue Viewer &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.2.2 documentation" href="index.html"/>
-        <link rel="next" title="ES-DOC-ERRATA API" href="api.html"/>
-        <link rel="prev" title="Close an issue" href="close.html"/> 
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
+        <link rel="next" title="Log in to the Errata Service" href="login.html"/>
+        <link rel="prev" title="Track a version" href="lookup.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> esgissue
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
           
 
           
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -91,17 +91,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Retrieve an issue</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#retrieve-the-issue">Retrieve the issue</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -120,7 +117,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">esgissue</a>
+          <a href="index.html">ESGF Errata Service</a>
         
       </nav>
 
@@ -150,13 +147,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Retrieve an issue</li>
+      <li>Issue Viewer</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="sources/retrieve.rst.txt" rel="nofollow"> View page source</a>
+            <a href="sources/viewer.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -169,35 +166,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="retrieve-an-issue">
-<span id="retrieve"></span><h1>Retrieve an issue<a class="headerlink" href="#retrieve-an-issue" title="Permalink to this headline">¶</a></h1>
-<p>At some point it might be a good idea to keep a local copy of the errata information hosted within the errata system.
-The <code class="docutils literal"><span class="pre">retrieve</span></code> command has been designed in the aim of either downloading a specific issue files, a set of specific issues,
-or the whole lot of issues hosted within the errata system (for archiving purposes for example).</p>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>The command takes as arguments a list of UIDs, the JSON file directory and the dataset list file directory the user wishes to use.
-If no UIDs are submitted, all issues are expected.
-If no directory is provided, a default directory will be used.
-If ESDOC_HOME environment variable is declared in user&#8217;s environment a specific download directory will then be used otherwise,
-the client uses its own installation directory.</p>
-</div>
-<div class="section" id="retrieve-the-issue">
-<h2>Retrieve the issue<a class="headerlink" href="#retrieve-the-issue" title="Permalink to this headline">¶</a></h2>
-<p>In order to download the issue with IDs <code class="docutils literal"><span class="pre">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/downloads --dsets esgissue/samples/downloads --id xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The naming convention used in creating the issue related files is <code class="docutils literal"><span class="pre">issue_&lt;uid&gt;.json</span></code> and <code class="docutils literal"><span class="pre">dset_&lt;uid&gt;.txt</span></code>.
-If needed we could have specified <code class="docutils literal"><span class="pre">.json</span></code> and <code class="docutils literal"><span class="pre">.txt</span></code> file in this example since we are downloading a single issue.</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Multiple downloads are allowed by listing IDs next to the flag.</p>
-</div>
-</div>
+  <div class="section" id="issue-viewer">
+<span id="viewer"></span><h1>Issue Viewer<a class="headerlink" href="#issue-viewer" title="Permalink to this headline">¶</a></h1>
+<p>Three tabs describe each issue providing:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">The information details,</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/viewer_issue.png"><img alt="Errata Viewer Issue" class="align-center" src="images/viewer_issue.png" style="width: 1404.2px; height: 982.8px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Graphics or pictures to illustrate the issue,</p>
+<blockquote>
+<div><p><em>[PICTURE TO BE ADDED]</em></p>
+</div></blockquote>
+</li>
+<li><p class="first">The list of the affected datasets.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/viewer_dsets.png"><img alt="Errata Viewer Datasets" class="align-center" src="images/viewer_dsets.png" style="width: 1404.2px; height: 456.4px;" /></a>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
 </div>
 
 
@@ -210,10 +200,10 @@ If needed we could have specified <code class="docutils literal"><span class="pr
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="ES-DOC-ERRATA API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="login.html" class="btn btn-neutral float-right" title="Log in to the Errata Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="close.html" class="btn btn-neutral" title="Close an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lookup.html" class="btn btn-neutral" title="Track a version" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -244,7 +234,7 @@ If needed we could have specified <code class="docutils literal"><span class="pr
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

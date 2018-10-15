@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; esgissue 0.2.2 documentation</title>
+  <title>Installation &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -35,9 +35,10 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="esgissue 0.2.2 documentation" href="index.html"/>
-        <link rel="next" title="Authentication" href="configuration.html"/>
-        <link rel="prev" title="ESGF Errata Client" href="index.html"/> 
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
+        <link rel="up" title="Command Line Interface" href="client.html"/>
+        <link rel="next" title="Configuration" href="configuration.html"/>
+        <link rel="prev" title="Command Line Interface" href="client.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -56,7 +57,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> esgissue
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
           
 
           
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -91,19 +92,29 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#usual-pip-installation">Usual PIP installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pip-installation-from-github">PIP installation from GitHub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-from-github">Installation from GitHub</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies-and-requirements">Dependencies and requirements</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Authentication</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="retrieve.html">Retrieve an issue</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usual-pip-installation">Usual PIP installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pip-installation-from-github">PIP installation from GitHub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-from-github">Installation from GitHub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies-and-requirements">Dependencies and requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_cli.html">Create an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="update_cli.html">Update an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="close_cli.html">Close an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retrieve_cli.html">Retrieve an issue</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -122,7 +133,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">esgissue</a>
+          <a href="index.html">ESGF Errata Service</a>
         
       </nav>
 
@@ -151,6 +162,8 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="client.html">Command Line Interface</a> &raquo;</li>
         
       <li>Installation</li>
     
@@ -187,26 +200,31 @@
 </div>
 <div class="section" id="installation-from-github">
 <h2>Installation from GitHub<a class="headerlink" href="#installation-from-github" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
+<ol class="arabic">
+<li><p class="first">Clone <a class="reference external" href="http://github.com/ES-DOC/esdoc-errata-client/">our GitHub project</a>:</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>git clone git@github.com:ES-DOC/esdoc-errata-client.git@master
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li>Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</li>
-</ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> esdoc-errata-client
+</div></blockquote>
+</li>
+<li><p class="first">Run the <code class="docutils literal"><span class="pre">setup.py</span></code>:</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> esdoc-errata-client
 python setup.py install
 </pre></div>
 </div>
-<ol class="arabic simple" start="3">
-<li>The <code class="docutils literal"><span class="pre">esgissue</span></code> command-line is ready.</li>
-</ol>
-<div class="admonition warning">
+</div></blockquote>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">esgissue</span></code> command-line is ready.</p>
+<blockquote>
+<div><div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">To run <code class="docutils literal"><span class="pre">esgissue</span></code> you have to be logged into a machine with internet access.</p>
 </div>
+</div></blockquote>
+</li>
+</ol>
 </div>
 <div class="section" id="dependencies-and-requirements">
 <h2>Dependencies and requirements<a class="headerlink" href="#dependencies-and-requirements" title="Permalink to this headline">¶</a></h2>
@@ -257,10 +275,10 @@ your Python environment includes:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="configuration.html" class="btn btn-neutral float-right" title="Authentication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="ESGF Errata Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="client.html" class="btn btn-neutral" title="Command Line Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -291,7 +309,7 @@ your Python environment includes:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

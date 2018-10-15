@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ESGF Errata Service &mdash; ESGF Errata Service 0.3 documentation</title>
+  <title>Retrieve an issue &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -35,8 +35,10 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="#"/>
-        <link rel="next" title="Look up an issue" href="searchUI.html"/> 
+    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
+        <link rel="up" title="Command Line Interface" href="client.html"/>
+        <link rel="next" title="ES-DOC-ERRATA API" href="api.html"/>
+        <link rel="prev" title="Close an issue (CLI)" href="close_cli.html"/> 
 
   
   <script src="static/js/modernizr.min.js"></script>
@@ -55,7 +57,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> ESGF Errata Service
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
           
 
           
@@ -89,7 +91,7 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
@@ -97,7 +99,20 @@
 <li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_cli.html">Create an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="update_cli.html">Update an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="close_cli.html">Close an issue (CLI)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Retrieve an issue</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieve-the-issue">Retrieve the issue</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -116,7 +131,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">ESGF Errata Service</a>
+          <a href="index.html">ESGF Errata Service</a>
         
       </nav>
 
@@ -144,15 +159,17 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>ESGF Errata Service</li>
+          <li><a href="client.html">Command Line Interface</a> &raquo;</li>
+        
+      <li>Retrieve an issue</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="sources/retrieve_cli.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -165,53 +182,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="esgf-errata-service">
-<span id="index"></span><h1>ESGF Errata Service<a class="headerlink" href="#esgf-errata-service" title="Permalink to this headline">¶</a></h1>
-<p>As part of the <a class="reference external" href="https://es-doc.org/">ES-DOC</a> ecosystem, the Errata Service centralizes timely information about known issues of ESGF data.</p>
-<p>Proper handling of errata information in the ESGF publication workflow has major impact on the quality of data.
-Version changes should be documented and justified by explaining what was updated, retracted and/or removed.
-This leads to the unspoken rule that any publication of a newer version of a dataset needs to have a valid motivation,
-which we will refer to as an issue.
-Consequently, the publication of a new version of a dataset, as well as the unpublication of a dataset version, has to be motivated by an issue and conversely.</p>
+  <div class="section" id="retrieve-an-issue">
+<span id="retrieve"></span><h1>Retrieve an issue<a class="headerlink" href="#retrieve-an-issue" title="Permalink to this headline">¶</a></h1>
+<p>At some point it might be a good idea to keep a local copy of the errata information hosted within the errata system.
+The <code class="docutils literal"><span class="pre">retrieve</span></code> command has been designed in the aim of either downloading a specific issue files, a set of specific issues,
+or the whole lot of issues hosted within the errata system (for archiving purposes for example).</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The command takes as arguments a list of UIDs, the JSON file directory and the dataset list file directory the user wishes to use.
+If <code class="docutils literal"><span class="pre">ESDOC_HOME</span></code> environment variable is declared in user’s environment a specific download directory will then be used otherwise,
+the client uses its own installation directory.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The issue registration should be executed prior to the publication process and is ought to be mandatory for additional versions, version removal or retraction.</p>
+<p class="last">If no UIDs are submitted, all issues are expected.</p>
 </div>
-<p>The Errata Service offers to ESGF users to query about modifications and/or corrections applied to their data in different ways:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Through a user-friendly filtered list of ESGF known issues,</li>
-<li>Through a search interface based on a dedicated API to get the version history of a (set of) file(s)/dataset(s).</li>
-</ul>
-</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">CMIP6, CMIP5 and CORDEX projects are currently supported by the Errata Service, with more to come in the next months.</p>
-</div>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
-<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">ES-DOC-ERRATA API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
-</ul>
+<p class="last">If no directory is provided, a default directory will be used.</p>
 </div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
-</ul>
+<div class="section" id="retrieve-the-issue">
+<h2>Retrieve the issue<a class="headerlink" href="#retrieve-the-issue" title="Permalink to this headline">¶</a></h2>
+<p>In order to download the issue with IDs <code class="docutils literal"><span class="pre">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/downloads --dsets esgissue/samples/downloads --id xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The naming convention used in creating the issue related files is <code class="docutils literal"><span class="pre">issue_&lt;UID&gt;.json</span></code> and <code class="docutils literal"><span class="pre">dset_&lt;UID&gt;.txt</span></code>.
+If needed we could have specified <code class="docutils literal"><span class="pre">.json</span></code> and <code class="docutils literal"><span class="pre">.txt</span></code> file in this example since we are downloading a single issue.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Multiple downloads are allowed by listing IDs next to the flag.</p>
+</div>
+</div>
 </div>
 
 
@@ -224,8 +229,10 @@ Consequently, the publication of a new version of a dataset, as well as the unpu
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="searchUI.html" class="btn btn-neutral float-right" title="Look up an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="ES-DOC-ERRATA API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="close_cli.html" class="btn btn-neutral" title="Close an issue (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
