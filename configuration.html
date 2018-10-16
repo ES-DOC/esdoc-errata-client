@@ -260,7 +260,8 @@ For the authorization, a user needs to be part of the organization team specifie
 <h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
 <p>In order to ease the interactions with the ES-DOC-ERRATA web service, a user can save the credentials for recurrent use.
 This can be done either through environment variables:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; <span class="nb">export</span> <span class="nv">ESDOC_HOME</span><span class="o">=</span>~/.esdoc
+$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 $&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_USERNAME</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 </pre></div>
 </div>
@@ -283,7 +284,7 @@ In case the user forgets the pass-phrase the saved credentials can be reset usin
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Old and new pass-phrases can be submit on the command-line to avoid the prompt.</p>
+<p class="last">Old and new pass-phrases can be submit on the command-line to avoid the prompt using <code class="docutils literal"><span class="pre">--oldpass</span></code> and <code class="docutils literal"><span class="pre">--newpass</span></code> options.</p>
 </div>
 <p>In the event of wanting to remove your saved credentials that you have saved on your machine:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credremove

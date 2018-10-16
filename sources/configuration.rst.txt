@@ -98,6 +98,7 @@ This can be done either through environment variables:
 
 .. code-block:: bash
 
+    $> export ESDOC_HOME=~/.esdoc
     $> export ERRATA_CLIENT_GITHUB_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     $> export ERRATA_CLIENT_GITHUB_USERNAME=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -109,6 +110,9 @@ In order to generate your token local file:
 .. code-block:: bash
 
     $> esgissue credset
+
+.. node::
+    To avoid prompt you can directly submit your GitHub username and token using the options ``--username``, ``--token`` and ``--pass`` if you want to set a passphrase.
 
 After setting your credentials you might want to give the new credentials a test and see if they work as expected.
 To do this the credtest command test your authentication then authorization linked to the selected institute errata management for a specific project.
@@ -125,7 +129,7 @@ In case the user forgets the pass-phrase the saved credentials can be reset usin
     $> esgissue changepass
 
 .. note::
-    Old and new pass-phrases can be submit on the command-line to avoid the prompt.
+    Old and new pass-phrases can be submit on the command-line to avoid the prompt using ``--oldpass`` and ``--newpass`` options.
 
 In the event of wanting to remove your saved credentials that you have saved on your machine:
 
