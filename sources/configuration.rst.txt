@@ -111,7 +111,7 @@ In order to generate your token local file:
 
     $> esgissue credset
 
-.. node::
+.. note::
     To avoid prompt you can directly submit your GitHub username and token using the options ``--username``, ``--token`` and ``--pass`` if you want to set a passphrase.
 
 After setting your credentials you might want to give the new credentials a test and see if they work as expected.

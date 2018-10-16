@@ -272,6 +272,10 @@ In order to generate your token local file:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credset
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To avoid prompt you can directly submit your GitHub username and token using the options <code class="docutils literal"><span class="pre">--username</span></code>, <code class="docutils literal"><span class="pre">--token</span></code> and <code class="docutils literal"><span class="pre">--pass</span></code> if you want to set a passphrase.</p>
+</div>
 <p>After setting your credentials you might want to give the new credentials a test and see if they work as expected.
 To do this the credtest command test your authentication then authorization linked to the selected institute errata management for a specific project.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$&gt; esgissue credtest -i &lt;INSTITUTE&gt; -p &lt;PROJECT&gt;
