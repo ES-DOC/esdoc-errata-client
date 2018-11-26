@@ -14,7 +14,6 @@ Developer/Author
 Contacts
 ********
 
-To submit bugs, suggestions or ideas, please address your comments to `Guillaume LEVAVASSEUR <glipsl@ipsl.fr>`_
-or `Atef BEN NASSER <abennasser@ipsl.fr>`_
-or submit your issue directly on the project github repository at : `GitHub repository <https://github.com/ES-DOC/esdoc-errata-client>`_.
+To submit bugs, suggestions or ideas, please address your comments the `ES-DOC Errata support <support@errata.es-doc.org>`_
+or submit your issue directly on the `GitHub repository <https://github.com/ES-DOC/esdoc-errata-client>`_.
 
