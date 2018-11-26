@@ -187,6 +187,8 @@ Consumes
 --------
 
 - param: ``pids``
+List of pid handle strings, dataset ids with '.v' as seperator for version or '%23' the percent-encoding for '#'.
+The list separator is a comma ','
 
 Produces
 --------
@@ -198,10 +200,9 @@ Parameters
 
 - name: ``pids``
 
-- description: "list of uids to download"
+- description: List of pid string, dataset id, or a mix.
 
-- required: false
-
+- required: true
 Responses
 ---------
 
@@ -223,7 +224,15 @@ OperationId: "simplePidSearch"
 Consumes
 --------
 
-- param: ``pids``
+- param: ``datasets``
+
+Dataset string list seperated with a comma ','
+Can also be list of pids, or a mixed list of datasets and pid handle strings.
+
+This endpoint returns a simpler return than the PID endpoint. It does not provide version history.
+
+NB: Due to URL encoding restriction, the '#' character is reserved and should be replaced by either '.v' or '%23' which
+is the percent-encoding of the '#' character as specified in the rfc3986.
 
 Produces
 --------
@@ -233,11 +242,11 @@ Produces
 Parameters
 ----------
 
-- name: ``pids``
+- name: ``datasets``
 
-- description: "list of uids to download"
+- description: List of pid string, dataset id, or a mix.
 
-- required: false
+- required: true
 
 Responses
 ---------
