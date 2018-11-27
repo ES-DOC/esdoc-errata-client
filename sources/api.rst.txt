@@ -93,7 +93,7 @@ Path: ``1/issue/close``
 
 Method: ``post``
 
-Tags: `Issue Management
+Tags: `Issue Management`
 
 Summary: "closes an issue"
 
@@ -220,11 +220,7 @@ Produces
 Parameters
 ----------
 - name: ``datasets``
-- description: Dataset string list seperated with a comma ','
-Can also be list of pids, or a mixed list of datasets and pid handle strings.
-This endpoint returns a simpler return than the PID endpoint. It does not provide version history.
-NB: Due to URL encoding restriction, the '#' character is reserved and should be replaced by either '.v' or '%23' which
-is the percent-encoding of the '#' character as specified in the rfc3986.
+- description: Dataset string list seperated with a comma ','. Can also be list of PIDs, or a mixed list of datasets and PID handle strings. This endpoint returns a simpler return than the PID endpoint. It does not provide version history. Due to URL encoding restriction, the '#' character is reserved and should be replaced by either '.v' or '%23' which is the percent-encoding of the '#' character as specified in the rfc3986.
 - required: true
 
 Responses
