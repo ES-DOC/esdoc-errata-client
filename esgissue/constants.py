@@ -34,7 +34,10 @@ CREDREMOVE = 'credremove'
 CREDSET = 'credset'
 CREDTEST = 'credtest'
 TEST = 'test'
-ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL, CREDTEST]
+CHECK = 'check'
+PID = 'pid'
+SIMPLE_PID = 'simple_pid'
+ACTIONS = [CREATE, UPDATE, CLOSE, RETRIEVE, RETRIEVE_ALL, CREDTEST, PID, SIMPLE_PID]
 
 
 # PATH CONSTANTS
@@ -106,6 +109,7 @@ GITHUB_USERNAME = "ERRATA_CLIENT_GITHUB_USERNAME"
 GITHUB_CREDS_ENCRYPTED = "ERRATA_CREDS_ENCRYPTED"
 ESDOC_HOME = 'ESDOC_HOME'
 ESDOC_VAR = 'ESDOC_HOME'
+PID_PREFIX = '21.14100'
 # Argparse:
 
 ESGISSUE_GENERAL = """
@@ -189,6 +193,13 @@ RETRIEVE_DESC = """"esgissue retrieve" retrieves one or several issues from a de
                     See "esgissue -h" for global help."""
 RETRIEVE_HELP = """Retrieves ESGF issues from the errata repository to a JSON template.|n
                 See "esgissue retrieve -h" for full help."""
+
+
+PID_DESC = """A command that targets the pid query endpoint, can be used to retrieve simple errata information from the
+dataset or file pid, can also retrieve the full history if the -f (--full) flag is used"""
+PID_HELP = """Retrieves errata information for id. 
+See "esgissue pid -h" for full help."""
+
 CREDRESET_DESC = """"esgissue credreset" allows users to interact with their established credentials.
             It mainly allows users who have locally saved credentials to modify their pass-phrase or reset it by deleting
             them and having to redo the credentials input all over again. This can be useful in case someone forgets the passphrase

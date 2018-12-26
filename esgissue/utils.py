@@ -29,7 +29,7 @@ from time import time
 from fnmatch import fnmatch
 from ConfigParser import ConfigParser
 from config import _get_config_contents
-
+from errata_object_factory import ErrataObject, ErrataCollectionObject
 # # SNI required fix for py2.7
 # from requests.packages.urllib3.contrib import pyopenssl
 # pyopenssl.inject_into_urllib3()
@@ -463,8 +463,8 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         r = requests.get(url+uid)
     elif action == CREDTEST:
         r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
-    else:
-        r = requests.get(url)
+    elif action == PID:
+        r = requests.get(url + '?pids=' + payload)
     if r.status_code != requests.codes.ok:
         try:
             error_json = json.loads(r.text)
@@ -730,3 +730,52 @@ def _cred_test(team=None, project=None, passphrase=None):
     _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
                                                                          'project': project.lower()})
     logging.info('HTTP CODE 200: User allowed to post issues related to institute {}'.format(team))
+
+
+# PID operations tools
+
+def _check_pid(dataset_or_file_string, full_check):
+    """
+    This is the errata PID api client command.
+    It can be used via command line to retrieve simple or complete errata data about a list of dataset/file ids.
+    Check the documentation for usage rules.
+    :param dataset_or_file_string: this could be dataset id or dataset/file pid.
+    :param full_check: flag for complete or simple search
+    :return: ErrataObjectCollection which is basically a list of errataObjects. See definition in errata_object_factory
+    """
+    # Sanitizing payload before injecting in URL (# is not appreciated in URL encoding)
+    dataset_or_file_string = dataset_or_file_string.replace('#', '.v')
+    r = _get_ws_call(PID, payload=dataset_or_file_string)
+    if r.status_code == 200:
+        print('Query successful, preparing results...')
+
+        # Retrieving the errata object from the API JSON response.
+        dataset_or_file_response_list = r.json()['errata']
+
+        # init of empty list where all ErrataCollectionObjects will be stored.
+        # The return is basically a list of ErrataCollectionObjects, which is in turn a list of ErrataObjects
+        # ErrataObjects are single issue to dataset/file object.
+        response_list = []
+        for response_item in dataset_or_file_response_list:
+            # For every input queried, we instantiate an erratacollectionobject to harvest the list of possible
+            # errataobjects
+            result = ErrataCollectionObject()
+            if full_check:
+                for index, version_iteration in enumerate(response_item[1], start=1):
+                    errata_object = ErrataObject(version_iteration)
+                    if index == len(response_item):
+                        errata_object.is_latest = True
+                    else:
+                        errata_object.is_latest = False
+                    result.append_errata_object(errata_object)
+            else:
+                for version_iteration in response_item[1]:
+                    is_latest = True
+                    if version_iteration[3] > 0:
+                        is_latest = False
+                    if version_iteration[3] == 0:
+                        errata_object = ErrataObject(version_iteration)
+                errata_object.is_latest = is_latest
+                result.append_errata_object(errata_object)
+            response_list.append(result)
+        return response_list

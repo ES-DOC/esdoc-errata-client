@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
    :platform: Unix
-   :synopsis: Manages ESGF issues on BitBucket repository.
+   :synopsis: Manages ESGF issues.
 
 """
 
@@ -279,3 +279,7 @@ class LocalIssue(object):
             data = _order_json(data)
             data_file.write(simplejson.dumps(data, indent=4))
         logging.info("Finished processing issue #{}".format(data[UID]))
+
+
+
+
