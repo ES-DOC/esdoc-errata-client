@@ -1,5 +1,8 @@
 # encoding: UTF-8
 import unittest
+
+from tests.test_cache import test_cache
+
 from actionwords import Actionwords
 import os
 test_issue_file = 'samples/issue.json'
@@ -77,6 +80,9 @@ class TestESDocERRATA(unittest.TestCase):
         self.actionwords.check_issue_files()
         check_issue_files(self)
 
+    def test_check_issue(self):
+        self.actionwords.check_issue_pid()
+
 
 def check_issue_files_and_pid(test_case):
 
@@ -87,6 +93,6 @@ def check_issue_files_and_pid(test_case):
 def check_issue_files(test_case):
     test_case.assertTrue(test_case.actionwords.check_issue_files())
 
+
 if __name__ == '__main__':
     unittest.main()
-

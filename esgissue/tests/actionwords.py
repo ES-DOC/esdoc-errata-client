@@ -6,7 +6,7 @@ from esgissue.constants import *
 #                             prepare_persistence, _get_f
 
 from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_key, _reset_credentials, _get_datasets, \
-                           _get_retrieve_dirs, _get_file_location
+                           _get_retrieve_dirs, _get_file_location, _check_pid
 
 
 from b2handle.handleclient import EUDATHandleClient
@@ -230,6 +230,12 @@ class Actionwords:
         d2_filtered = dict((k, v) for k, v in d2.iteritems() if k not in ignore_keys)
         return d1_filtered == d2_filtered
 
+    @staticmethod
+    def check_pid_for_issues():
+        expected_return = []
+        return _check_pid(get_input_for_check_issue_test()) == expected_return
+
+
 
 def create_handle_for_dataset(dataset_list):
     data_node1 = "foo"
@@ -309,3 +315,7 @@ def create_handle_for_dataset(dataset_list):
         print('Content:   '+str(resp.content))
     # Finish messaging thread
     connector.finish_messaging_thread()
+
+def get_input_for_check_issue_test():
+    dataset_or_file_string = input('Enter dataset or file id: ')
+    return dataset_or_file_string
