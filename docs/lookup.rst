@@ -8,9 +8,9 @@ The Errata Service exploits the `Persistent IDentifier (PID) <https://esgf-data.
 The PIDs enable to request the `Handle Service <https://www.dkrz.de/mms/pdf/klimadaten/poster/EGU2012-web-services-and-handle.pdf>`_ from DKRZ to get the version history of a (set of) file/dataset(s).
 Such a version tracker enables the end users to submit one or several files or datasets identifiers to get back all annotations related to each corresponding issue.
 
-#. From the `Errata Service home page <https://errata.es-doc.org/>`_, click on "**PID**".
+#. From the `Errata Service home page <https://errata.es-doc.org/>`_, click on "**Search**".
 
-    .. image:: images/pid_button.png
+    .. image:: images/search_button.png
         :scale: 70 %
         :alt: Errata Menu
         :align: center
@@ -30,7 +30,7 @@ Such a version tracker enables the end users to submit one or several files or d
     .. note::
         Several requests can be sent at once by uploading a local text file with one PID or dataset ID per line.
 
-    .. image:: images/pid_lookup.png
+    .. image:: images/search.png
         :scale: 70 %
         :alt: Errata Menu
         :align: center
@@ -39,7 +39,7 @@ Such a version tracker enables the end users to submit one or several files or d
 
 #. The Errata Service returns the result within a table per dataset. Each line corresponds to one version of the considered dataset in the chronological order. Useful labels are added to flag the first, last and queried dataset versions. On the right, the annotation picture links to the corresponding issue. The check mark means no known issues for the corresponding version, it is often associated to the corrected version, the latest published version.
 
-    .. image:: images/lookup_result.png
+    .. image:: images/search_result.png
           :scale: 70 %
           :alt: Errata PID Lookup
           :align: center

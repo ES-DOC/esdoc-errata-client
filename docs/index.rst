@@ -15,6 +15,11 @@ Consequently, the publication of a new version of a dataset, as well as the unpu
 .. note::
     The issue registration should be executed prior to the publication process and is ought to be mandatory for additional versions, version removal or retraction.
 
+.. image:: images/errata_service.png
+   :scale: 50%
+   :alt: ESGF Errata Service Overview
+   :align: center
+
 The Errata Service offers to ESGF users to query about modifications and/or corrections applied to their data in different ways:
 
     - Through a user-friendly filtered list of ESGF known issues,

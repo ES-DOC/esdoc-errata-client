@@ -10,6 +10,10 @@ that are notified of the existence of an issue regarding one or many datasets/fi
 
 This lightweight CLI relies on ``.json`` and ``.txt`` file records. This enables the data provider, in charge of ESGF issues, to efficiently manage one or several issues remotely and locally.
 
+.. note::
+    `Some screencasts are available on YouTube <https://www.youtube.com/channel/UCFVy0HC9cnGbIKc6UsDIHDA/playlists>`_ to learn about the Errata CLI usage.
+
+
 .. toctree::
     :maxdepth: 1
 
