@@ -30,16 +30,20 @@ from fnmatch import fnmatch
 from ConfigParser import ConfigParser
 from config import _get_config_contents
 from errata_object_factory import ErrataObject, ErrataCollectionObject
+
 # # SNI required fix for py2.7
 # from requests.packages.urllib3.contrib import pyopenssl
 # pyopenssl.inject_into_urllib3()
 cf = _get_config_contents()
+
+
 class MultilineFormatter(HelpFormatter):
     """
     Custom formatter class for argument parser to use with the Python
     `argparse <https://docs.python.org/2/library/argparse.ht__JSON_SCHEMA_PATHS__ml>`_ module.
 
     """
+
     def __init__(self, prog):
         # Overload the HelpFormatter class.
         super(MultilineFormatter, self).__init__(prog, max_help_position=60, width=100)
@@ -68,6 +72,7 @@ class MultilineFormatter(HelpFormatter):
             multiline_text.append(textwrap.fill(line, width))
         multiline_text[-1] += '\n'
         return multiline_text
+
 
 # Validation
 
@@ -141,6 +146,7 @@ def _get_file_location(file_name, download_dir=None):
         os.makedirs(os.path.dirname(file_location))
     return file_location
 
+
 # Logging
 
 
@@ -199,6 +205,7 @@ def _resolve_validation_error_code(message):
         if key in message.lower():
             return value
     return ERROR_DIC['unknown_error']
+
 
 # Preparing operations
 
@@ -295,8 +302,8 @@ def _get_retrieve_dirs(path_to_issues, path_to_dsets, uid):
         os.makedirs(download_dir_d)
     if os.path.isdir(os.path.join(download_dir_i, path_to_issues)) and os.path.isdir(os.path.join(download_dir_d,
                                                                                                   path_to_dsets)):
-        path_to_issues = os.path.join(download_dir_i, ISSUE_1+uid+ISSUE_2)
-        path_to_dsets = os.path.join(download_dir_d, path_to_dsets, DSET_1+uid+DSET_2)
+        path_to_issues = os.path.join(download_dir_i, ISSUE_1 + uid + ISSUE_2)
+        path_to_dsets = os.path.join(download_dir_d, path_to_dsets, DSET_1 + uid + DSET_2)
     else:
         path_to_issues = os.path.join(_get_file_location(path_to_issues, download_dir='downloads'), ISSUE_1 + uid +
                                       ISSUE_2)
@@ -325,6 +332,7 @@ def _prepare_persistence(data):
         if key in data:
             del data[key]
     return data
+
 
 # TXT operations
 
@@ -382,7 +390,7 @@ def _format_datasets(dataset_version_dict, dset_file):
     logging.info('Reformatting dataset file...')
     uniform_list = list()
     for dset_and_version in dataset_version_dict.values():
-        uniform_list.append(dset_and_version[0]+'#'+dset_and_version[1])
+        uniform_list.append(dset_and_version[0] + '#' + dset_and_version[1])
     uniform_list = list(set(uniform_list))
     with open(dset_file.name, 'w+') as df:
         try:
@@ -406,6 +414,7 @@ def _get_datasets(dataset_file):
     # Removing redundancy
     dsets = list(set(dsets))
     return dsets
+
 
 # JSON operations
 
@@ -460,7 +469,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     elif action == CLOSE:
         r = requests.post(url + uid + '&status=' + payload, auth=credentials)
     elif action == RETRIEVE:
-        r = requests.get(url+uid)
+        r = requests.get(url + uid)
     elif action == CREDTEST:
         r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
     elif action == PID:
@@ -512,6 +521,7 @@ def _translate_dataset_regex(pattern, sections):
         else:
             pattern = re.sub(re.compile(r'%\(([^()]*)\)s'), r'(?P<\1>[\w-]+)', pattern)
     return pattern
+
 
 # Credentials management tools.
 
@@ -598,13 +608,13 @@ def _authenticate(**kwargs):
                 key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
                 with open(path_to_creds, 'wb+') as credfile:
                     if key != '':
-                        credfile.write('entry:'+_encrypt_with_key(username, key)+'\n')
-                        credfile.write('entry:'+_encrypt_with_key(token, key)+'\n')
-                        credfile.write('entry:'+'1')
+                        credfile.write('entry:' + _encrypt_with_key(username, key) + '\n')
+                        credfile.write('entry:' + _encrypt_with_key(token, key) + '\n')
+                        credfile.write('entry:' + '1')
                     else:
-                        credfile.write('entry:'+username+'\n')
-                        credfile.write('entry:'+token+'\n')
-                        credfile.write('entry:'+'0')
+                        credfile.write('entry:' + username + '\n')
+                        credfile.write('entry:' + token + '\n')
+                        credfile.write('entry:' + '0')
                 logging.info('Credentials were successfully saved.')
     return username, token
 
@@ -651,13 +661,13 @@ def _reset_passphrase(**kwargs):
     # Writing new data
     with open(path_to_creds, 'wb') as cred_file:
         if new_pass != '':
-            cred_file.write('entry:'+_encrypt_with_key(username, new_pass)+'\n')
-            cred_file.write('entry:'+_encrypt_with_key(token, new_pass)+'\n')
-            cred_file.write('entry:'+'1')
+            cred_file.write('entry:' + _encrypt_with_key(username, new_pass) + '\n')
+            cred_file.write('entry:' + _encrypt_with_key(token, new_pass) + '\n')
+            cred_file.write('entry:' + '1')
         else:
-            cred_file.write('entry:'+username+'\n')
-            cred_file.write('entry:'+token+'\n')
-            cred_file.write('entry:'+'0')
+            cred_file.write('entry:' + username + '\n')
+            cred_file.write('entry:' + token + '\n')
+            cred_file.write('entry:' + '0')
     logging.info('Passphrase has been successfully updated.')
 
 
@@ -707,13 +717,13 @@ def _set_credentials(**kwargs):
         _reset_credentials()
     with open(path_to_creds, 'wb') as cred_file:
         if passphrase != '':
-            cred_file.write('entry:'+_encrypt_with_key(username, passphrase)+'\n')
-            cred_file.write('entry:'+_encrypt_with_key(tkn, passphrase)+'\n')
-            cred_file.write('entry:'+'1')
+            cred_file.write('entry:' + _encrypt_with_key(username, passphrase) + '\n')
+            cred_file.write('entry:' + _encrypt_with_key(tkn, passphrase) + '\n')
+            cred_file.write('entry:' + '1')
         else:
-            cred_file.write('entry:'+username+'\n')
-            cred_file.write('entry:'+tkn+'\n')
-            cred_file.write('entry:'+'0')
+            cred_file.write('entry:' + username + '\n')
+            cred_file.write('entry:' + tkn + '\n')
+            cred_file.write('entry:' + '0')
     logging.info('Your credentials were successfully set.')
 
 
@@ -734,23 +744,32 @@ def _cred_test(team=None, project=None, passphrase=None):
 
 # PID operations tools
 
-def _check_pid(dataset_or_file_string, full_check):
-    """
-    This is the errata PID api client command.
-    It can be used via command line to retrieve simple or complete errata data about a list of dataset/file ids.
-    Check the documentation for usage rules.
-    :param dataset_or_file_string: this could be dataset id or dataset/file pid.
-    :param full_check: flag for complete or simple search
-    :return: ErrataObjectCollection which is basically a list of errataObjects. See definition in errata_object_factory
-    """
+def _sanitize_input_and_call_ws(dataset_or_file_string):
     # Sanitizing payload before injecting in URL (# is not appreciated in URL encoding)
     dataset_or_file_string = dataset_or_file_string.replace('#', '.v')
+    return dataset_or_file_string
+
+
+def _call_pid_api(dataset_or_file_string):
     r = _get_ws_call(PID, payload=dataset_or_file_string)
-    if r.status_code == 200:
-        print('Query successful, preparing results...')
+    return r.json(), r.status_code
+
+
+def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
+    """
+        This is the errata PID api client command.
+        It can be used via command line to retrieve simple or complete errata data about a list of dataset/file ids.
+        Check the documentation for usage rules.
+        :param full_check: flag for complete or simple search.
+        :param api_code: HTTP return code.
+        :param api_json: json body of the response.
+        :return: ErrataObjectCollection which is basically a list of errataObjects. See definition in errata_object_factory
+        """
+    if api_code == 200:
+        logging.info('Query successful, preparing results...')
 
         # Retrieving the errata object from the API JSON response.
-        dataset_or_file_response_list = r.json()['errata']
+        dataset_or_file_response_list = api_json['errata']
 
         # init of empty list where all ErrataCollectionObjects will be stored.
         # The return is basically a list of ErrataCollectionObjects, which is in turn a list of ErrataObjects
@@ -779,3 +798,9 @@ def _check_pid(dataset_or_file_string, full_check):
                 result.append_errata_object(errata_object)
             response_list.append(result)
         return response_list
+
+def _check_pid(dataset_or_file_string, full_check):
+
+    dataset_or_file_string = _sanitize_input_and_call_ws(dataset_or_file_string)
+    response_json, response_code = _call_pid_api(dataset_or_file_string)
+    pid_response = _encapsulate_pid_api_response(api_code=response_code, api_json=response_json, full_check=full_check)

@@ -6,9 +6,10 @@ from esgissue.constants import *
 #                             prepare_persistence, _get_f
 
 from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_key, _reset_credentials, _get_datasets, \
-                           _get_retrieve_dirs, _get_file_location, _check_pid
+                           _get_retrieve_dirs, _get_file_location, _encapsulate_pid_api_response, \
+                           _sanitize_input_and_call_ws
 
-
+from esgissue.errata_object_factory import ErrataCollectionObject, ErrataObject
 from b2handle.handleclient import EUDATHandleClient
 import uuid
 import os
@@ -179,6 +180,10 @@ class Actionwords:
         with open(self.issue_path, 'w') as issue:
             json.dump(data, issue)
 
+    def check_pid_utilitites(self):
+        self.sanitize_user_input()
+        self.encapsulation_test()
+
     @staticmethod
     def reformat_downloaded_json(dw_json):
         dw_json[URL] = []
@@ -231,10 +236,41 @@ class Actionwords:
         return d1_filtered == d2_filtered
 
     @staticmethod
-    def check_pid_for_issues():
-        expected_return = []
-        return _check_pid(get_input_for_check_issue_test()) == expected_return
+    def sanitize_user_input():
+        input_repo = 'samples/inputs'
+        output_repo = 'samples/outputs'
+        test_result = True
+        for flag in range(1, 4):
+            with open(os.path.join(input_repo, 'pid_'+str(flag)+'.txt')) as input_file:
+                data = input_file.read()
+            sanitized_list = []
+            for element in data.split(','):
+                sanitized_element = _sanitize_input_and_call_ws(element)
+                sanitized_list.append(sanitized_element)
+            sanitized_data = ','.join(sanitized_list)
+            print(sanitized_data)
+            with open(os.path.join(output_repo, 'pid_'+ str(flag) + '.txt')) as output_file:
+                expected_data = output_file.read()
+            if expected_data != sanitized_data:
+                print(sanitized_data)
+                test_result = False
+                print('Issue detected with file pid_'+str(flag)+'.txt')
+        return test_result
 
+    @staticmethod
+    def encapsulation_test():
+        """
+        tests whether object generated from response json is not None.
+        :return: Boolean
+        """
+        input_repo = 'samples/inputs'
+        for flag in range(1, 3):
+            with open(os.path.join(input_repo, 'response_'+str(flag)+'.json')) as test_file:
+                test_json = json.load(test_file)
+                test_result = _encapsulate_pid_api_response(test_json, 200)
+                if test_result is None:
+                    return False
+        return True
 
 
 def create_handle_for_dataset(dataset_list):
@@ -315,7 +351,3 @@ def create_handle_for_dataset(dataset_list):
         print('Content:   '+str(resp.content))
     # Finish messaging thread
     connector.finish_messaging_thread()
-
-def get_input_for_check_issue_test():
-    dataset_or_file_string = input('Enter dataset or file id: ')
-    return dataset_or_file_string
