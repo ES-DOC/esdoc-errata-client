@@ -10,11 +10,8 @@ extra_dset_file = 'samples/inputs/extra_datasets.txt'
 
 class TestESDocERRATA(unittest.TestCase):
 
-    # def test_Installing_esgissue_client(self):
-    #     self.assertTrue(self.actionwords.check_installation())
 
     def setUp(self):
-        print(os.path.abspath(test_issue_file))
         self.actionwords = Actionwords(test_issue_file=test_issue_file, test_dset_file=test_dset_file)
 
     def test_Saving_credentials(self):
@@ -30,7 +27,6 @@ class TestESDocERRATA(unittest.TestCase):
         self.actionwords.reset_credentials()
 
     def creating_an_issue_for_a_number_of_datasets(self):
-        print('here')
         self.actionwords.clear_issue()
         self.actionwords.create_issue()
         check_issue_files_and_pid(self)

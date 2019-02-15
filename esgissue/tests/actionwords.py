@@ -54,7 +54,6 @@ class Actionwords:
         _set_credentials(username=username, token=token, passphrase=passphrase)
         process_command(command=UPDATE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
                         issue_path=self.issue_path, dataset_path=self.dsets_path)
-        print(len(self.dsets))
         self.check_issue_files()
         _reset_credentials()
 

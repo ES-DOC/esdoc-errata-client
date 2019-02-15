@@ -14,7 +14,8 @@
             "CLOSE": "/1/issue/close?uid=",
             "RETRIEVE": "/1/issue/retrieve?uid=",
             "RETRIEVE_ALL": "/1/issue/retrieve-all",
-            "CREDTEST": "/verify-authorization?login={}&token={}&institute={}&project={}"
+            "CREDTEST": "/verify-authorization?login={}&token={}&institute={}&project={}",
+            "PID": "/1/resolve/pid"
     },
 "validate_issue_urls": true
 

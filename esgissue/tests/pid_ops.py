@@ -92,5 +92,3 @@ def check_errata_information(local_errata, remote_errata):
         else:
             return False
     return True
-
-print check_drs("cmip5.output1.IPSL.IPSL-CM5A-MR.rcp26.yr.ocnBgchem.Oyr.r1i1p1#20111119")

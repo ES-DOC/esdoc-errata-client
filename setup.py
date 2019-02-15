@@ -3,11 +3,11 @@ from esgissue.constants import VERSION_NUMBER
 setup(name='esgissue-client',
       version=VERSION_NUMBER,
       description='Local client to create, update, close and retrieve ESGF issues',
-      author='Levavasseur Guillaume',
-      author_email='glipsl@ipsl.jussieu.fr',
+      author='Atef Ben Nasser',
+      author_email='abennasser@ipsl.fr',
 
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
           'Intended Audience :: Science/Research',
           'Natural Language :: English',
