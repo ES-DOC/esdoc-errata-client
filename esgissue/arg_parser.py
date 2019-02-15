@@ -185,7 +185,7 @@ def get_args():
         help="""Output directory for the retrieved lists of affected dataset IDs.""")
 
     #####################################
-    # Subparser for "esgissue pid" #
+    # Subparser for "esgissue check" #
     #####################################
     check = subparsers.add_parser(
         'check',

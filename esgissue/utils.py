@@ -766,8 +766,6 @@ def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
         :return: ErrataObjectCollection which is basically a list of errataObjects. See definition in errata_object_factory
         """
     if api_code == 200:
-        logging.info('Query successful, preparing results...')
-
         # Retrieving the errata object from the API JSON response.
         dataset_or_file_response_list = api_json['errata']
 
@@ -775,6 +773,7 @@ def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
         # The return is basically a list of ErrataCollectionObjects, which is in turn a list of ErrataObjects
         # ErrataObjects are single issue to dataset/file object.
         response_list = []
+        drs_list = []
         for response_item in dataset_or_file_response_list:
             # For every input queried, we instantiate an erratacollectionobject to harvest the list of possible
             # errataobjects
@@ -782,21 +781,29 @@ def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
             if full_check:
                 for index, version_iteration in enumerate(response_item[1], start=1):
                     errata_object = ErrataObject(version_iteration)
-                    if index == len(response_item):
+                    if index == len(response_item)+1:
                         errata_object.is_latest = True
+                    elif index==1:
+                        errata_object.is_first = True
                     else:
                         errata_object.is_latest = False
                     result.append_errata_object(errata_object)
             else:
+                is_first = True
+                is_latest = True
                 for version_iteration in response_item[1]:
-                    is_latest = True
+                    if version_iteration[3] < 0:
+                        is_first = False
                     if version_iteration[3] > 0:
                         is_latest = False
                     if version_iteration[3] == 0:
                         errata_object = ErrataObject(version_iteration)
                 errata_object.is_latest = is_latest
+                errata_object.is_first = is_first
                 result.append_errata_object(errata_object)
-            response_list.append(result)
+            if result.drs not in drs_list:
+                response_list.append(result)
+                drs_list.append(result.drs)
         return response_list
 
 def _check_pid(dataset_or_file_string, full_check):
@@ -804,3 +811,4 @@ def _check_pid(dataset_or_file_string, full_check):
     dataset_or_file_string = _sanitize_input_and_call_ws(dataset_or_file_string)
     response_json, response_code = _call_pid_api(dataset_or_file_string)
     pid_response = _encapsulate_pid_api_response(api_code=response_code, api_json=response_json, full_check=full_check)
+    return pid_response
