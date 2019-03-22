@@ -4,9 +4,8 @@
 Log in to the Errata Service
 ============================
 
-Any ESGF users can report an issue to the appropriate climate modeling group.
-An error on ESGF data can be detected by any actor of ESGF community or ESGF users.
-The issue has to be reported to the appropriate data provider.
+An issue on the ESGF data can be detected by any data user or any actor of ESGF community.
+This issue has to be reported to the appropriate data provider.
 To that end, most of the ESGF netCDF files have a ``contact`` attribute with the email of the corresponding climate modeling group.
 If not exists please use the usual `ESGF users mailing list <esgf-user@lists.llnl.gov>`_.
 
