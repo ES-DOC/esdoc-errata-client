@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log in to the Errata Service &mdash; ESGF Errata Service 0.3 documentation</title>
+  <title>Log in to the Errata Service &mdash; ESGF Errata Service 1.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ESGF Errata Service 0.3 documentation" href="index.html"/>
+    <link rel="top" title="ESGF Errata Service 1.0 documentation" href="index.html"/>
         <link rel="next" title="Create an issue" href="create.html"/>
         <link rel="prev" title="Issue Viewer" href="viewer.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.3
+                1.0
               </div>
             
           
@@ -169,7 +169,11 @@
   <div class="section" id="log-in-to-the-errata-service">
 <span id="login"></span><h1>Log in to the Errata Service<a class="headerlink" href="#log-in-to-the-errata-service" title="Permalink to this headline">¶</a></h1>
 <p>Any ESGF users can report an issue to the appropriate climate modeling group.
-The issue has to be validate from a scientific point of view before its registration into the Errata Service.
+An error on ESGF data can be detected by any actor of ESGF community or ESGF users.
+The issue has to be reported to the appropriate data provider.
+To that end, most of the ESGF netCDF files have a <code class="docutils literal"><span class="pre">contact</span></code> attribute with the email of the corresponding climate modeling group.
+If not exists please use the usual <a class="reference external" href="mailto:esgf-user&#37;&#52;&#48;lists&#46;llnl&#46;gov">ESGF users mailing list</a>.</p>
+<p>The issue will then be validate from a scientific point of view before its registration into the Errata Service.
 Thus, only identified and authorized actors of the corresponding modeling groups can create, update and close issues.</p>
 <p>Authentication requires a verified (by email) GitHub account.
 Authorization is controlled using GitHub’s organizations invitational based structure.
@@ -262,7 +266,7 @@ For the authorization, a user needs to be part of the organization team specifie
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3',
+            VERSION:'1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
