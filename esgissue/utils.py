@@ -755,11 +755,12 @@ def _call_pid_api(dataset_or_file_string):
     return r.json(), r.status_code
 
 
-def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
+def _encapsulate_pid_api_response(api_code, api_json, full_check=True, latest_only=False):
     """
         This is the errata PID api client command.
         It can be used via command line to retrieve simple or complete errata data about a list of dataset/file ids.
         Check the documentation for usage rules.
+        Note that full_check flag bypasses latest_only.
         :param full_check: flag for complete or simple search.
         :param api_code: HTTP return code.
         :param api_json: json body of the response.
@@ -781,34 +782,57 @@ def _encapsulate_pid_api_response(api_code, api_json, full_check=True):
             if full_check:
                 for index, version_iteration in enumerate(response_item[1], start=1):
                     errata_object = ErrataObject(version_iteration)
-                    if index == len(response_item)+1:
+                    if index == len(response_item) + 1:
                         errata_object.is_latest = True
-                    elif index==1:
+                    elif index == 1:
                         errata_object.is_first = True
                     else:
                         errata_object.is_latest = False
                     result.append_errata_object(errata_object)
             else:
-                is_first = True
-                is_latest = True
-                for version_iteration in response_item[1]:
-                    if version_iteration[3] < 0:
-                        is_first = False
-                    if version_iteration[3] > 0:
-                        is_latest = False
-                    if version_iteration[3] == 0:
-                        errata_object = ErrataObject(version_iteration)
-                errata_object.is_latest = is_latest
-                errata_object.is_first = is_first
-                result.append_errata_object(errata_object)
+
+                if not latest_only:
+                    is_first = True
+                    is_latest = True
+
+                    for version_iteration in response_item[1]:
+                        if version_iteration[3] < 0:
+                            is_first = False
+                        if version_iteration[3] > 0:
+                            is_latest = False
+                        if version_iteration[3] == 0:
+                            errata_object = ErrataObject(version_iteration)
+                    errata_object.is_latest = is_latest
+                    errata_object.is_first = is_first
+                    result.append_errata_object(errata_object)
+                else:
+                    # search for latest only, which means the max index number retrived in the version chain.
+                    # start search at queried version to reduce iterations.
+                    max = 0
+                    for version_iteration in response_item[1]:
+                        if version_iteration[3] > max:
+                            max = version_iteration[3]
+                            temp_errata_object = ErrataObject(version_iteration)
+                    temp_errata_object.is_latest = True
+                    result.append_errata_object(temp_errata_object)
+
+
+            # ensuring the list doesn't contain dupes ?
             if result.drs not in drs_list:
                 response_list.append(result)
                 drs_list.append(result.drs)
         return response_list
 
-def _check_pid(dataset_or_file_string, full_check):
 
+def _check_pid(dataset_or_file_string, full_check, latest_only):
+    """
+    Method for checking the errata information stored within the PID
+    :param dataset_or_file_string: dataset identifier or pid handle string for dataset/file.
+    :param full_check: All versions or not.
+    :return: errata information if exists + order.
+    """
     dataset_or_file_string = _sanitize_input_and_call_ws(dataset_or_file_string)
     response_json, response_code = _call_pid_api(dataset_or_file_string)
-    pid_response = _encapsulate_pid_api_response(api_code=response_code, api_json=response_json, full_check=full_check)
+    pid_response = _encapsulate_pid_api_response(api_code=response_code, api_json=response_json, full_check=full_check,
+                                                 latest_only=latest_only)
     return pid_response

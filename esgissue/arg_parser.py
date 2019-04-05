@@ -208,7 +208,11 @@ def get_args():
         '--full', '-f',
         action='store_true',
         help="""If set this returns the full history of the queried ids.""")
-
+    check.add_argument(
+        '--latest', '-lat',
+        action='store_true',
+        help="""if set this returns the latest version of the queried dataset/file only."""
+    )
     ########################################
     # Subparser for "esgissue changepass" #
     ########################################

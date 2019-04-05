@@ -88,7 +88,7 @@ def run():
             _cred_test(args.institute, args.project, args.passphrase)
 
         elif args.command == CHECK:
-            result = _check_pid(",".join(args.id), args.full)
+            result = _check_pid(",".join(args.id), args.full, args.latest)
             # result printing.
             # For the time being bare print. Need better method for this.
             for element in result:
