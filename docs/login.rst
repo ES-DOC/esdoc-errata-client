@@ -4,8 +4,12 @@
 Log in to the Errata Service
 ============================
 
-Any ESGF users can report an issue to the appropriate climate modeling group.
-The issue has to be validate from a scientific point of view before its registration into the Errata Service.
+An issue on ESGF data can be detected by any user or any actor of the ESGF community.
+This issue has to be reported to the appropriate data provider.
+To that end, most of the ESGF netCDF files have a ``contact`` attribute with the email of the corresponding climate modeling group.
+If not exists please use the usual `ESGF users mailing list <esgf-user@lists.llnl.gov>`_.
+
+The issue will then be validate from a scientific point of view before its registration into the Errata Service.
 Thus, only identified and authorized actors of the corresponding modeling groups can create, update and close issues.
 
 Authentication requires a verified (by email) GitHub account.
