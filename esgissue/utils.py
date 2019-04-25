@@ -13,21 +13,16 @@ import sys
 import logging
 import textwrap
 import pbkdf2
-import platform
 import datetime
 import json
 import requests
 import getpass
-import StringIO
 import pyDes
 
 from argparse import HelpFormatter
 from constants import *
 from collections import OrderedDict
-from uuid import getnode as get_mac
-from time import time
 from fnmatch import fnmatch
-from ConfigParser import ConfigParser
 from config import _get_config_contents
 from errata_object_factory import ErrataObject, ErrataCollectionObject
 
@@ -460,10 +455,16 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         sys.exit(ERROR_DIC['unknown_command'][0])
     url = cf['url_base'] + cf['api_map'][action.upper()]
     # Checking if the errata ws server is up.
+    # TODO surround with try and catch to provide feedback to users?
     _check_ws_heartbeat()
     if action in [CREATE, UPDATE]:
+        # First you need to retrieve the xsrf token from the options request
+        options_r = requests.options(url)
+        HEADERS['X-Xsrftoken'] = options_r.headers['X-Xsrftoken']
+        HEADERS['Cookie'] = options_r.headers['Set-Cookie']
         try:
             r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
+            print(r.text)
         except Exception as e:
             print(e.message)
     elif action == CLOSE:
