@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Update an issue (CLI) &mdash; ESGF Errata Service 1.1.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Close an issue (CLI)" href="close_cli.html" />
+    <link rel="prev" title="Create an issue (CLI)" href="create_cli.html" /> 
+
+  
+  <script src="static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ESGF Errata Service
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html">Generic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_cli.html">Create an issue (CLI)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Update an issue (CLI)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modify-the-issue">Modify the issue</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#send-the-changes">Send the changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="close_cli.html">Close an issue (CLI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retrieve_cli.html">Retrieve an issue</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ESGF Errata Service</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="client.html">Command Line Interface</a> &raquo;</li>
+        
+      <li>Update an issue (CLI)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="sources/update_cli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="update-an-issue-cli">
+<span id="update-cli"></span><h1>Update an issue (CLI)<a class="headerlink" href="#update-an-issue-cli" title="Permalink to this headline">¶</a></h1>
+<p>Updating an issue on the Errata Service through the CLI requires modifying the corresponding issue template or list of affected
+datasets on local files.
+In case of those files have been locally removed or compromised, users can easily retrieve fresh copies from the ES-DOC
+Errata server using the <a class="reference internal" href="retrieve_cli.html#retrieve"><span class="std std-ref">retrieve</span></a> subcommand.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The new issue <cite>.json</cite> file is still constrained and validated against a new JSON schema.
+In fact, to guarantee the issue quality some attributes are immutable.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Requirement</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">uid</span></code></td>
+<td>Mandatory and unchanged (between 16 and 255 characters)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">title</span></code></td>
+<td>Mandatory and unchanged (between 16 and 1023 characters)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">description</span></code></td>
+<td>Mandatory and value-controlled</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mip_era</span></code></td>
+<td>Mandatory and unchanged</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">severity</span></code></td>
+<td>Mandatory and value-controlled</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">status</span></code></td>
+<td>Mandatory and value-controlled</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">landing_page</span></code></td>
+<td>Optional</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">materials</span></code></td>
+<td>Optional</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">dateCreated</span></code></td>
+<td>Mandatory and unchanged</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">dateUpdated</span></code></td>
+<td>Mandatory and unchanged</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">dateClosed</span></code></td>
+<td>Not expected</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Safeguards requirements are:</p>
+<ul class="last simple">
+<li>Empty attributes are disallowed.</li>
+<li>As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.</li>
+<li>All optional URLs must be valid (i.e., accessible).</li>
+<li>The issue status cannot change back to “new”.</li>
+<li>The creation date should not be modified in order to preserve an authentic set of records.</li>
+<li>The updated date is returned by the server.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a mistake occurred while declaring the issue, it should be reported to the <a class="reference internal" href="credits.html#credits"><span class="std std-ref">administrators</span></a>).</p>
+</div>
+<p>Finally, feel free to remove, add or modify any dataset identifiers into the corresponding list if necessary as long as the dataset list isn’t empty. The life cycle of an issue may incorporate a few changes within the contents of an issue.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">issue.json</span></code> needs to be at contain the same fields as in after the creation action. If your local file is corrupted
+consider using the <a class="reference internal" href="retrieve_cli.html#retrieve"><span class="std std-ref">retrieve</span></a> subcommand to download a fresh copy. The issue json should always be conform to the templates otherwise
+an exception will be thrown.</p>
+</div>
+</div>
+<div class="section" id="modify-the-issue">
+<h2>Modify the issue<a class="headerlink" href="#modify-the-issue" title="Permalink to this headline">¶</a></h2>
+<p>From our previous issue template (see <a class="reference internal" href="create_cli.html#create-cli"><span class="std std-ref">Create an issue (CLI)</span></a>), we altered the description of the issue, the severity, the status status and added 2 new affected datasets.
+This will lead to updated files files as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">issue.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a NEW test description, void of meaning.&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip5&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://myerrata.com/images/after.jpg&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://websitetest.com/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;onhold&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dateClosed&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dateUpdated&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">dataset.txt</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r1i1p1#20111119
+cmip5.output1.IPSL.IPSL-CM5A-MR.historical.mon.land.Lmon.r2i2p2#20121212
+cmip5.output1.IPSL.IPSL-CM5A-LR.historical.mon.land.Lmon.r3i1p1#20130514
+cmip5.output1.IPSL.IPSL-CM5A-LR.piControl.mon.land.Lmon.r3i1p1#20130514
+[...]
+</pre></div>
+</div>
+</div>
+<div class="section" id="send-the-changes">
+<h2>Send the changes<a class="headerlink" href="#send-the-changes" title="Permalink to this headline">¶</a></h2>
+<p>The update subcommand has a similar structure as the creation command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue update --issue /path/to/issue.json --dsets /path/to/datasets.txt
+</pre></div>
+</div>
+<p>On success the local issue file will be modified again. The update date will be modified accordingly:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test issue title&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a NEW test description, void of meaning.&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;cmip5&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;materials&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;http://myerrata.com/images/before.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://myerrata.com/images/after.jpg&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://websitetest.com/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;onhold&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dateClosed&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dateUpdated&quot;</span><span class="p">:</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The updates now are registered both in the remote errata service and are reflected in the local issue files.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="close_cli.html" class="btn btn-neutral float-right" title="Close an issue (CLI)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="create_cli.html" class="btn btn-neutral" title="Create an issue (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.1.2',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript" src="static/underscore.js"></script>
+        <script type="text/javascript" src="static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
