@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Application Programming Interface &mdash; ESGF Errata Service 1.0 documentation</title>
+  <title>ES-DOC-ERRATA API &mdash; ESGF Errata Service 0.3 documentation</title>
   
 
   
@@ -24,27 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ESGF Errata Service 1.0 documentation" href="index.html"/>
-        <link rel="next" title="Frequently asked questions" href="faq.html"/>
-        <link rel="prev" title="Retrieve an issue" href="retrieve_cli.html"/> 
+  <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frequently asked questions" href="faq.html" />
+    <link rel="prev" title="Retrieve an issue" href="retrieve_cli.html" /> 
 
   
   <script src="static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -66,7 +58,7 @@
             
             
               <div class="version">
-                1.0
+                0.3
               </div>
             
           
@@ -99,7 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
 <li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Application Programming Interface</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ES-DOC-ERRATA API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#issue-creation">Issue Creation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#consumes">Consumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#produces">Produces</a></li>
@@ -131,14 +123,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#id14">Responses</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pid-tracker">PID Tracker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pid-search">Pid search</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id15">Consumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id16">Produces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id17">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id18">Responses</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#simple-pid-search">Simple-PID search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simple-pid-search">Simple-Pid search</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id19">Consumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id20">Produces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id21">Parameters</a></li>
@@ -161,7 +153,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">ESGF Errata Service</a>
@@ -169,9 +161,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -194,7 +187,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Application Programming Interface</li>
+      <li>ES-DOC-ERRATA API</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -213,35 +206,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="application-programming-interface">
-<span id="api"></span><h1>Application Programming Interface<a class="headerlink" href="#application-programming-interface" title="Permalink to this headline">¶</a></h1>
-<p>The Errata Service uses various endpoints that can also be used by third party software to use the features that the errata has to offer.</p>
+  <div class="section" id="es-doc-errata-api">
+<span id="api"></span><h1>ES-DOC-ERRATA API<a class="headerlink" href="#es-doc-errata-api" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">esdoc-errata-client</span></code> uses various endpoints that can also be used by third party software to use the features that
+the ES-DOC-ERRATA project has to offer.</p>
 <div class="section" id="issue-creation">
 <h2>Issue Creation<a class="headerlink" href="#issue-creation" title="Permalink to this headline">¶</a></h2>
 <p>Endpoint used for issue creation. Requires proper authentication and authorization.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/create</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">post</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “Create a new issue”</p>
-<p>OperationId: “createIssue”</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/issue/create</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">post</span></code>
+Tags: “Issue Management”
+Summary: “Create a new issue”
+OperationId: “createIssue”</p>
 <div class="section" id="consumes">
 <h3>Consumes<a class="headerlink" href="#consumes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="produces">
 <h3>Produces<a class="headerlink" href="#produces" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">body</span></code></li>
 <li>description: “Issue json schema”</li>
-<li>required: <code class="docutils literal"><span class="pre">true</span></code></li>
+<li>required: <code class="docutils literal notranslate"><span class="pre">true</span></code></li>
 </ul>
 </div>
 <div class="section" id="responses">
@@ -261,27 +255,27 @@
 <h2>Issue Update<a class="headerlink" href="#issue-update" title="Permalink to this headline">¶</a></h2>
 <p>Endpoint used for issue update. Requires proper authentication and authorization.
 Local files need to be updated, if tampered with beforehand, they can be downloaded using the retrieve endpoint.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/update</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">post</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “Update an issue”</p>
-<p>OperationId: “updateIssue”`</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/issue/update</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">post</span></code>
+Tags: “Issue Management:”
+Summary: “Update an issue”
+OperationId: “updateIssue”</p>
 <div class="section" id="id1">
 <h3>Consumes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h3>Produces<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h3>Parameters<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">body</span></code></li>
 <li>description: “Issue json schema”</li>
 <li>required: true</li>
 </ul>
@@ -302,27 +296,27 @@ Local files need to be updated, if tampered with beforehand, they can be downloa
 <div class="section" id="issue-close">
 <h2>Issue Close<a class="headerlink" href="#issue-close" title="Permalink to this headline">¶</a></h2>
 <p>Endpoint used to close an issue marking its lifecycle’s end. Requires proper authentication and authorization.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/close</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">post</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “closes an issue”</p>
-<p>OperationId: “closeIssue”</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/issue/close</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">post</span></code>
+Tags: “Issue Management:”
+Summary: “closes an issue”
+OperationId: “closeIssue”</p>
 <div class="section" id="id6">
 <h3>Consumes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id7">
 <h3>Produces<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id8">
 <h3>Parameters<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">body</span></code></li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">body</span></code></li>
 <li>description: “Issue json schema”</li>
 <li>required: true</li>
 </ul>
@@ -344,27 +338,27 @@ Local files need to be updated, if tampered with beforehand, they can be downloa
 <h2>Issue Retrieve<a class="headerlink" href="#issue-retrieve" title="Permalink to this headline">¶</a></h2>
 <p>This endpoint serves as download endpoint for issue local files (e.g. the issue.json and datasets.txt)
 This endpoint requires no authentication nor authentication.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/retrieve</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">get</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “Downloads issue files”</p>
-<p>OperationId: “retrieveIssue”</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/issue/retrieve</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">get</span></code>
+Tags: “Issue Management:”
+Summary: “downloads issue files”
+OperationId: “retrieveIssue”</p>
 <div class="section" id="id11">
 <h3>Consumes<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>param: <code class="docutils literal"><span class="pre">uid</span></code></li>
+<li>param: <code class="docutils literal notranslate"><span class="pre">uid</span></code></li>
 </ul>
 </div>
 <div class="section" id="id12">
 <h3>Produces<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id13">
 <h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">uid</span></code></li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">uid</span></code></li>
 <li>description: “list of uids to download”</li>
 <li>required: false</li>
 </ul>
@@ -374,34 +368,34 @@ This endpoint requires no authentication nor authentication.</p>
 <p>405: “Bad Method”</p>
 </div>
 </div>
-<div class="section" id="pid-tracker">
-<h2>PID Tracker<a class="headerlink" href="#pid-tracker" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pid-search">
+<h2>Pid search<a class="headerlink" href="#pid-search" title="Permalink to this headline">¶</a></h2>
 <p>This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
 This is the advanced search endpoint, it seeks information about all versions of every dataset.
 This endpoint requires no authentication nor authentication.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/pid</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">get</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “Checks dataset (and entire version history) for issues “</p>
-<p>OperationId: “pidSearch”</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/resolve/pid</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">get</span></code>
+Tags: “Issue Management:”
+Summary: “checks dataset (and entire version history) for issues ”
+OperationId: “pidSearch”</p>
 <div class="section" id="id15">
 <h3>Consumes<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>param: <code class="docutils literal"><span class="pre">pids</span></code></li>
+<li>param: <code class="docutils literal notranslate"><span class="pre">pids</span></code></li>
 </ul>
 </div>
 <div class="section" id="id16">
 <h3>Produces<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id17">
 <h3>Parameters<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">pids</span></code></li>
-<li>description: List of pid handle strings, dataset ids with ‘.v’ as seperator for version or ‘%23’ the percent-encoding for ‘#’. The list separator is a comma ‘,’</li>
-<li>required: true</li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">pids</span></code></li>
+<li>description: “list of uids to download”</li>
+<li>required: false</li>
 </ul>
 </div>
 <div class="section" id="id18">
@@ -410,33 +404,33 @@ This endpoint requires no authentication nor authentication.</p>
 </div>
 </div>
 <div class="section" id="simple-pid-search">
-<h2>Simple-PID search<a class="headerlink" href="#simple-pid-search" title="Permalink to this headline">¶</a></h2>
+<h2>Simple-Pid search<a class="headerlink" href="#simple-pid-search" title="Permalink to this headline">¶</a></h2>
 <p>This endpoint enables users to query the errata service for issues in specific set of dataset PIDs.
 This is the simple response version of the pid endpoint, only the queried versions will be inspected.
 This endpoint requires no authentication nor authentication.</p>
-<p>Path: <code class="docutils literal"><span class="pre">1/issue/simple_pid</span></code></p>
-<p>Method: <code class="docutils literal"><span class="pre">get</span></code></p>
-<p>Tags: <cite>Issue Management</cite></p>
-<p>Summary: “checks dataset for issues”</p>
-<p>OperationId: “simplePidSearch”</p>
+<p>Path: <code class="docutils literal notranslate"><span class="pre">1/resolve/simple-pid</span></code>
+Method: <code class="docutils literal notranslate"><span class="pre">get</span></code>
+Tags: “Issue Management:”
+Summary: “checks dataset for issues”
+OperationId: “simplePidSearch”</p>
 <div class="section" id="id19">
 <h3>Consumes<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>param: <code class="docutils literal"><span class="pre">datasets</span></code></li>
+<li>param: <code class="docutils literal notranslate"><span class="pre">pids</span></code></li>
 </ul>
 </div>
 <div class="section" id="id20">
 <h3>Produces<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">application/json</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">application/json</span></code></li>
 </ul>
 </div>
 <div class="section" id="id21">
 <h3>Parameters<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>name: <code class="docutils literal"><span class="pre">datasets</span></code></li>
-<li>description: Dataset string list seperated with a comma ‘,’. Can also be list of PIDs, or a mixed list of datasets and PID handle strings. This endpoint returns a simpler return than the PID endpoint. It does not provide version history. Due to URL encoding restriction, the ‘#’ character is reserved and should be replaced by either ‘.v’ or ‘%23’ which is the percent-encoding of the ‘#’ character as specified in the rfc3986.</li>
-<li>required: true</li>
+<li>name: <code class="docutils literal notranslate"><span class="pre">pids</span></code></li>
+<li>description: “list of uids to download”</li>
+<li>required: false</li>
 </ul>
 </div>
 <div class="section" id="id22">
@@ -448,9 +442,7 @@ This endpoint requires no authentication nor authentication.</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -468,11 +460,11 @@ This endpoint requires no authentication nor authentication.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR.
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -487,35 +479,33 @@ This endpoint requires no authentication nor authentication.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="static/jquery.js"></script>
-      <script type="text/javascript" src="static/underscore.js"></script>
-      <script type="text/javascript" src="static/doctools.js"></script>
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'0.3',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript" src="static/underscore.js"></script>
+        <script type="text/javascript" src="static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
