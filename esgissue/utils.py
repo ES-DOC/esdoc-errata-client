@@ -471,6 +471,8 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         r = requests.post(url + uid + '&status=' + payload, auth=credentials)
     elif action == RETRIEVE:
         r = requests.get(url + uid)
+    elif action == RETRIEVE_ALL:
+        r = requests.get(url)
     elif action == CREDTEST:
         r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
     elif action == PID:
