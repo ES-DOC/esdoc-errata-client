@@ -164,7 +164,7 @@ This endpoint enables users to query the errata service for issues in specific s
 This is the advanced search endpoint, it seeks information about all versions of every dataset.
 This endpoint requires no authentication nor authentication.
 
-Path: ``1/resolve/pid``
+Path: ``1/issue/pid``
 
 Method: ``get``
 
@@ -192,11 +192,6 @@ Responses
 ---------
 405: "Bad Method"
 
-
-Example of usage
-----------------
-GET https://errata.es-doc.org/1/resolve/pid?pids=list_of_pids
-
 Simple-PID search
 *****************
 
@@ -204,7 +199,7 @@ This endpoint enables users to query the errata service for issues in specific s
 This is the simple response version of the pid endpoint, only the queried versions will be inspected.
 This endpoint requires no authentication nor authentication.
 
-Path: ``1/resolve/simple-pid``
+Path: ``1/issue/simple_pid``
 
 Method: ``get``
 
@@ -231,7 +226,3 @@ Parameters
 Responses
 ---------
 405: "Bad Method"
-
-Example of usage
-----------------
-GET https://errata.es-doc.org/1/resolve/simple-pid?datasets=dataset_ids
