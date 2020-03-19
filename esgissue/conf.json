@@ -1,7 +1,7 @@
 {
 "url_base": "https://errata.es-doc.org",
 "url_base_aux": "http://localhost:5001",
-"url_viewer": "https://test-errata.es-doc.org/viewer.html?uid=",
+"url_viewer": "https://errata.es-doc.org/static/view.html",
 "json_schema_paths" : {
              "create": "{0}/templates/create.json",
              "update": "{0}/templates/update.json",
@@ -18,5 +18,4 @@
             "PID": "/1/resolve/pid"
     },
 "validate_issue_urls": true
-
 }
