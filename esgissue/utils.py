@@ -18,17 +18,16 @@ import json
 import requests
 import getpass
 import pyDes
+import base64
 
-from argparse import HelpFormatter
-from constants import *
 from collections import OrderedDict
 from fnmatch import fnmatch
-from config import _get_config_contents
-from errata_object_factory import ErrataObject, ErrataCollectionObject
+from argparse import HelpFormatter
 
-# # SNI required fix for py2.7
-# from requests.packages.urllib3.contrib import pyopenssl
-# pyopenssl.inject_into_urllib3()
+from esgissue.constants import *
+from esgissue.config import _get_config_contents
+from esgissue.errata_object_factory import ErrataObject, ErrataCollectionObject
+
 cf = _get_config_contents()
 
 
@@ -196,7 +195,7 @@ def _resolve_validation_error_code(message):
     :param message: string of error message
     :return: error code
     """
-    for key, value in ERROR_DIC.iteritems():
+    for key, value in ERROR_DIC.items():
         if key in message.lower():
             return value
     return ERROR_DIC['unknown_error']
@@ -313,7 +312,7 @@ def _prepare_persistence(data):
     :return: json file
     """
     to_del = []
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if value is None or value == '' or value == [] or value == [u'']:
             to_del.append(key)
         if type(value) == list:
@@ -405,7 +404,7 @@ def _get_datasets(dataset_file):
     """
     dsets = list()
     for dset in dataset_file:
-        dsets.append(unicode(dset.strip(' \n\r\t')))
+        dsets.append(dset.strip(' \n\r\t'))
     # Removing redundancy
     dsets = list(set(dsets))
     return dsets
@@ -433,7 +432,7 @@ def _order_json(json_body):
     :return: ordered json dictionary
     """
     index_tuple = ()
-    for key, value in INDEX_DICT.iteritems():
+    for key, value in INDEX_DICT.items():
         if value in json_body.keys():
             index_tuple += ((value, json_body[value]),)
     return OrderedDict(index_tuple)
@@ -441,7 +440,7 @@ def _order_json(json_body):
 
 # WS OPS
 
-def _get_ws_call(action, payload=None, uid=None, credentials=None):
+def _get_ws_call(action, payload=None, uid=None, credentials=None, dry_run=False):
     """
     This function builds the url for the outgoing call to the different errata ws.
     :param payload: payload to be posted
@@ -453,7 +452,10 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
     if action not in ACTIONS:
         logging.error(ERROR_DIC['unknown_command'][1] + '. Error code: {}'.format(ERROR_DIC['unknown_command'][0]))
         sys.exit(ERROR_DIC['unknown_command'][0])
-    url = cf['url_base'] + cf['api_map'][action.upper()]
+    if not dry_run:
+        url = cf['url_base'] + cf['api_map'][action.upper()]
+    else:
+        url = cf['url_base_dry_run'] + cf['api_map'][action.upper()]
     # Checking if the errata ws server is up.
     # TODO surround with try and catch to provide feedback to users?
     _check_ws_heartbeat()
@@ -468,7 +470,13 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None):
         except Exception as e:
             print(e.message)
     elif action == CLOSE:
-        r = requests.post(url + uid + '&status=' + payload, auth=credentials)
+        options_r = requests.options(url)
+        HEADERS['X-Xsrftoken'] = options_r.headers['X-Xsrftoken']
+        HEADERS['Cookie'] = options_r.headers['Set-Cookie']
+        try:
+            r = requests.post(url + uid + '&status=' + payload, headers=HEADERS, auth=credentials)
+        except Exception as e:
+            print(e.message)
     elif action == RETRIEVE:
         r = requests.get(url + uid)
     elif action == RETRIEVE_ALL:
@@ -551,7 +559,7 @@ def _encrypt_with_key(data, passphrase=''):
     if passphrase != '':
         key = pbkdf2.PBKDF2(passphrase, "\0\0\0\0\0\0\0\0").read(24)
         k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-        return k.encrypt(data).encode('string_escape').replace('\\\\', '\\')
+        return k.encrypt(data)
     else:
         return data
 
@@ -563,15 +571,16 @@ def _decrypt_with_key(data, passphrase=''):
     :param passphrase: key used in encryption
     :return: decrypted data
     """
-    data = data.decode('string_escape').replace('\\', '\\\\')
+    # data = data.decode('string_escape').replace('\\', '\\\\')
     if passphrase is None:
         passphrase = ''
     if passphrase != '':
         key = pbkdf2.PBKDF2(passphrase, "\0\0\0\0\0\0\0\0").read(24)
         k = pyDes.triple_des(key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-        return k.decrypt(data)
+        decrypted_data = k.decrypt(data)
+        return k.decrypt(data).decode('ascii')
     else:
-        return data
+        return data.decode('ascii')
 
 
 def _authenticate(**kwargs):
@@ -581,19 +590,21 @@ def _authenticate(**kwargs):
         if os.environ.get(GITHUB_CREDS_ENCRYPTED) is not None:
             if str(os.environ.get(GITHUB_CREDS_ENCRYPTED)) == '1':
                 passphrase = getpass.getpass('Passphrase: ')
+                decoded_token = base64.b64decode(token).encode('ascii')
+                decoded_username = base64.b64decode(username).encode('ascii')
                 token = _decrypt_with_key(token, passphrase)
                 username = _decrypt_with_key(username, passphrase)
         return username, token
     else:
         path_to_creds = _get_file_location('cred.txt')
         if os.path.isfile(path_to_creds) and os.path.getsize(path_to_creds) > 0:
-            with open(path_to_creds, 'r') as credfile:
+            with open(path_to_creds, 'rb') as credfile:
                 content = credfile.readlines()
-                enc_username = content[0].split('entry:')[1].replace('\n', '')
-                enc_token = content[1].split('entry:')[1].replace('\n', '')
-                is_encrypted = content[2].split('entry:')[1]
+                enc_username = content[0][6:][:-1]
+                enc_token = content[1][6:][:-1]
+                is_encrypted = content[2][6:]
 
-            if is_encrypted == "1":
+            if is_encrypted == "1" or is_encrypted == b'1':
                 if 'passphrase' in kwargs and kwargs['passphrase'] is not None:
                     key = kwargs['passphrase']
                 else:
@@ -604,9 +615,9 @@ def _authenticate(**kwargs):
                 username = enc_username
                 token = enc_token
         else:
-            username = raw_input('Username: ')
-            token = raw_input('Token: ')
-            save_cred = raw_input('Would you like to save your credentials for later uses? (y/n): ')
+            username = input('Username: ')
+            token = input('Token: ')
+            save_cred = input('Would you like to save your credentials for later uses? (y/n): ')
             if save_cred.lower() == 'y':
                 key = getpass.getpass('Select passphrase to encrypt credentials, this will log you in from now on: ')
                 with open(path_to_creds, 'wb+') as credfile:
@@ -639,11 +650,11 @@ def _reset_passphrase(**kwargs):
         # if yes:
         with open(path_to_creds, 'rb') as cred_file:
             content = cred_file.readlines()
-        username = content[0].split('entry:')[1].replace('\n', '')
-        token = content[1].split('entry:')[1].replace('\n', '')
-        is_encrypted = content[2].split('entry:')[1]
+        username = content[0][6:][:-1]
+        token = content[1][6:][:-1]
+        is_encrypted = str(content[2][6:])
     if username is None or token is None:
-        logging.warn('No credentials found.')
+        logging.warning('No credentials found.')
     if 'old_pass' in kwargs and 'new_pass' in kwargs:
         logging.info('Using new credentials from user input...')
         old_pass = kwargs['old_pass']
@@ -659,18 +670,21 @@ def _reset_passphrase(**kwargs):
     username = _decrypt_with_key(username, old_pass)
     token = _decrypt_with_key(token, old_pass)
     # Writing new data
-    os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, new_pass)
-    os.environ[GITHUB_TOKEN] = _encrypt_with_key(token, new_pass)
+    encoded_username = base64.b64encode(_encrypt_with_key(username, new_pass)).decode('ascii')
+    encoded_token = base64.b64encode(_encrypt_with_key(token, new_pass)).decode('ascii')
+    os.environ[GITHUB_USERNAME] = encoded_username
+    os.environ[GITHUB_TOKEN] = encoded_token
+
     # Writing new data
     with open(path_to_creds, 'wb') as cred_file:
         if new_pass != '':
-            cred_file.write('entry:' + _encrypt_with_key(username, new_pass) + '\n')
-            cred_file.write('entry:' + _encrypt_with_key(token, new_pass) + '\n')
-            cred_file.write('entry:' + '1')
+            cred_file.write('entry:'.encode() + _encrypt_with_key(username, new_pass) + '\n'.encode())
+            cred_file.write('entry:'.encode() + _encrypt_with_key(token, new_pass) + '\n'.encode())
+            cred_file.write(('entry:' + '1').encode())
         else:
-            cred_file.write('entry:' + username + '\n')
-            cred_file.write('entry:' + token + '\n')
-            cred_file.write('entry:' + '0')
+            cred_file.write(('entry:' + username + '\n').encode())
+            cred_file.write(('entry:' + token + '\n').encode())
+            cred_file.write(('entry:' + '0').encode())
     logging.info('Passphrase has been successfully updated.')
 
 
@@ -684,7 +698,7 @@ def _reset_credentials():
         os.remove(path_to_creds)
         logging.info('Credentials have been successfully reset.')
     else:
-        logging.warn('No existing credentials found.')
+        logging.warning('No existing credentials found.')
 
 
 def _set_credentials(**kwargs):
@@ -702,13 +716,15 @@ def _set_credentials(**kwargs):
         else:
             passphrase = ''
     else:
-        username = raw_input('Username: ')
-        tkn = raw_input('Token: ')
+        username = input('Username: ')
+        tkn = input('Token: ')
         passphrase = getpass.getpass('Passphrase: ')
         if passphrase != '' and passphrase is not None:
             os.environ[GITHUB_CREDS_ENCRYPTED] = '1'
-            os.environ[GITHUB_USERNAME] = _encrypt_with_key(username, passphrase)
-            os.environ[GITHUB_TOKEN] = _encrypt_with_key(tkn, passphrase)
+            encoded_username = base64.b64encode(_encrypt_with_key(username, new_pass)).decode('ascii')
+            encoded_token = base64.b64encode(_encrypt_with_key(token, new_pass)).decode('ascii')
+            os.environ[GITHUB_USERNAME] = encoded_username
+            os.environ[GITHUB_TOKEN] = encoded_token
         else:
             os.environ[GITHUB_CREDS_ENCRYPTED] = '0'
             os.environ[GITHUB_USERNAME] = username
@@ -720,13 +736,13 @@ def _set_credentials(**kwargs):
         _reset_credentials()
     with open(path_to_creds, 'wb') as cred_file:
         if passphrase != '':
-            cred_file.write('entry:' + _encrypt_with_key(username, passphrase) + '\n')
-            cred_file.write('entry:' + _encrypt_with_key(tkn, passphrase) + '\n')
-            cred_file.write('entry:' + '1')
+            cred_file.write('entry:'.encode() + _encrypt_with_key(username, passphrase) + '\n'.encode())
+            cred_file.write('entry:'.encode() + _encrypt_with_key(tkn, passphrase) + '\n'.encode())
+            cred_file.write(('entry:' + '1').encode())
         else:
-            cred_file.write('entry:' + username + '\n')
-            cred_file.write('entry:' + tkn + '\n')
-            cred_file.write('entry:' + '0')
+            cred_file.write('entry:'.encode() + username + '\n'.encode())
+            cred_file.write('entry:'.encode() + tkn + '\n'.encode())
+            cred_file.write('entry:'.encode() + '0'.encode())
     logging.info('Your credentials were successfully set.')
 
 
@@ -736,9 +752,9 @@ def _cred_test(team=None, project=None, passphrase=None):
     :return:
     """
     while not team:
-        team = raw_input('Please specify the institute you wish to test authorization to: ')
+        team = input('Please specify the institute you wish to test authorization to: ')
     while not project:
-        project = raw_input('Please specify the project you wish to test authorization to: ')
+        project = input('Please specify the project you wish to test authorization to: ')
     credentials = _authenticate(passphrase=passphrase)
     _get_ws_call('credtest', uid=None, credentials=credentials, payload={'team': team.lower(),
                                                                          'project': project.lower()})

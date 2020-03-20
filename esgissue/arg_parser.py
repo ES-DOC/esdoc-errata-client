@@ -1,8 +1,7 @@
 import argparse
 import os
-from constants import *
-from utils import MultilineFormatter
-
+from esgissue.constants import *
+from esgissue.utils import MultilineFormatter
 
 # Program version
 __version__ = VERSION_NUMBER
@@ -217,13 +216,13 @@ def get_args():
     # Subparser for "esgissue changepass" #
     ########################################
     changepass = subparsers.add_parser(
-            'changepass',
-            prog='esgissue changepass',
-            description=CHANGEPASS_DESC,
-            formatter_class=MultilineFormatter,
-            help=CHANGEPASS_HELP,
-            add_help=False,
-            parents=[parent])
+        'changepass',
+        prog='esgissue changepass',
+        description=CHANGEPASS_DESC,
+        formatter_class=MultilineFormatter,
+        help=CHANGEPASS_HELP,
+        add_help=False,
+        parents=[parent])
     changepass._optionals.title = "Optional arguments"
     changepass._positionals.title = "Positional arguments"
     changepass.add_argument('--oldpass',
@@ -238,24 +237,24 @@ def get_args():
     # Subparser for "esgissue credremove" #
     ######################################
     credremove = subparsers.add_parser(
-            'credremove',
-            prog='esgissue credremove',
-            description=CREDRESET_DESC,
-            formatter_class=MultilineFormatter,
-            help=CREDRESET_HELP,
-            add_help=False,
-            parents=[parent])
+        'credremove',
+        prog='esgissue credremove',
+        description=CREDRESET_DESC,
+        formatter_class=MultilineFormatter,
+        help=CREDRESET_HELP,
+        add_help=False,
+        parents=[parent])
     ####################################
     # Subparser for "esgissue credset" #
     ####################################
     credset = subparsers.add_parser(
-            'credset',
-            prog='esgissue credset',
-            description=CREDSET_DESC,
-            formatter_class=MultilineFormatter,
-            help=CREDSET_HELP,
-            add_help=False,
-            parents=[parent])
+        'credset',
+        prog='esgissue credset',
+        description=CREDSET_DESC,
+        formatter_class=MultilineFormatter,
+        help=CREDSET_HELP,
+        add_help=False,
+        parents=[parent])
     credset.add_argument('--username', '-u',
                          nargs='?',
                          required=False,
@@ -268,13 +267,13 @@ def get_args():
     # Subparser for "esgissue credtest" #
     #####################################
     credtest = subparsers.add_parser(
-            'credtest',
-            prog='esgissue credtest',
-            description=CREDTEST_DESC,
-            formatter_class=MultilineFormatter,
-            help=CREDTEST_HELP,
-            add_help=False,
-            parents=[parent])
+        'credtest',
+        prog='esgissue credtest',
+        description=CREDTEST_DESC,
+        formatter_class=MultilineFormatter,
+        help=CREDTEST_HELP,
+        add_help=False,
+        parents=[parent])
     credtest.add_argument('--institute',
                           '-i',
                           nargs='?',
@@ -284,9 +283,7 @@ def get_args():
                           nargs='?',
                           type=str)
     credtest.add_argument('--passphrase',
-                      '-pass',
-                      nargs='?',
-                      type=str)
+                          '-pass',
+                          nargs='?',
+                          type=str)
     return main.parse_args()
-
-

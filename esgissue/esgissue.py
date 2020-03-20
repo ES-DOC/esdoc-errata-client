@@ -4,20 +4,32 @@
    :synopsis: Manages ESGF issues on BitBucket repository.
 
 """
-
-# Module imports
 from uuid import uuid4
-from issue_handler import LocalIssue
-from arg_parser import get_args
-from constants import *
-from utils import _init_logging, _get_datasets, _get_issue, _reset_passphrase,_set_credentials, _prepare_retrieve_ids, \
-                  _reset_credentials, _cred_test, _get_credentials, _check_pid
+from esgissue.issue_handler import LocalIssue
+from esgissue.arg_parser import get_args
+from esgissue.constants import *
+from esgissue.utils import _init_logging, _get_datasets, _get_issue, _reset_passphrase,_set_credentials, \
+    _prepare_retrieve_ids, _reset_credentials, _cred_test, _get_credentials, _check_pid
 
 # Rabbit MQ unsent messages directory
 
 
 def process_command(command, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None, status=None,
-                    list_of_ids=None, **kwargs):
+                    list_of_ids=None, dry_run=False, **kwargs):
+    """
+    Process command is the utility called to do the necessary for each of the client's command.
+    If you're debugging an issue this is where you need to start.
+    :param command: action command needs to be one of Create, Update, Close or Retrieve
+    :param issue_file: issue json file
+    :param dataset_file: dataset list in txt form
+    :param issue_path: local path to the issue file
+    :param dataset_path: local path to the dataset file
+    :param status: status of the issue [new, on_hold, wontfix, resolved]
+    :param list_of_ids: List of issue uids
+    :param dry_run: parameter used by the test suite to target test nodes.
+    :param kwargs: credentials retrieved from here.
+    :return:
+    """
     payload = issue_file
 
     if command in [CREATE, UPDATE, CLOSE]:
@@ -30,11 +42,11 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
     # intializing mandatory new issue fields
     if command == CREATE:
         payload[UID] = str(uuid4())
-        payload[STATUS] = unicode(STATUS_NEW)
+        payload[STATUS] = STATUS_NEW
 
     # instatiating a localissue object
     local_issue = LocalIssue(action=command, issue_file=payload, dataset_file=dataset_file, issue_path=issue_path,
-                             dataset_path=dataset_path)
+                             dataset_path=dataset_path, dry_run=dry_run)
 
     # issue file validation
     if command not in [RETRIEVE, RETRIEVE_ALL]:
@@ -92,7 +104,7 @@ def run():
             # result printing.
             # For the time being bare print. Need better method for this.
             for element in result:
-                print element
+                print(element)
 
         # Retrieve command has a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:

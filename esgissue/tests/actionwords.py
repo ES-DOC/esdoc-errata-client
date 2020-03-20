@@ -2,9 +2,6 @@ from subprocess import CalledProcessError
 
 from esgissue.esgissue import process_command
 from esgissue.constants import *
-# from esgissue.utils import set_credentials, reset_passphrase, encrypt_with_key, reset_credentials, get_datasets, \
-#                             prepare_persistence, _get_f
-
 from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_key, _reset_credentials, _get_datasets, \
                            _get_retrieve_dirs, _get_file_location, _encapsulate_pid_api_response, \
                            _sanitize_input_and_call_ws
@@ -15,7 +12,7 @@ import uuid
 import os
 import subprocess as sub
 import json
-import esgfpid
+# import esgfpid
 import requests
 from time import sleep
 
@@ -46,61 +43,65 @@ class Actionwords:
         # Required if the datasets don't have handles before.
         # create_handle_for_dataset(self.dsets)
         process_command(command=CREATE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
-                        issue_path=self.issue_path, dataset_path=self.dsets_path)
+                        issue_path=self.issue_path, dataset_path=self.dsets_path, dry_run=True)
         self.check_issue_files()
         _reset_credentials()
 
     def update_issue(self):
         _set_credentials(username=username, token=token, passphrase=passphrase)
         process_command(command=UPDATE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
-                        issue_path=self.issue_path, dataset_path=self.dsets_path)
+                        issue_path=self.issue_path, dataset_path=self.dsets_path, dry_run=True)
         self.check_issue_files()
         _reset_credentials()
 
     def close_issue(self):
         _set_credentials(username=username, token=token, passphrase=passphrase)
         process_command(command=CLOSE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
-                        issue_path=self.issue_path, dataset_path=self.dsets_path, status=STATUS_RESOLVED)
+                        issue_path=self.issue_path, dataset_path=self.dsets_path, status=STATUS_RESOLVED, dry_run=True)
         self.check_issue_files()
         _reset_credentials()
 
     def retrieve_issue(self):
         process_command(command=RETRIEVE, issue_path=self.issue, dataset_path=self.dsets,
-                        list_of_ids=[self.uid])
+                        list_of_ids=[self.uid], dry_run=True)
 
-    def check_issue_pid(self):
-        # Checking PID HANDLE
-        print('checkin PIDs')
-        sleep(5)
-        handle_client = EUDATHandleClient.instantiate_for_read_access()
-        self.uid = self.issue['uid']
-        for line in self.dsets:
-            print('CHECKING {} ERRATA IDS'.format(line))
-            exists = False
-            dataset = line.split('#')
-            dset_id = dataset[0]
-            dset_version = dataset[1]
-            hash_basis = dset_id+'.v'+dset_version
-            hash_basis_utf8 = hash_basis.encode('utf-8')
-            handle_string = uuid.uuid3(uuid.NAMESPACE_URL, hash_basis_utf8)
-            encoded_dict = handle_client.retrieve_handle_record(prefix + str(handle_string))
-            if encoded_dict is not None:
-                    handle_record = {k.decode('utf8'): v.decode('utf8') for k, v in encoded_dict.items()}
-                    if 'ERRATA_IDS' in handle_record.keys():
-                        for uid in str(handle_record['ERRATA_IDS']).split(';'):
-                            if uid == self.uid:
-                                exists = True
-                                break
-            if not exists:
-                print('An error occurred updating handle.')
-                return exists
+    # def check_issue_pid(self):
+    #     # Checking PID HANDLE
+    #     print('checkin PIDs')
+    #     sleep(5)
+    #     handle_client = EUDATHandleClient.instantiate_for_read_access()
+    #     self.uid = self.issue['uid']
+    #     for line in self.dsets:
+    #         print('CHECKING {} ERRATA IDS'.format(line))
+    #         exists = False
+    #         dataset = line.split('#')
+    #         dset_id = dataset[0]
+    #         dset_version = dataset[1]
+    #         hash_basis = dset_id+'.v'+dset_version
+    #         hash_basis_utf8 = hash_basis.encode('utf-8')
+    #         handle_string = uuid.uuid3(uuid.NAMESPACE_URL, hash_basis_utf8)
+    #         encoded_dict = handle_client.retrieve_handle_record(prefix + str(handle_string))
+    #         if encoded_dict is not None:
+    #                 handle_record = {k.decode('utf8'): v.decode('utf8') for k, v in encoded_dict.items()}
+    #                 if 'ERRATA_IDS' in handle_record.keys():
+    #                     for uid in str(handle_record['ERRATA_IDS']).split(';'):
+    #                         if uid == self.uid:
+    #                             exists = True
+    #                             break
+    #         if not exists:
+    #             print('An error occurred updating handle.')
+    #             return exists
 
     def check_issue_files(self):
         # Comparing local file to server copy.
         self.uid = self.issue['uid']
         issue_dw = ''
         dataset_dw = ''
-        process_command(command=RETRIEVE, issue_path=issue_dw, dataset_path=dataset_dw, list_of_ids=[self.uid])
+        process_command(command=RETRIEVE,
+                        issue_path=issue_dw,
+                        dataset_path=dataset_dw,
+                        list_of_ids=[self.uid],
+                        dry_run=True)
         issue_dw, dataset_dw = _get_retrieve_dirs(os.getcwd(), os.getcwd(), self.uid)
         with open(self.issue_path, 'r') as issue:
             local_data = json.load(issue)
@@ -167,6 +168,9 @@ class Actionwords:
         self.dsets_path.close()
         with open(os.path.abspath(self.dsets_path.name)) as dset_file:
             lines = dset_file.readlines()
+        if len(lines) < 2:
+            print('Not enough datasets in test file to conduct this unittest.')
+            return
         self.dsets = _get_datasets([item for item in lines[:-1]])
         with open(os.path.abspath(self.dsets_path.name), 'w') as dsets_file:
             for dset in self.dsets:
@@ -212,8 +216,8 @@ class Actionwords:
         encrypted_token = _encrypt_with_key(token, passphrase_key)
         with open(_get_file_location('cred.txt'), 'rb') as cred_file:
             content = cred_file.readlines()
-        file_username = content[0].split('entry:')[1].replace('\n', '')
-        file_token = content[1].split('entry:')[1].replace('\n', '')
+        file_username = content[0][6:][:-1]
+        file_token = content[1][6:][:-1]
         if file_username == encrypted_username and file_token == encrypted_token:
             return True
         else:
@@ -222,7 +226,7 @@ class Actionwords:
     @staticmethod
     def check_installation():
         try:
-            print sub.check_output(['esgissue', '-v'], shell=True)
+            print(sub.check_output(['esgissue', '-v'], shell=True))
             sub.check_output(['esgissue', '-v'], shell=True)
             return True
         except CalledProcessError:
@@ -230,8 +234,8 @@ class Actionwords:
 
     @staticmethod
     def compare_json(d1, d2, ignore_keys):
-        d1_filtered = dict((k, v) for k, v in d1.iteritems() if k not in ignore_keys)
-        d2_filtered = dict((k, v) for k, v in d2.iteritems() if k not in ignore_keys)
+        d1_filtered = dict((k, v) for k, v in d1.items() if k not in ignore_keys)
+        d2_filtered = dict((k, v) for k, v in d2.items() if k not in ignore_keys)
         return d1_filtered == d2_filtered
 
     @staticmethod
@@ -270,83 +274,3 @@ class Actionwords:
                 if test_result is None:
                     return False
         return True
-
-
-def create_handle_for_dataset(dataset_list):
-    data_node1 = "foo"
-    is_test  = True
-    is_synchronous = True
-    prefix =  21.14100
-    rabbit_exchange = "esgffed-exchange"
-    rabbit_password_trusted = "LDfj5784T4VeKTxwhpqk8UmSqbC9DkTW"
-    rabbit_user_open = "esgf-publisher-open"
-    rabbit_user_trusted = "esgf-publisher"
-    rabbit_urls_open = []
-    rabbit_url_trusted = "207.38.94.86"
-    port = "32272"
-    vhost = "esgf-pid"
-
-
-    sync_retry_interval_in_seconds = 900
-    thredds_service_path1 = "bar"
-    ssl_enabled = "true"
-
-    cred = dict(user=rabbit_user_trusted, password=rabbit_password_trusted, url=rabbit_url_trusted,
-                vhost=vhost, port=port, ssl_enabled=ssl_enabled)
-
-    connector = esgfpid.Connector(
-        messaging_service_credentials=[cred],
-        handle_prefix=prefix,
-        messaging_service_exchange_name=rabbit_exchange,
-        data_node=data_node1,
-        test_publication=is_test,
-        thredds_service_path=thredds_service_path1,
-        message_service_synchronous=is_synchronous
-        )
-    connector.start_messaging_thread()
-    for dset in dataset_list:
-        dataset = dset.split('#')
-        dataset_id = dataset[0]
-        version_number = dataset[1]
-        is_replica = False
-        number_of_files = 1
-        print('Creating handle for dataset {}'.format(dataset_id))
-        wizard = connector.create_publication_assistant(
-            drs_id=dataset_id,
-            version_number=int(version_number),
-            is_replica=is_replica
-            )
-        ds_handle = wizard.get_dataset_handle() # HERE YOU GET THE DATASET PID
-
-    # Adding a number of files
-        for i in xrange(number_of_files):
-            # Test file info:       ### PLEASE COMPLETE!
-            file_num = i+1
-            file_handle = 'hdl:'+prefix+'/erratatestfile_'+str(uuid.uuid1())
-            file_name = 'testfile_number_'+str(file_num)+'.nc'
-            file_size = 1000
-            file_checksum = 'foo'
-            file_publish_path = 'my/path/'+file_name
-            file_checksum_type='SHA256'
-            file_version = 'foo'
-
-            # Add this test file info:
-            wizard.add_file(
-                file_name=file_name,
-                file_handle=file_handle,
-                file_size=file_size,
-                checksum=file_checksum,
-                publish_path=file_publish_path,
-                checksum_type=file_checksum_type,
-                file_version=file_version
-            )
-
-        wizard.dataset_publication_finished()
-        print('\n\nChecking PID existence')
-        handle = ds_handle.replace('hdl:', '')
-        resp = requests.get('http://hdl.handle.net/api/handles/'+handle+'?auth=True')
-        print('\n\nHandle '+handle)
-        print('HTTP code: '+str(resp.status_code))
-        print('Content:   '+str(resp.content))
-    # Finish messaging thread
-    connector.finish_messaging_thread()

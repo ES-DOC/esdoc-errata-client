@@ -1,7 +1,7 @@
 # encoding: UTF-8
 import unittest
 
-from actionwords import Actionwords
+from esgissue.tests.actionwords import Actionwords
 import os
 test_issue_file = 'samples/inputs/issue.json'
 test_dset_file = 'samples/inputs/datasets.txt'
@@ -29,7 +29,7 @@ class TestESDocERRATA(unittest.TestCase):
     def creating_an_issue_for_a_number_of_datasets(self):
         self.actionwords.clear_issue()
         self.actionwords.create_issue()
-        check_issue_files_and_pid(self)
+        check_issue_files(self)
 
     def updating_issue_add_some_datasets(self):
         self.actionwords.clear_issue()
@@ -37,14 +37,14 @@ class TestESDocERRATA(unittest.TestCase):
         self.actionwords.extra_dsets = extra_dset_file
         self.actionwords.add_dsets_to_file()
         self.actionwords.update_issue()
-        check_issue_files_and_pid(self)
+        check_issue_files(self)
 
     def test_Updating_issue_Removing_some_datasets(self):
         self.actionwords.clear_issue()
         self.actionwords.create_issue()
         self.actionwords.remove_dsets_from_file()
         self.actionwords.update_issue()
-        check_issue_files_and_pid(self)
+        check_issue_files(self)
 
     def test_Updating_issue_Changing_status(self):
         self.actionwords.clear_issue()

@@ -4,7 +4,7 @@
    :synopsis: Errata object factory.
 
 """
-from constants import VISUAL_SEPARATOR
+from esgissue.constants import VISUAL_SEPARATOR
 errata_viewer_url_base = 'https://errata.es-doc.org/static/view.html?uid='
 
 

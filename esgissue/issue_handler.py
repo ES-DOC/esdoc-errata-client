@@ -11,23 +11,26 @@ import time
 import linecache
 import logging
 import os
+import simplejson
+
 from json import load
 from jsonschema import validate, ValidationError
-import simplejson
-from constants import *
-from config import _get_config_contents
 from requests.exceptions import ConnectionError, ConnectTimeout
-from utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
-                  _logging_error, _order_json, _prepare_persistence, _resolve_status, _prepare_retrieve_dirs,\
-                  _format_datasets, _test_datasets_for_version_and_empty
+
+from esgissue.constants import *
+from esgissue.config import _get_config_contents
+from esgissue.utils import _test_url, _traverse, _get_ws_call, _get_retrieve_dirs, _resolve_validation_error_code, \
+                           _logging_error, _order_json, _prepare_persistence, _resolve_status, _prepare_retrieve_dirs,\
+                           _format_datasets, _test_datasets_for_version_and_empty
 
 cf = _get_config_contents()
 class LocalIssue(object):
     """
     An object representing the local issue.
     """
-    def __init__(self, action, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None):
+    def __init__(self, action, issue_file=None, dataset_file=None, issue_path=None, dataset_path=None, dry_run=False):
         self.action = action
+        self.dry_run = dry_run
         self.project = None
         if issue_file is not None:
             self.json = issue_file
@@ -81,14 +84,17 @@ class LocalIssue(object):
         dataset_version_dictionary = _test_datasets_for_version_and_empty(self.json[DATASETS])
 
         # Test landing page and materials URLs
-        urls = filter(None, _traverse(map(self.json.get, [URL, MATERIALS])))
+        urls = list(filter(None, _traverse([self.json[URL], self.json[MATERIALS]])))
         if cf['validate_issue_urls']:
             logging.info('Validating issue urls...')
-            for url in urls:
-                if url != '':
-                    if not _test_url(url):
-                        _logging_error(ERROR_DIC[URLS], url)
-            logging.info('Issue urls validated.')
+            if len(urls) > 0:
+                for url in urls:
+                    if url != '':
+                        if not _test_url(url):
+                            _logging_error(ERROR_DIC[URLS], url)
+                logging.info('Issue URLS validated.')
+            else:
+                logging.warning('No URLS attached to the issue. Moving on.')
         # Once validated, persisting changes to local dataset file.
         logging.info('Formatting and persisting datasets...')
         # Persisting datasets locally and updating issue file accordingly.
@@ -104,7 +110,7 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            _get_ws_call(action=self.action, payload=self.json, credentials=credentials)
+            _get_ws_call(action=self.action, payload=self.json, credentials=credentials, dry_run=self.dry_run)
             logging.info('Updating fields of payload after remote issue creation...')
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
@@ -129,7 +135,7 @@ class LocalIssue(object):
         logging.info('Update issue #{}'.format(self.json[UID]))
 
         try:
-            _get_ws_call(action=self.action, payload=self.json, credentials=credentials)
+            _get_ws_call(action=self.action, payload=self.json, credentials=credentials, dry_run=self.dry_run)
             del self.json[DATASETS]
             # updating the issue body.
             with open(self.issue_path, 'w+') as data_file:
@@ -173,7 +179,7 @@ class LocalIssue(object):
                         self.action = CLOSE
                 else:
                     time.sleep(0.25)
-                    status = raw_input('Issue status does not allow direct closing. '
+                    status = input('Issue status does not allow direct closing. '
                                        'Please change it to either (w)ontfix/(r)esolved: ')
                     if status not in ['w', 'r', 'W', 'R']:
                         logging.error(STATUS)
@@ -188,7 +194,8 @@ class LocalIssue(object):
                         self.action = CLOSE
             else:
                 status = self.json[STATUS]
-            _get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials)
+            _get_ws_call(action=self.action, payload=status, uid=self.json[UID], credentials=credentials,
+                         dry_run=self.dry_run)
             # Only in case the webservice operation succeeded.
             if DATASETS in self.json.keys():
                 del self.json[DATASETS]
@@ -216,7 +223,7 @@ class LocalIssue(object):
             logging.info('Processing id {}'.format(n))
             try:
                 logging.info('Contacting ESDoc-Errata server for issue #{} information'.format(n))
-                r = _get_ws_call(action=RETRIEVE, uid=n)
+                r = _get_ws_call(action=RETRIEVE, uid=n, dry_run=self.dry_run)
                 if r.json() is not None:
                     logging.info('Retrieved issue #{} information from ESDoc-Errata server, persisting...'.format(n))
                     data = _prepare_persistence(r.json()[ISSUE])
@@ -240,7 +247,7 @@ class LocalIssue(object):
         """
         try:
             logging.info('Starting issue archiving process...')
-            r = _get_ws_call(action=RETRIEVE_ALL)
+            r = _get_ws_call(action=RETRIEVE_ALL, dry_run=self.dry_run)
             logging.info('Successfully retrieved {} issues from ESDoc-Errata server...'.format(r.json()[COUNT]))
             results = r.json()[ISSUES]
             for issue in results:
@@ -279,7 +286,3 @@ class LocalIssue(object):
             data = _order_json(data)
             data_file.write(simplejson.dumps(data, indent=4))
         logging.info("Finished processing issue #{}".format(data[UID]))
-
-
-
-

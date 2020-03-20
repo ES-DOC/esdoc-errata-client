@@ -1,6 +1,7 @@
 {
 "url_base": "https://errata.es-doc.org",
 "url_base_aux": "http://localhost:5001",
+"url_base_dry_run": "http://localhost:5001",
 "url_viewer": "https://errata.es-doc.org/static/view.html",
 "json_schema_paths" : {
              "create": "{0}/templates/create.json",
