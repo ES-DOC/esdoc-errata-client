@@ -110,7 +110,9 @@ class LocalIssue(object):
         """
         try:
             logging.info('Requesting issue #{} creation from errata service...'.format(self.json[UID]))
-            _get_ws_call(action=self.action, payload=self.json, credentials=credentials, dry_run=self.dry_run)
+            # Launching WS request to remote errata server
+            r = _get_ws_call(action=self.action, payload=self.json, credentials=credentials, dry_run=self.dry_run)
+            # In here we are certain r status code is ok
             logging.info('Updating fields of payload after remote issue creation...')
             logging.info('Issue json schema has been updated, persisting in file...')
             with open(self.issue_path, 'w') as issue_file:
@@ -124,8 +126,7 @@ class LocalIssue(object):
             _logging_error(ERROR_DIC['connection_error'])
         except ConnectTimeout:
             _logging_error(ERROR_DIC['connection_timeout'])
-        except Exception as e:
-            _logging_error(ERROR_DIC['unknown_error'], repr(e))
+
 
     def update(self, credentials):
         """

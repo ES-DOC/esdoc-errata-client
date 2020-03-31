@@ -19,15 +19,15 @@ import requests
 import getpass
 import pyDes
 import base64
-
 from collections import OrderedDict
 from fnmatch import fnmatch
 from argparse import HelpFormatter
 
-from esgissue.constants import *
 from esgissue.config import _get_config_contents
-from esgissue.errata_object_factory import ErrataObject, ErrataCollectionObject
-
+from esgissue.errata_object_factory import ErrataObject
+from esgissue.errata_object_factory import ErrataCollectionObject
+from esgissue.exceptions import *
+from esgissue.constants import *
 cf = _get_config_contents()
 
 
@@ -186,7 +186,6 @@ def _logging_error(error, additional_data=None):
         logging.error(str(error[1]) + ' Error code: {}.'.format(str(error[0])))
         if additional_data:
             logging.error('Error caused by {}.'.format(str(additional_data)))
-        sys.exit(error[1])
 
 
 def _resolve_validation_error_code(message):
@@ -458,7 +457,7 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None, dry_run=False
         url = cf['url_base_dry_run'] + cf['api_map'][action.upper()]
     # Checking if the errata ws server is up.
     # TODO surround with try and catch to provide feedback to users?
-    _check_ws_heartbeat()
+    _check_ws_heartbeat(dry_run)
     if action in [CREATE, UPDATE]:
         # First you need to retrieve the xsrf token from the options request
         options_r = requests.options(url)
@@ -486,31 +485,42 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None, dry_run=False
     elif action == PID:
         r = requests.get(url + '?pids=' + payload)
     if r.status_code != requests.codes.ok:
-        try:
-            error_json = json.loads(r.text)
-            if r.status_code == 401:
-                _logging_error(ERROR_DIC['authentication'])
-            elif r.status_code == 403:
-                _logging_error(ERROR_DIC['authorization'])
-            _logging_error([error_json['errorMessage'], error_json['errorCode']], error_json['errorType'])
-        except Exception:
-            _logging_error(ERROR_DIC['unknown_command'], str(r.status_code))
+        error_json = json.loads(r.text)
+        if r.status_code == 400:
+            _logging_error(ERROR_DIC['issue_validation'])
+            raise ServerIssueValidationFailedException(error_json['errorCode'],
+                                                       'Error: {}, Type: {}, Field: {}'.format
+                                                       (error_json['errorMessage'],
+                                                        error_json['errorType'],
+                                                        error_json['errorField']))
+        elif r.status_code == 401:
+            _logging_error(ERROR_DIC['authentication'])
+            raise AuthenticationFailedException(code=401, msg='Authentication failed, check your credentials.')
+        elif r.status_code == 403:
+            _logging_error(ERROR_DIC['authorization'])
+            raise AuthorizationFailedException(code=403, msg='Authorization failed, check your affiliations.')
     return r
 
 
-def _check_ws_heartbeat():
+def _check_ws_heartbeat(dry_run = False):
     """
     checks whether the configured errata ws server is up
     :return: raises exception if down.
     """
+    if not dry_run:
+        url = cf['url_base']
+    else:
+        url = cf['url_base_dry_run']
     try:
-        r = requests.get(cf['url_base'])
+        r = requests.get(url)
         if r.status_code != 200:
-            sys.exit(ERROR_DIC['server_down'][0])
+            logging.warning(ERROR_DIC['server_down'][0])
+            raise ServerDownException(code=404, msg='{} is unreachable'.format(url))
         else:
             return
     except requests.exceptions.ConnectionError as ce:
-        sys.exit(ERROR_DIC['server_down'])
+        logging.warning(ERROR_DIC['server_down'])
+        raise ServerDownException(code=404, msg='{} is unreachable'.format(url))
 
 
 def _translate_dataset_regex(pattern, sections):

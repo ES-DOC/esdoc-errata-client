@@ -48,7 +48,10 @@ class TestESDocERRATA(unittest.TestCase):
 
     def test_Updating_issue_Changing_status(self):
         self.actionwords.clear_issue()
-        self.actionwords.create_issue()
+        try:
+            self.actionwords.create_issue()
+        except SystemExit as se:
+            pass
         self.actionwords.change_status()
         self.actionwords.update_issue()
         check_issue_files(self)

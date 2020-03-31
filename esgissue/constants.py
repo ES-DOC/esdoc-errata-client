@@ -93,6 +93,7 @@ ERROR_DIC = {
                  'facet_type_not_recognized': [29, 'Facet type not recognized by this project configuration.'],
                  'facet_value_not_recognized': [30, 'Facet value not recognized by this project configuration.'],
                  'server_down': [31, 'ESDoc ERRATA servers are down or under maintenance.'],
+                 'issue_validation': [32, 'Server rejected issue or dataset.'],
                  'unknown_error': [99, 'An unknown error has been detected. '
                                        'Please provide the admins with the error stack.']
              }

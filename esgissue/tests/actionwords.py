@@ -1,20 +1,28 @@
-from subprocess import CalledProcessError
-
-from esgissue.esgissue import process_command
-from esgissue.constants import *
-from esgissue.utils import _set_credentials, _reset_passphrase, _encrypt_with_key, _reset_credentials, _get_datasets, \
-                           _get_retrieve_dirs, _get_file_location, _encapsulate_pid_api_response, \
-                           _sanitize_input_and_call_ws
-
-from esgissue.errata_object_factory import ErrataCollectionObject, ErrataObject
-from b2handle.handleclient import EUDATHandleClient
+# Externals
 import uuid
 import os
 import subprocess as sub
 import json
-# import esgfpid
 import requests
 from time import sleep
+from subprocess import CalledProcessError
+from b2handle.handleclient import EUDATHandleClient
+# Internals
+from essential_generators import DocumentGenerator
+from esgissue.esgissue import process_command
+from esgissue.utils import _set_credentials
+from esgissue.utils import _reset_passphrase
+from esgissue.utils import _encrypt_with_key
+from esgissue.utils import _reset_credentials
+from esgissue.utils import _get_datasets
+from esgissue.utils import _get_retrieve_dirs
+from esgissue.utils import _get_file_location
+from esgissue.utils import _encapsulate_pid_api_response
+from esgissue.utils import _sanitize_input_and_call_ws
+from esgissue.exceptions import ServerIssueValidationFailedException
+from esgissue.errata_object_factory import ErrataCollectionObject
+from esgissue.errata_object_factory import ErrataObject
+from esgissue.constants import *
 
 
 prefix = '21.14100/'
@@ -29,6 +37,8 @@ new_passphrase = 'newPassphrase@=#125_a'
 
 class Actionwords:
     def __init__(self, test_issue_file, test_dset_file, extra_dsets_file=None, uid=None):
+        # Issue has to have a different title and description from what exists in the database.
+        # Which forces us to rely on randomly generated title and description instead of fixed ones.
         with open(test_issue_file, 'r') as issue_file:
             self.issue = json.load(issue_file)
         self.issue_path = test_issue_file
@@ -42,6 +52,9 @@ class Actionwords:
         _set_credentials(username=username, token=token, passphrase=passphrase)
         # Required if the datasets don't have handles before.
         # create_handle_for_dataset(self.dsets)
+        gen = DocumentGenerator()
+        self.issue['title'] = gen.sentence()
+        self.issue['description'] = gen.paragraph()
         process_command(command=CREATE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
                         issue_path=self.issue_path, dataset_path=self.dsets_path, dry_run=True)
         self.check_issue_files()
@@ -128,11 +141,16 @@ class Actionwords:
         else:
             return False
 
+    def change_description_slightly(self):
+        """Returns description string without the first 10 characters"""
+        return self.issue['description'][10:]
+
     def change_severity(self):
         self.change_attribute('severity', 'medium')
 
     def change_description(self):
-        self.change_attribute('description', "An issue with a single dataset but multiple notations updated.")
+        new_desc = self.change_description_slightly()
+        self.change_attribute('description', new_desc)
 
     def change_status(self):
         self.change_attribute('status', 'onhold')
@@ -244,7 +262,7 @@ class Actionwords:
         output_repo = 'samples/outputs'
         test_result = True
         for flag in range(1, 4):
-            with open(os.path.join(input_repo, 'pid_'+str(flag)+'.txt')) as input_file:
+            with open(os.path.join(input_repo, 'pid_' + str(flag) + '.txt')) as input_file:
                 data = input_file.read()
             sanitized_list = []
             for element in data.split(','):
@@ -252,12 +270,12 @@ class Actionwords:
                 sanitized_list.append(sanitized_element)
             sanitized_data = ','.join(sanitized_list)
             print(sanitized_data)
-            with open(os.path.join(output_repo, 'pid_'+ str(flag) + '.txt')) as output_file:
+            with open(os.path.join(output_repo, 'pid_' + str(flag) + '.txt')) as output_file:
                 expected_data = output_file.read()
             if expected_data != sanitized_data:
                 print(sanitized_data)
                 test_result = False
-                print('Issue detected with file pid_'+str(flag)+'.txt')
+                print('Issue detected with file pid_' + str(flag) + '.txt')
         return test_result
 
     @staticmethod
@@ -268,9 +286,10 @@ class Actionwords:
         """
         input_repo = 'samples/inputs'
         for flag in range(1, 3):
-            with open(os.path.join(input_repo, 'response_'+str(flag)+'.json')) as test_file:
+            with open(os.path.join(input_repo, 'response_' + str(flag) + '.json')) as test_file:
                 test_json = json.load(test_file)
                 test_result = _encapsulate_pid_api_response(test_json, 200)
                 if test_result is None:
                     return False
         return True
+
