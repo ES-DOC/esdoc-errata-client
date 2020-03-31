@@ -194,6 +194,8 @@ class Actionwords:
             for dset in self.dsets:
                 print(dset)
                 dsets_file.write(dset + '\n')
+        # added to prevent i/o keeping file open
+        return
 
     def change_attribute(self, key, new_value):
         data = self.issue
@@ -269,11 +271,9 @@ class Actionwords:
                 sanitized_element = _sanitize_input_and_call_ws(element)
                 sanitized_list.append(sanitized_element)
             sanitized_data = ','.join(sanitized_list)
-            print(sanitized_data)
             with open(os.path.join(output_repo, 'pid_' + str(flag) + '.txt')) as output_file:
                 expected_data = output_file.read()
             if expected_data != sanitized_data:
-                print(sanitized_data)
                 test_result = False
                 print('Issue detected with file pid_' + str(flag) + '.txt')
         return test_result

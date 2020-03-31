@@ -1,15 +1,14 @@
 # encoding: UTF-8
 import unittest
+import os
 
 from esgissue.tests.actionwords import Actionwords
-import os
 test_issue_file = 'samples/inputs/issue.json'
 test_dset_file = 'samples/inputs/datasets.txt'
 extra_dset_file = 'samples/inputs/extra_datasets.txt'
 
 
 class TestESDocERRATA(unittest.TestCase):
-
 
     def setUp(self):
         self.actionwords = Actionwords(test_issue_file=test_issue_file, test_dset_file=test_dset_file)
