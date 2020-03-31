@@ -862,6 +862,8 @@ def _check_pid(dataset_or_file_string, full_check, latest_only):
     """
     dataset_or_file_string = _sanitize_input_and_call_ws(dataset_or_file_string)
     response_json, response_code = _call_pid_api(dataset_or_file_string)
-    pid_response = _encapsulate_pid_api_response(api_code=response_code, api_json=response_json, full_check=full_check,
+    pid_response = _encapsulate_pid_api_response(api_code=response_code,
+                                                 api_json=response_json,
+                                                 full_check=full_check,
                                                  latest_only=latest_only)
     return pid_response

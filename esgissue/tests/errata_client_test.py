@@ -3,9 +3,10 @@ import unittest
 import os
 
 from esgissue.tests.actionwords import Actionwords
-test_issue_file = 'samples/inputs/issue.json'
-test_dset_file = 'samples/inputs/datasets.txt'
-extra_dset_file = 'samples/inputs/extra_datasets.txt'
+cwd = os.path.dirname(os.path.realpath(__file__))
+test_issue_file = os.path.join(cwd, 'samples/inputs/issue.json')
+test_dset_file = os.path.join(cwd, 'samples/inputs/datasets.txt')
+extra_dset_file = os.path.join(cwd, 'samples/inputs/extra_datasets.txt')
 
 
 class TestESDocERRATA(unittest.TestCase):
@@ -76,8 +77,8 @@ class TestESDocERRATA(unittest.TestCase):
         self.actionwords.check_issue_files()
         check_issue_files(self)
 
-    def test_check_pid_utilitites(self):
-        self.actionwords.check_pid_utilitites()
+    # def test_check_pid_utilitites(self):
+    #     self.actionwords.check_pid_utilitites()
 
 
 def check_issue_files(test_case):

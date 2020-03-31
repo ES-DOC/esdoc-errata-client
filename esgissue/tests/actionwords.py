@@ -26,7 +26,8 @@ from esgissue.constants import *
 
 
 prefix = '21.14100/'
-download_dir = 'samples/download/'
+cwd = os.path.dirname(os.path.realpath(__file__))
+download_dir = os.path.join(cwd,'samples/download/')
 download_issue = 'dw_issue.json'
 download_dset = 'dw_dset.txt'
 username = 'AtefBN'
@@ -203,9 +204,9 @@ class Actionwords:
         with open(self.issue_path, 'w') as issue:
             json.dump(data, issue)
 
-    def check_pid_utilitites(self):
-        self.sanitize_user_input()
-        self.encapsulation_test()
+    # def check_pid_utilitites(self):
+    #     self.sanitize_user_input()
+    #     self.encapsulation_test()
 
     @staticmethod
     def reformat_downloaded_json(dw_json):
@@ -258,38 +259,38 @@ class Actionwords:
         d2_filtered = dict((k, v) for k, v in d2.items() if k not in ignore_keys)
         return d1_filtered == d2_filtered
 
-    @staticmethod
-    def sanitize_user_input():
-        input_repo = 'samples/inputs'
-        output_repo = 'samples/outputs'
-        test_result = True
-        for flag in range(1, 4):
-            with open(os.path.join(input_repo, 'pid_' + str(flag) + '.txt')) as input_file:
-                data = input_file.read()
-            sanitized_list = []
-            for element in data.split(','):
-                sanitized_element = _sanitize_input_and_call_ws(element)
-                sanitized_list.append(sanitized_element)
-            sanitized_data = ','.join(sanitized_list)
-            with open(os.path.join(output_repo, 'pid_' + str(flag) + '.txt')) as output_file:
-                expected_data = output_file.read()
-            if expected_data != sanitized_data:
-                test_result = False
-                print('Issue detected with file pid_' + str(flag) + '.txt')
-        return test_result
-
-    @staticmethod
-    def encapsulation_test():
-        """
-        tests whether object generated from response json is not None.
-        :return: Boolean
-        """
-        input_repo = 'samples/inputs'
-        for flag in range(1, 3):
-            with open(os.path.join(input_repo, 'response_' + str(flag) + '.json')) as test_file:
-                test_json = json.load(test_file)
-                test_result = _encapsulate_pid_api_response(test_json, 200)
-                if test_result is None:
-                    return False
-        return True
+    # @staticmethod
+    # def sanitize_user_input():
+    #     input_repo = os.path.join(cwd, 'samples/inputs')
+    #     output_repo = os.path.join(cwd, 'samples/outputs')
+    #     test_result = True
+    #     for flag in range(1, 4):
+    #         with open(os.path.join(input_repo, 'pid_' + str(flag) + '.txt')) as input_file:
+    #             data = input_file.read()
+    #         sanitized_list = []
+    #         for element in data.split(','):
+    #             sanitized_element = _sanitize_input_and_call_ws(element)
+    #             sanitized_list.append(sanitized_element)
+    #         sanitized_data = ','.join(sanitized_list)
+    #         with open(os.path.join(output_repo, 'pid_' + str(flag) + '.txt')) as output_file:
+    #             expected_data = output_file.read()
+    #         if expected_data != sanitized_data:
+    #             test_result = False
+    #             print('Issue detected with file pid_' + str(flag) + '.txt')
+    #     return test_result
+    #
+    # @staticmethod
+    # def encapsulation_test():
+    #     """
+    #     tests whether object generated from response json is not None.
+    #     :return: Boolean
+    #     """
+    #     input_repo = 'samples/inputs'
+    #     for flag in range(1, 3):
+    #         with open(os.path.join(input_repo, 'response_' + str(flag) + '.json')) as test_file:
+    #             test_json = json.load(test_file)
+    #             test_result = _encapsulate_pid_api_response(test_json, 200)
+    #             if test_result is None:
+    #                 return False
+    #     return True
 

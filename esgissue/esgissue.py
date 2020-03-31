@@ -8,8 +8,16 @@ from uuid import uuid4
 from esgissue.issue_handler import LocalIssue
 from esgissue.arg_parser import get_args
 from esgissue.constants import *
-from esgissue.utils import _init_logging, _get_datasets, _get_issue, _reset_passphrase,_set_credentials, \
-    _prepare_retrieve_ids, _reset_credentials, _cred_test, _get_credentials, _check_pid
+from esgissue.utils import _init_logging
+from esgissue.utils import  _get_datasets
+from esgissue.utils import  _get_issue
+from esgissue.utils import  _reset_passphrase
+from esgissue.utils import  _set_credentials
+from esgissue.utils import  _prepare_retrieve_ids
+from esgissue.utils import  _reset_credentials
+from esgissue.utils import  _cred_test
+from esgissue.utils import  _get_credentials
+from esgissue.utils import  _check_pid
 
 # Rabbit MQ unsent messages directory
 
