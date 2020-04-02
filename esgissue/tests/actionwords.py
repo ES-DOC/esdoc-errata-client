@@ -6,7 +6,6 @@ import json
 import requests
 from time import sleep
 from subprocess import CalledProcessError
-from b2handle.handleclient import EUDATHandleClient
 # Internals
 from essential_generators import DocumentGenerator
 from esgissue.main import process_command

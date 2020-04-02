@@ -1,9 +1,8 @@
 jsonschema
 requests>=2.18.1
-functools32
 argparse
-repoze.lru>0.6
 simplejson>=3.11.1
 pyDes>=2.0.1
 pbkdf2>=1.3
 pyopenssl>=17.0.0
+pytest
