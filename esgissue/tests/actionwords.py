@@ -9,7 +9,7 @@ from subprocess import CalledProcessError
 from b2handle.handleclient import EUDATHandleClient
 # Internals
 from essential_generators import DocumentGenerator
-from esgissue.esgissue import process_command
+from esgissue.main import process_command
 from esgissue.utils import _set_credentials
 from esgissue.utils import _reset_passphrase
 from esgissue.utils import _encrypt_with_key
@@ -24,16 +24,16 @@ from esgissue.errata_object_factory import ErrataCollectionObject
 from esgissue.errata_object_factory import ErrataObject
 from esgissue.constants import *
 
-
+gen = DocumentGenerator()
 prefix = '21.14100/'
 cwd = os.path.dirname(os.path.realpath(__file__))
-download_dir = os.path.join(cwd,'samples/download/')
+download_dir = os.path.join(cwd, 'samples/download/')
 download_issue = 'dw_issue.json'
 download_dset = 'dw_dset.txt'
 username = 'AtefBN'
 token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 passphrase = 'atef'
-new_passphrase = 'newPassphrase@=#125_a'
+new_passphrase = gen.sentence()
 
 
 class Actionwords:
@@ -53,7 +53,6 @@ class Actionwords:
         _set_credentials(username=username, token=token, passphrase=passphrase)
         # Required if the datasets don't have handles before.
         # create_handle_for_dataset(self.dsets)
-        gen = DocumentGenerator()
         self.issue['title'] = gen.sentence()
         self.issue['description'] = gen.paragraph()
         process_command(command=CREATE, issue_file=self.issue, dataset_file=self.dsets, passphrase=passphrase,
@@ -137,6 +136,8 @@ class Actionwords:
         if not dataset_file_test:
             print(datasets)
             print(remote_datasets)
+        os.remove(issue_dw)
+        os.remove(dataset_dw)
         if issue_file_test and dataset_file_test:
             return True
         else:
@@ -293,4 +294,3 @@ class Actionwords:
     #             if test_result is None:
     #                 return False
     #     return True
-

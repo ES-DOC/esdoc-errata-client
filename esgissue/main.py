@@ -4,20 +4,22 @@
    :synopsis: Manages ESGF issues on BitBucket repository.
 
 """
+import pytest
 from uuid import uuid4
 from esgissue.issue_handler import LocalIssue
 from esgissue.arg_parser import get_args
 from esgissue.constants import *
 from esgissue.utils import _init_logging
-from esgissue.utils import  _get_datasets
-from esgissue.utils import  _get_issue
-from esgissue.utils import  _reset_passphrase
-from esgissue.utils import  _set_credentials
-from esgissue.utils import  _prepare_retrieve_ids
-from esgissue.utils import  _reset_credentials
-from esgissue.utils import  _cred_test
-from esgissue.utils import  _get_credentials
-from esgissue.utils import  _check_pid
+from esgissue.utils import _get_datasets
+from esgissue.utils import _get_issue
+from esgissue.utils import _reset_passphrase
+from esgissue.utils import _set_credentials
+from esgissue.utils import _prepare_retrieve_ids
+from esgissue.utils import _reset_credentials
+from esgissue.utils import _cred_test
+from esgissue.utils import _get_credentials
+from esgissue.utils import _check_pid
+
 
 # Rabbit MQ unsent messages directory
 
@@ -74,7 +76,7 @@ def process_command(command, issue_file=None, dataset_file=None, issue_path=None
 
 def run():
     """
-    Main process that\:
+    Main process that:
      * Parse command-line arguments,
      * Parse configuration file,
      * Initiates logger,
@@ -113,8 +115,7 @@ def run():
             # For the time being bare print. Need better method for this.
             for element in result:
                 print(element)
-
-        # Retrieve command has a slightly different behavior from the rest so it's singled out
+        # Retrieve & close commands have a slightly different behavior from the rest so it's singled out
         elif args.command not in [RETRIEVE, CLOSE]:
             issue_file = _get_issue(args.issue)
             dataset_file = _get_datasets(args.dsets)
@@ -128,9 +129,11 @@ def run():
         elif args.command == RETRIEVE:
             list_of_id = _prepare_retrieve_ids(args.id)
             if len(list_of_id) >= 1:
-                process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets, list_of_ids=list_of_id)
+                process_command(command=RETRIEVE, issue_path=args.issues, dataset_path=args.dsets,
+                                list_of_ids=list_of_id)
             else:
                 process_command(command=RETRIEVE_ALL, issue_path=args.issues, dataset_path=args.dsets)
+
     except KeyboardInterrupt:
         print('Keyboard interruption, exiting...')
 

@@ -1,15 +1,15 @@
 # encoding: UTF-8
 import unittest
 import os
-
 from esgissue.tests.actionwords import Actionwords
+
 cwd = os.path.dirname(os.path.realpath(__file__))
 test_issue_file = os.path.join(cwd, 'samples/inputs/issue.json')
 test_dset_file = os.path.join(cwd, 'samples/inputs/datasets.txt')
 extra_dset_file = os.path.join(cwd, 'samples/inputs/extra_datasets.txt')
 
 
-class TestESDocERRATA(unittest.TestCase):
+class ErrataClient(unittest.TestCase):
 
     def setUp(self):
         self.actionwords = Actionwords(test_issue_file=test_issue_file, test_dset_file=test_dset_file)
@@ -77,9 +77,6 @@ class TestESDocERRATA(unittest.TestCase):
         self.actionwords.check_issue_files()
         check_issue_files(self)
 
-    # def test_check_pid_utilitites(self):
-    #     self.actionwords.check_pid_utilitites()
-
 
 def check_issue_files(test_case):
     test_case.assertTrue(test_case.actionwords.check_issue_files())
@@ -87,3 +84,4 @@ def check_issue_files(test_case):
 
 if __name__ == '__main__':
     unittest.main()
+
