@@ -1,0 +1,226 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Configuration &#8212; esdoc-errata-client 2.0n documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Generic usage" href="usage.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="configuration">
+<span id="id1"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="github-setup">
+<h2>GitHub setup<a class="headerlink" href="#github-setup" title="Permalink to this headline">¶</a></h2>
+<p>Authentication is essential to use the “write” features of the <code class="docutils literal notranslate"><span class="pre">esgissue</span></code> package.
+A verified (by email) GitHub account is required. The authentication part is set by generating the personal access token through <a class="reference external" href="https://github.com/settings/profile">your GitHub profile setting page</a>.</p>
+<ol class="arabic">
+<li><p class="first">Sign up/in to <a class="reference external" href="https://github.com/">GitHub</a>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/github.png"><img alt="Github's home page" class="align-center" src="images/github.png" style="width: 1432.2px; height: 880.6px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Click on the upper-right avatar and go on the bottom of the menu to access to “<strong>Settings</strong>”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/settings.png"><img alt="Avatar menu" class="align-center" src="images/settings.png" style="width: 141.6px; height: 216.0px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Go on the bottom of the left menu of your profile page to access to “<strong>Developer Settings</strong>”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/developer_settings.png"><img alt="Profile menu" class="align-center" src="images/developer_settings.png" style="width: 191.2px; height: 482.4px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">In the left menu click on “<strong>Personal Access Token</strong>”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/personal_token.png"><img alt="Github Personal Token" class="align-center" src="images/personal_token.png" style="width: 195.2px; height: 110.4px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">In the main page click on “<strong>Generate new token</strong>”</p>
+<blockquote>
+<div><img alt="Github's developer settings" class="align-center" src="images/generation_token_button.png" />
+</div></blockquote>
+</li>
+<li><p class="first">Name your token</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/token_description.png"><img alt="Github Personal Token Name" class="align-center" src="images/token_description.png" style="width: 1069.6px; height: 298.2px;" /></a>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure you associate a meaningful name and description for your newly generated token, to help you manage your tokens.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Define your token scope(s)</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/token_scope.png"><img alt="Github Personal Token Scope" class="align-center" src="images/token_scope.png" style="width: 1054.2px; height: 156.8px;" /></a>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This step is important step. We highly recommend to set the minimum required scope for your personal access token: <code class="docutils literal notranslate"><span class="pre">orgs:READ</span></code>. Limiting the number of scopes increases the security of your own personal data associated with your github account.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Go on the bottom of the form and click on “Generate token”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/generate_button.png"><img alt="Github Personal Token Generation" class="align-center" src="images/generate_button.png" style="width: 1058.4px; height: 75.6px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Your token is ready to use.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/final_token.png"><img alt="Github Personal Token Generation" class="align-center" src="images/final_token.png" style="width: 1058.4px; height: 316.4px;" /></a>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can revoke your token any time and generate a new one without any consequences on the Errata Service authorization.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="authorization">
+<h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">¶</a></h2>
+<p>Authorization is controlled using GitHub’s organizations invitational based structure.
+The ES-DOC-ERRATA officers (designated in each group) and administrator are the only persons qualified to add GitHub users to the requested teams.
+For the authorization, a user needs to be part of the organization team specified for the institute and project he/she on behalf of which wishes to publish issues.</p>
+<p>Please ask to your ES-DOC officer or the ES-DOC administrator to add your GitHub username to the appropriate GitHub organization team(s). Don’t forget to provide the institute(s) and the project(s) on behalf of which you wishe to publish issues.</p>
+</div>
+<div class="section" id="credentials-management">
+<h2>Credentials management<a class="headerlink" href="#credentials-management" title="Permalink to this headline">¶</a></h2>
+<p>In order to ease the interactions with the ES-DOC-ERRATA web service, a user can save the credentials for recurrent use.
+This can be done either through environment variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; <span class="nb">export</span> <span class="nv">ESDOC_HOME</span><span class="o">=</span>~/.esdoc
+$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$&gt; <span class="nb">export</span> <span class="nv">ERRATA_CLIENT_GITHUB_USERNAME</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</pre></div>
+</div>
+<p>This will enable the client to retrieve the token whenever the action requires it and stops it from prompting the user to type it in.
+However setting the token on environment variables sets it up for grabs in clear text. For this reason an encrypted local file solution is
+more encouraged to be employed by users. This file is encrypted using a chosen pass-phrase but it also is valid on the currently used machine only.
+In order to generate your token local file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue credset
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To avoid prompt you can directly submit your GitHub username and token using the options <code class="docutils literal notranslate"><span class="pre">--username</span></code>, <code class="docutils literal notranslate"><span class="pre">--token</span></code> and <code class="docutils literal notranslate"><span class="pre">--pass</span></code> if you want to set a passphrase.</p>
+</div>
+<p>After setting your credentials you might want to give the new credentials a test and see if they work as expected.
+To do this the credtest command test your authentication then authorization linked to the selected institute errata management for a specific project.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue credtest -i &lt;INSTITUTE&gt; -p &lt;PROJECT&gt;
+</pre></div>
+</div>
+<p>After declaring these credentials, the client will only ask user to provide the pass-phrase from now on.
+In case the user forgets the pass-phrase the saved credentials can be reset using the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue changepass
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Old and new pass-phrases can be submit on the command-line to avoid the prompt using <code class="docutils literal notranslate"><span class="pre">--oldpass</span></code> and <code class="docutils literal notranslate"><span class="pre">--newpass</span></code> options.</p>
+</div>
+<p>In the event of wanting to remove your saved credentials that you have saved on your machine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue credremove
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">esdoc-errata-client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">PID tracker</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="client.html">Command Line Interface</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="usage.html" title="next chapter">Generic usage</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Atef Ben Nasser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/configuration.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

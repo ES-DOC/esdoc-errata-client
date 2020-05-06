@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Generic usage &#8212; esdoc-errata-client 2.0n documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Create an issue (CLI)" href="create_cli.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="generic-usage">
+<span id="usage"></span><h1>Generic usage<a class="headerlink" href="#generic-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="check-the-help">
+<h2>Check the help<a class="headerlink" href="#check-the-help" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue -h
+$&gt; esgissue SUBCOMMAND -h
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-the-version">
+<h2>Check the version<a class="headerlink" href="#check-the-version" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue -v
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-a-logfile">
+<h2>Use a logfile<a class="headerlink" href="#use-a-logfile" title="Permalink to this headline">¶</a></h2>
+<p>All information are logged into a file named <code class="docutils literal notranslate"><span class="pre">esgissue-YYYYMMDD-HHMMSS-PID.log</span></code> only if <code class="docutils literal notranslate"><span class="pre">--log</span></code> is submitted.
+If not, the standard output is used following the verbose mode.
+By default, the logfiles are stored in your current working directory.
+It can be changed by adding a optional logfile directory to the flag.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue SUBCOMMAND --log
+$&gt; esgissue SUBCOMMAND --log /PATH/TO/LOGDIR/
+</pre></div>
+</div>
+</div>
+<div class="section" id="exit-status">
+<h2>Exit status<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[0]: Successful execution of the requested operation,</li>
+<li>[1]: Missing or invalid title in issue json file,</li>
+<li>[2]: Missing or invalid description in issue json file,</li>
+<li>[3]: Missing or invalid datasets in issue json file,</li>
+<li>[4]: Missing or invalid severity in issue json file,</li>
+<li>[5]: Missing or invalid project (mip era) in issue json file,</li>
+<li>[6]: Missing or invalid models (source id) in issue json file,</li>
+<li>[7]: Missing or invalid status in issue json file (status should be one of [new, onhold, wontfix, resolved]),</li>
+<li>[8]: Missing or invalid institute (institution id) in issue json file,</li>
+<li>[9]: Missing or invalid materials in issue json file,</li>
+<li>[10]: Missing or invalid urls in issue json file,</li>
+<li>[11]: Missing or invalid id (uid) in issue json file (do not attempt to tamper with already generated uids download a fresh copy of issue files if necessary),</li>
+<li>[12]: Missing or invalid creation date (creation date should not be altered, download fresh copy of local issue files if necessary),</li>
+<li>[13]: Missing or invalid update date (update date should not be altered, download fresh copy of local issue files if necessary),</li>
+<li>[14]: Missing or invalid close date (close date should not be altered, download fresh copy of local issue files if necessary).</li>
+<li>[15]: Incoherent dataset id with project drs structure, please make sure both are coherent.</li>
+<li>[16]: Multiple facet declaration in issue creation/update not permitted (e.g. multiple institutes detected)</li>
+<li>[17]: Authentication failed. Make sure the credentials are correct.</li>
+<li>[18]: User lacks required privilege. Make sure you’re part of the institute’s errata publication team on github. Contact admins for further information.</li>
+<li>[19]: Connection failed, server probably down. Contact admins.</li>
+<li>[20]: Connection timed out, try again later.</li>
+<li>[21]: Multiple issue ids were provided along with a single file destination, aborting.</li>
+<li>[22]: Json file validation failed for an unknown reason, please check said file.</li>
+<li>[23]: Command is unknown, check the documentation or help for further information</li>
+<li>[24]: WS request failed for unknown reason.</li>
+<li>[25]: Field only supports single input per issue declaration.</li>
+<li>[26]: Project indicated in issue is not supported by errata service.</li>
+<li>[27]: A dataset list is required for either creation or update operation. This message also shows in case user tries to close an issue by indicating an empty dataset file.</li>
+<li>[28]: Dataset malformed and doesn’t comply to the expected regex.</li>
+<li>[29]: Facet type not recognized by the selected project configuration.</li>
+<li>[30]: Facet value not recognized by the selected project configuration.</li>
+<li>[31]: Errata servers are down or under maintenance.</li>
+<li>[99]: An unexpected error has caused the task to fail. Check the error message for fix and/or contact the developers.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">esdoc-errata-client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">PID tracker</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="client.html">Command Line Interface</a><ul>
+      <li>Previous: <a href="configuration.html" title="previous chapter">Configuration</a></li>
+      <li>Next: <a href="create_cli.html" title="next chapter">Create an issue (CLI)</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Atef Ben Nasser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

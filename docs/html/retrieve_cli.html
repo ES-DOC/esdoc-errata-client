@@ -1,0 +1,149 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Retrieve an issue &#8212; esdoc-errata-client 2.0n documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Application Programming Interface" href="api.html" />
+    <link rel="prev" title="Close an issue (CLI)" href="close_cli.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="retrieve-an-issue">
+<span id="retrieve"></span><h1>Retrieve an issue<a class="headerlink" href="#retrieve-an-issue" title="Permalink to this headline">¶</a></h1>
+<p>At some point it might be a good idea to keep a local copy of the errata information hosted within the errata system.
+The <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> command has been designed in the aim of either downloading a specific issue files, a set of specific issues,
+or the whole lot of issues hosted within the errata system (for archiving purposes for example).</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The command takes as arguments a list of UIDs, the JSON file directory and the dataset list file directory the user wishes to use.
+If <code class="docutils literal notranslate"><span class="pre">ESDOC_HOME</span></code> environment variable is declared in user’s environment a specific download directory will then be used otherwise,
+the client uses its own installation directory.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If no UIDs are submitted, all issues are expected.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If no directory is provided, a default directory will be used.</p>
+</div>
+</div>
+<div class="section" id="retrieve-the-issue">
+<h2>Retrieve the issue<a class="headerlink" href="#retrieve-the-issue" title="Permalink to this headline">¶</a></h2>
+<p>In order to download the issue with IDs <code class="docutils literal notranslate"><span class="pre">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$&gt; esgissue retrieve --issue esgissue/samples/downloads --dsets esgissue/samples/downloads --id xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The naming convention used in creating the issue related files is <code class="docutils literal notranslate"><span class="pre">issue_&lt;UID&gt;.json</span></code> and <code class="docutils literal notranslate"><span class="pre">dset_&lt;UID&gt;.txt</span></code>.
+If needed we could have specified <code class="docutils literal notranslate"><span class="pre">.json</span></code> and <code class="docutils literal notranslate"><span class="pre">.txt</span></code> file in this example since we are downloading a single issue.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Multiple downloads are allowed by listing IDs next to the flag.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">esdoc-errata-client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">PID tracker</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="client.html">Command Line Interface</a><ul>
+      <li>Previous: <a href="close_cli.html" title="previous chapter">Close an issue (CLI)</a></li>
+      <li>Next: <a href="api.html" title="next chapter">Application Programming Interface</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Atef Ben Nasser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/retrieve_cli.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

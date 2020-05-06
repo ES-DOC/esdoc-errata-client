@@ -1,0 +1,152 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Track a version &#8212; esdoc-errata-client 2.0n documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Issue Viewer" href="viewer.html" />
+    <link rel="prev" title="Look up an issue" href="searchUI.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="track-a-version">
+<span id="lookup"></span><h1>Track a version<a class="headerlink" href="#track-a-version" title="Permalink to this headline">¶</a></h1>
+<p>The Errata Service exploits the <a class="reference external" href="https://esgf-data.dkrz.de/projects/esgf-dkrz/pid">Persistent IDentifier (PID)</a> attached to each dataset during the ESGF publication process.
+The PIDs enable to request the <a class="reference external" href="https://www.dkrz.de/mms/pdf/klimadaten/poster/EGU2012-web-services-and-handle.pdf">Handle Service</a> from DKRZ to get the version history of a (set of) file/dataset(s).
+Such a version tracker enables the end users to submit one or several files or datasets identifiers to get back all annotations related to each corresponding issue.</p>
+<ol class="arabic">
+<li><p class="first">From the <a class="reference external" href="https://errata.es-doc.org/">Errata Service home page</a>, click on “<strong>Search</strong>”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/search_button.png"><img alt="Errata Menu" class="align-center" src="images/search_button.png" style="width: 704.9px; height: 53.2px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Send your request either with:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A PID following the syntax <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;:&lt;uuid&gt;</span></code>. PIDs can be found in the metadata of ESGF front-end or directly into the netCDF files as the <code class="docutils literal notranslate"><span class="pre">tracking_id</span></code> global attribute.</p>
+<blockquote>
+<div><p>Example: <code class="docutils literal notranslate"><span class="pre">21.14100/81b0709b-1546-3cb7-b0d8-e6ad9d1cc727</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">A dataset identifier as a sequence of dot-separated facets that follows the <em>Data Reference Syntax</em> of the corresponding project. The dataset identifiers has to append the dataset version number.</p>
+<blockquote>
+<div><p>Example: <code class="docutils literal notranslate"><span class="pre">CMIP6.CMIP.IPSL.IPSL-CM6A-LR.1pctCO2.r1i1p1f1.Omon.si.gn#20180727</span></code></p>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Several requests can be sent at once by uploading a local text file with one PID or dataset ID per line.</p>
+</div>
+<a class="reference internal image-reference" href="images/search.png"><img alt="Errata Menu" class="align-center" src="images/search.png" style="width: 1397.2px; height: 134.4px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Click on “<strong>Search</strong>”.</p>
+</li>
+<li><p class="first">The Errata Service returns the result within a table per dataset. Each line corresponds to one version of the considered dataset in the chronological order. Useful labels are added to flag the first, last and queried dataset versions. On the right, the annotation picture links to the corresponding issue. The check mark means no known issues for the corresponding version, it is often associated to the corrected version, the latest published version.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/search_result.png"><img alt="Errata PID Lookup" class="align-center" src="images/search_result.png" style="width: 1391.6px; height: 361.2px;" /></a>
+</div></blockquote>
+</li>
+</ol>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">esdoc-errata-client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">PID tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="searchUI.html" title="previous chapter">Look up an issue</a></li>
+      <li>Next: <a href="viewer.html" title="next chapter">Issue Viewer</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Atef Ben Nasser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/lookup.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

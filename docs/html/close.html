@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Close an issue &#8212; esdoc-errata-client 2.0n documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PID tracker" href="pid.html" />
+    <link rel="prev" title="Update an issue" href="update.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="close-an-issue">
+<span id="close"></span><h1>Close an issue<a class="headerlink" href="#close-an-issue" title="Permalink to this headline">¶</a></h1>
+<p>At the end of an issue’s lifecycle, it should be marked as a closed issue in order to prevent confusion. Closure is a particular step of the <a class="reference internal" href="update.html#update"><span class="std std-ref">update</span></a> procedure with similar rules.</p>
+<ol class="arabic">
+<li><p class="first"><a class="reference internal" href="login.html#login"><span class="std std-ref">Log in to the Errata Service</span></a></p>
+</li>
+<li><p class="first">From the <a class="reference external" href="https://errata.es-doc.org/">Errata Service home page</a>, click on any issue your are authorized to modify on behalf of your institute.</p>
+</li>
+<li><p class="first">The corresponding issue pops up.</p>
+</li>
+<li><p class="first">Click on “<strong>Edit</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/edit_button.png"><img alt="Create Issue Form" class="align-center" src="images/edit_button.png" style="width: 704.9px; height: 53.2px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Use the update form to choose the appropriate status:</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>“Resolved”</dt>
+<dd><p class="first last">The issue has been resolved <strong>AND</strong> the corrected files have been published on ESGF with a new dataset version.</p>
+</dd>
+<dt>“Wontfix”</dt>
+<dd><p class="first">The issue cannot/won’t be fixed by the data provider. This may occur in the following cases:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>the model should be re-run to correct the issue,</li>
+<li>an “Low” severity issue without any consequences on the analyzes.</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The previously explained safeguards for the <a class="reference internal" href="update.html#update"><span class="std std-ref">issue update</span></a> are also valid in this context.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Click on “<strong>Save</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/save_button.png"><img alt="Create Menu" class="align-center" src="images/save_button.png" style="width: 704.9px; height: 51.1px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Your request will be processed and validated by the server.</p>
+</li>
+<li><p class="first">If successfully saved, you are redirected to the newly generated view of your issue.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/success.png"><img alt="Creation Success" class="align-center" src="images/success.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">If invalid issue, you are requested to correct the form depending on the error message and try again.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/fail.png"><img alt="Creation Fail" class="align-center" src="images/fail.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">The issue is now closed and is kept for archiving/consultation purposes.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The update date and authors are automatically modified to the issue by the server.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">esdoc-errata-client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">PID tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="update.html" title="previous chapter">Update an issue</a></li>
+      <li>Next: <a href="pid.html" title="next chapter">PID tracker</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Atef Ben Nasser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/close.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
