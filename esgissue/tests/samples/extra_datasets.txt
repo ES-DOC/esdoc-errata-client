@@ -1,2 +1,0 @@
-cmip6.CMIP.IPSL.IPSL-CM6A-LR.historical.r1i1p1f1.Emon.nProduct.gr#20170601
-cmip6.CMIP.IPSL.IPSL-CM6A-LR.historical.r2i2p3f4.Emon.nProduct.gr#20170631
