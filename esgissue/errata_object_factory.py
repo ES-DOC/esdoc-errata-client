@@ -23,7 +23,9 @@ class ErrataObject(object):
         self.is_latest = False
         self.is_queried = False
         self.is_first = False
+        self.errata_ids_list = None
         self._check_for_multiple_errata()
+
 
     def __str__(self):
         result_string = ''
@@ -41,7 +43,8 @@ class ErrataObject(object):
     def _check_for_multiple_errata(self):
         # Checks for the case where multiple errata ids are found for a single dataset/file
         # instead of double ErrataObjects, it's taken care of in printing.
-        self.errata_ids_list = self.errata_ids.split(';')
+        if self.errata_ids_list is not None:
+            self.errata_ids_list = self.errata_ids.split(';')
 
 
 
