@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Update an issue &mdash; ESGF Errata Service 2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="static/documentation_options.js"></script>
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript" src="static/underscore.js"></script>
+        <script type="text/javascript" src="static/doctools.js"></script>
+        <script type="text/javascript" src="static/language_data.js"></script>
+    
+    <script type="text/javascript" src="static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Close an issue" href="close.html" />
+    <link rel="prev" title="Create an issue" href="create.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ESGF Errata Service
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup.html">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ESGF Errata Service</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Update an issue</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="sources/update.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="update-an-issue">
+<span id="update"></span><h1>Update an issue<a class="headerlink" href="#update-an-issue" title="Permalink to this headline">¶</a></h1>
+<p>Once an issue is created, it inevitably will be subject to some changes, whether it regards the content of the issue (description
+for instance), its status or the list of affected datasets. Updating an issue is still constrained and validated against some rules.
+In fact, to guarantee the issue quality some attributes are immutable.</p>
+<ol class="arabic">
+<li><p class="first"><a class="reference internal" href="login.html#login"><span class="std std-ref">Log in to the Errata Service</span></a></p>
+</li>
+<li><p class="first">From the <a class="reference external" href="https://errata.es-doc.org/">Errata Service home page</a>, click on any issue your are authorized to modify on behalf of your institute.</p>
+</li>
+<li><p class="first">The corresponding issue pops up.</p>
+</li>
+<li><p class="first">Click on “<strong>Edit</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/edit_button.png"><img alt="Create Issue Form" class="align-center" src="images/edit_button.png" style="width: 704.9px; height: 53.2px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Update the form following the requirements:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">The project and the title cannot be changed.</p>
+</li>
+<li><p class="first">A description between 16 and 1023 characters is mandatory.</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">As a matter of fact updating the description is controlled by a variation threshold that should not be exceeded. Which is currently set at 20%, if the description is to be changed more than that, the issue should be closed and the creation of a brand new issue is required.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">The severity is mandatory and value-controlled.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The accepted terms for issue severity are:</p>
+<dl class="last docutils">
+<dt>“Low”</dt>
+<dd><p class="first last">The issue concerns file management (e.g., addition, removal, period extension, etc.),</p>
+</dd>
+<dt>“Medium”</dt>
+<dd><p class="first last">The issue concerns metadata (NetCDF attributes) without undermining the values of the involved variable,</p>
+</dd>
+<dt>“High”</dt>
+<dd><p class="first last">The issue concerns single point variable or axis values,</p>
+</dd>
+<dt>“Critical”</dt>
+<dd><p class="first last">The issue concerns the variable or axis values undermining the analysis. The use of this data is strongly discouraged.</p>
+</dd>
+</dl>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">The status is mandatory and value-controlled.</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">An issue status cannot change back to “<strong>New</strong>”.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Optional links and materials are expected to be a valid URL(s) (checked upon validation).</p>
+</li>
+<li><p class="first">The datasets list is mandatory and gathers all the identifiers of the affected datasets. Any dataset ID can be add or modify as long as the dataset list isn’t empty.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A dataset identifier is a sequence of dot-separated facets that follows the <em>Data Reference Syntax</em> of the corresponding project.
+The dataset identifiers has to append the dataset version number. If one of the dataset ID is malformed or if the dataset list is empty, the form will raise an error.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<a class="reference internal image-reference" href="images/update_form.png"><img alt="Create Issue Form" class="align-center" src="images/update_form.png" style="width: 626.5px; height: 611.1px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Click on “<strong>Save</strong>” in the upper-right menu.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/save_button.png"><img alt="Create Menu" class="align-center" src="images/save_button.png" style="width: 704.9px; height: 51.1px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Your request will be processed and validated by the server.</p>
+</li>
+<li><p class="first">If successfully saved, you are redirected to the newly generated view of your issue.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/success.png"><img alt="Creation Success" class="align-center" src="images/success.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">If invalid issue, you are requested to correct the form depending on the error message and try again.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/fail.png"><img alt="Creation Fail" class="align-center" src="images/fail.png" style="width: 583.0px; height: 163.0px;" /></a>
+</div></blockquote>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The update date and authors are also automatically assigned/modified to the issue by the server.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="close.html" class="btn btn-neutral float-right" title="Close an issue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="create.html" class="btn btn-neutral float-left" title="Create an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

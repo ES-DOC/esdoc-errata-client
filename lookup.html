@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Track a version &mdash; ESGF Errata Service 2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="static/documentation_options.js"></script>
+        <script type="text/javascript" src="static/jquery.js"></script>
+        <script type="text/javascript" src="static/underscore.js"></script>
+        <script type="text/javascript" src="static/doctools.js"></script>
+        <script type="text/javascript" src="static/language_data.js"></script>
+    
+    <script type="text/javascript" src="static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Issue Viewer" href="viewer.html" />
+    <link rel="prev" title="Look up an issue" href="searchUI.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ESGF Errata Service
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="searchUI.html">Look up an issue</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Track a version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="viewer.html">Issue Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="login.html">Log in to the Errata Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create.html">Create an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update.html">Update an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="close.html">Close an issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Application Programming Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="log.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ESGF Errata Service</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Track a version</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="sources/lookup.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="track-a-version">
+<span id="lookup"></span><h1>Track a version<a class="headerlink" href="#track-a-version" title="Permalink to this headline">¶</a></h1>
+<p>The Errata Service exploits the <a class="reference external" href="https://esgf-data.dkrz.de/projects/esgf-dkrz/pid">Persistent IDentifier (PID)</a> attached to each dataset during the ESGF publication process.
+The PIDs enable to request the <a class="reference external" href="https://www.dkrz.de/mms/pdf/klimadaten/poster/EGU2012-web-services-and-handle.pdf">Handle Service</a> from DKRZ to get the version history of a (set of) file/dataset(s).
+Such a version tracker enables the end users to submit one or several files or datasets identifiers to get back all annotations related to each corresponding issue.</p>
+<ol class="arabic">
+<li><p class="first">From the <a class="reference external" href="https://errata.es-doc.org/">Errata Service home page</a>, click on “<strong>Search</strong>”.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/search_button.png"><img alt="Errata Menu" class="align-center" src="images/search_button.png" style="width: 704.9px; height: 53.2px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Send your request either with:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A PID following the syntax <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;:&lt;uuid&gt;</span></code>. PIDs can be found in the metadata of ESGF front-end or directly into the netCDF files as the <code class="docutils literal notranslate"><span class="pre">tracking_id</span></code> global attribute.</p>
+<blockquote>
+<div><p>Example: <code class="docutils literal notranslate"><span class="pre">21.14100/81b0709b-1546-3cb7-b0d8-e6ad9d1cc727</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">A dataset identifier as a sequence of dot-separated facets that follows the <em>Data Reference Syntax</em> of the corresponding project. The dataset identifiers has to append the dataset version number.</p>
+<blockquote>
+<div><p>Example: <code class="docutils literal notranslate"><span class="pre">CMIP6.CMIP.IPSL.IPSL-CM6A-LR.1pctCO2.r1i1p1f1.Omon.si.gn#20180727</span></code></p>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Several requests can be sent at once by uploading a local text file with one PID or dataset ID per line.</p>
+</div>
+<a class="reference internal image-reference" href="images/search.png"><img alt="Errata Menu" class="align-center" src="images/search.png" style="width: 598.8px; height: 57.6px;" /></a>
+</div></blockquote>
+</li>
+<li><p class="first">Click on “<strong>Search</strong>”.</p>
+</li>
+<li><p class="first">The Errata Service returns the result within a table per dataset. Each line corresponds to one version of the considered dataset in the chronological order. Useful labels are added to flag the first, last and queried dataset versions. On the right, the annotation picture links to the corresponding issue. The check mark means no known issues for the corresponding version, it is often associated to the corrected version, the latest published version.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="images/search_result.png"><img alt="Errata PID Lookup" class="align-center" src="images/search_result.png" style="width: 596.4px; height: 154.8px;" /></a>
+</div></blockquote>
+</li>
+</ol>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="viewer.html" class="btn btn-neutral float-right" title="Issue Viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="searchUI.html" class="btn btn-neutral float-left" title="Look up an issue" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016, Atef BEN NASSER, Guillaume LEVAVASSEUR
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
