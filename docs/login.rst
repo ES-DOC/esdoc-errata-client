@@ -21,7 +21,7 @@ For the authorization, a user needs to be part of the organization team specifie
 #. Sign up on `GitHub <https://github.com/>`_ platform.
 
     .. image:: images/github.png
-        :scale: 70 %
+        :scale: 30 %
         :alt: Github's home page
         :align: center
 
