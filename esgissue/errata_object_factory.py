@@ -43,7 +43,7 @@ class ErrataObject(object):
     def _check_for_multiple_errata(self):
         # Checks for the case where multiple errata ids are found for a single dataset/file
         # instead of double ErrataObjects, it's taken care of in printing.
-        if self.errata_ids_list is not None:
+        if self.errata_ids is not None:
             self.errata_ids_list = self.errata_ids.split(';')
 
 

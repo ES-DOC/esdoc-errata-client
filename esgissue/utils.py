@@ -835,7 +835,7 @@ def _encapsulate_pid_api_response(api_code, api_json, full_check=True, latest_on
                     errata_object.is_first = is_first
                     result.append_errata_object(errata_object)
                 else:
-                    # search for latest only, which means the max index number retrived in the version chain.
+                    # search for latest only, which means the max index number retrieved in the version chain.
                     # start search at queried version to reduce iterations.
                     max = 0
                     for version_iteration in response_item[1]:
