@@ -16,7 +16,7 @@ Consequently, the publication of a new version of a dataset, as well as the unpu
     The issue registration should be executed prior to the publication process and is ought to be mandatory for additional versions, version removal or retraction.
 
 .. image:: images/errata_service.png
-   :scale: 50%
+   :scale: 20%
    :alt: ESGF Errata Service Overview
    :align: center
 

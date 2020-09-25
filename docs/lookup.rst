@@ -31,7 +31,7 @@ Such a version tracker enables the end users to submit one or several files or d
         Several requests can be sent at once by uploading a local text file with one PID or dataset ID per line.
 
     .. image:: images/search.png
-        :scale: 70 %
+        :scale: 30 %
         :alt: Errata Menu
         :align: center
 
@@ -40,6 +40,6 @@ Such a version tracker enables the end users to submit one or several files or d
 #. The Errata Service returns the result within a table per dataset. Each line corresponds to one version of the considered dataset in the chronological order. Useful labels are added to flag the first, last and queried dataset versions. On the right, the annotation picture links to the corresponding issue. The check mark means no known issues for the corresponding version, it is often associated to the corrected version, the latest published version.
 
     .. image:: images/search_result.png
-          :scale: 70 %
+          :scale: 30 %
           :alt: Errata PID Lookup
           :align: center
