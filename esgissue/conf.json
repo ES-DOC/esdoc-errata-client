@@ -18,5 +18,6 @@
             "CREDTEST": "/verify-authorization?login={}&token={}&institute={}&project={}",
             "PID": "/1/resolve/pid"
     },
-"validate_issue_urls": true
+"validate_issue_urls": true,
+"verify_certificate": false
 }

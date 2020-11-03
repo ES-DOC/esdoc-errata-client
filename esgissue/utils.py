@@ -460,30 +460,30 @@ def _get_ws_call(action, payload=None, uid=None, credentials=None, dry_run=False
     _check_ws_heartbeat(dry_run)
     if action in [CREATE, UPDATE]:
         # First you need to retrieve the xsrf token from the options request
-        options_r = requests.options(url)
+        options_r = requests.options(url, verify=cf['verify_certificate'])
         HEADERS['X-Xsrftoken'] = options_r.headers['X-Xsrftoken']
         HEADERS['Cookie'] = options_r.headers['Set-Cookie']
         try:
-            r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials)
+            r = requests.post(url, json.dumps(payload), headers=HEADERS, auth=credentials, verify=cf['verify_certificate'])
             print(r.text)
         except Exception as e:
             print(e.message)
     elif action == CLOSE:
-        options_r = requests.options(url)
+        options_r = requests.options(url, verify=cf['verify_certificate'])
         HEADERS['X-Xsrftoken'] = options_r.headers['X-Xsrftoken']
         HEADERS['Cookie'] = options_r.headers['Set-Cookie']
         try:
-            r = requests.post(url + uid + '&status=' + payload, headers=HEADERS, auth=credentials)
+            r = requests.post(url + uid + '&status=' + payload, headers=HEADERS, auth=credentials, verify=cf['verify_certificate'])
         except Exception as e:
             print(e.message)
     elif action == RETRIEVE:
-        r = requests.get(url + uid)
+        r = requests.get(url + uid , verify=cf['verify_certificate'])
     elif action == RETRIEVE_ALL:
-        r = requests.get(url)
+        r = requests.get(url, verify=cf['verify_certificate'])
     elif action == CREDTEST:
-        r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']))
+        r = requests.get(url.format(credentials[0], credentials[1], payload['team'], payload['project']), verify=cf['verify_certificate'])
     elif action == PID:
-        r = requests.get(url + '?pids=' + payload)
+        r = requests.get(url + '?pids=' + payload, verify=cf['verify_certificate'])
     if r.status_code != requests.codes.ok:
         error_json = json.loads(r.text)
         if r.status_code == 400:
@@ -512,7 +512,7 @@ def _check_ws_heartbeat(dry_run = False):
     else:
         url = cf['url_base_dry_run']
     try:
-        r = requests.get(url)
+        r = requests.get(url, verify=cf['verify_certificate'])
         if r.status_code != 200:
             logging.warning(ERROR_DIC['server_down'][0])
             raise ServerDownException(code=404, msg='{} is unreachable'.format(url))
