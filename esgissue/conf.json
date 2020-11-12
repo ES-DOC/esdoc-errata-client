@@ -19,5 +19,5 @@
             "PID": "/1/resolve/pid"
     },
 "validate_issue_urls": true,
-"verify_certificate": false
+"verify_certificate": true
 }
